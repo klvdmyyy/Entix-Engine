@@ -1,22 +1,19 @@
+#include "GameMain.h"
 
 #include <Core/Application.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#define GameMain() WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int mShowCmd)
-#else
-#define GameMain() main()
-#endif
-
 int GameMain()
 {
+	CollectArgs();
+
 	Core::ApplicationSpecification appSpec =
 	{
 		.Name = "Entix Example Game",
+		.Description = "My first game written with my own Game Engine",
 		.WindowSpec = { .Width = 800, .Height = 600, .Title = "The Game!" },
 	};
 
-	Core::Application app(appSpec);
+	Core::Application app(appSpec, argc, argv);
 
 	app.Run();
 

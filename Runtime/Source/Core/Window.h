@@ -6,8 +6,31 @@
 #include "ERuntimeExport.h"
 #include "Core/Memory.h"
 
+#include "Core/Event.h"
+
 namespace Core
 {
+	using WindowID = uint32_t;
+
+	class WindowCloseEvent : public Event
+	{
+	public:
+		WindowCloseEvent(const WindowID id)
+			: m_ID(id)
+		{
+		}
+
+		inline const WindowID GetWindowID() const noexcept
+		{
+			return m_ID;
+		}
+
+		DEFINE_EVENT_TYPE(WindowCloseEvent);
+
+	private:
+		const WindowID m_ID;
+	};
+
 	struct WindowSpecification
 	{
 		uint32_t Width;

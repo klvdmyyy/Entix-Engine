@@ -16,6 +16,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Binaries)
 include(FetchContent)
 
 FetchContent_Declare(
+	CLI11
+	GIT_REPOSITORY https://github.com/CLIUtils/CLI11
+	GIT_TAG v2.6.2
+)
+
+FetchContent_MakeAvailable(CLI11)
+
+FetchContent_Declare(
 	SDL3
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL
 	GIT_TAG release-3.4.10

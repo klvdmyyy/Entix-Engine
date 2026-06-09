@@ -1,5 +1,7 @@
 #include "Core/Window.h"
 
+#include "Core/EventBus.h"
+
 #include <SDL3/SDL.h>
 
 using namespace Core;
@@ -35,6 +37,17 @@ public:
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
+			switch (event.type)
+			{
+			case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+			{
+				WindowCloseEvent e(event.window.windowID);
+				EventBus::Get().PublishEvent(e);
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 
