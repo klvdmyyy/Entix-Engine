@@ -5,7 +5,8 @@
 #include "ERuntimeExport.h"
 #include "Core/Window.h"
 
-namespace Core {
+namespace Core
+{
 	struct ApplicationSpecification
 	{
 		std::string Name;
