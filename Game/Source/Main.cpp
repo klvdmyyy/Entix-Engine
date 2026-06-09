@@ -1,7 +1,14 @@
 
 #include <Core/Application.h>
 
-int main()
+#ifdef _WIN32
+#include <Windows.h>
+#define GameMain() WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int mShowCmd)
+#else
+#define GameMain() main()
+#endif
+
+int GameMain()
 {
 	Core::ApplicationSpecification appSpec =
 	{

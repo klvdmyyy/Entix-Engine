@@ -1,4 +1,8 @@
-add_executable(Game)
+if(WIN32)
+	add_executable(Game WIN32)
+else()
+	add_executable(Game)
+endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Game PROPERTY CXX_STANDARD 23)
