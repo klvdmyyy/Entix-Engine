@@ -6,7 +6,7 @@ namespace Core
 {
 	Application::Application(const ApplicationSpecification& spec)
 	{
-		(void)spec;
+		m_Window = Window::Create(spec.WindowSpec);
 	}
 
 	Application::~Application()

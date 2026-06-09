@@ -20,5 +20,12 @@ namespace Core
 		~Application();
 
 		void Run();
+
+	private:
+		/* This two methods are implemented in Impl section */
+		void Init();
+		void Shutdown();
+
+		Ref<Window> m_Window;
 	};
 }
