@@ -26,6 +26,8 @@ namespace Core
 		void Init();
 		void Shutdown();
 
+		bool m_Running = true;
+
 		Ref<Window> m_Window;
 	};
 }

@@ -11,6 +11,8 @@ endif()
 
 target_compile_definitions(EntixRuntime PRIVATE ERUNTIME_BUILD_DLL)
 
+target_link_libraries(EntixRuntime PRIVATE SDL3-shared)
+
 target_include_directories (EntixRuntime PUBLIC "Source/")
 
 file(

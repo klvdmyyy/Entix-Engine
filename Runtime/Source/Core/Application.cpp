@@ -15,6 +15,10 @@ namespace Core
 
 	void Application::Run()
 	{
-		std::println("Hello, World! asdasd");
+		while (m_Running)
+		{
+			/* Poll events */
+			m_Window->OnUpdate();
+		}
 	}
 }
