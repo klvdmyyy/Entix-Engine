@@ -2,6 +2,8 @@
 
 #include <Core/Application.h>
 
+#include <RHI/RenderingDevice.h>
+
 int GameMain()
 {
 	CollectArgs();

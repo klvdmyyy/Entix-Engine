@@ -1,5 +1,7 @@
 #include "RHI/RenderingDevice.h"
 
+#include "Drivers/OpenGL/RenderingDeviceGL.h"
+
 namespace RHI
 {
 	GraphicsAPI RenderingDevice::s_API = GraphicsAPI::None;
@@ -20,7 +22,7 @@ namespace RHI
 			return nullptr;
 
 		case GraphicsAPI::OpenGL:
-			return nullptr;
+			return new Drivers::RenderingDeviceGL(index);
 
 		case GraphicsAPI::Vulkan:
 			return nullptr;

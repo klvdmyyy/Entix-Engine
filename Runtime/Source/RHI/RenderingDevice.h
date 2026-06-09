@@ -44,6 +44,8 @@ namespace RHI
 		static RenderingDevice* Create(GraphicsAPI api, size_t index = 0);
 
 	private:
+		RenderingDevice() = default;
+
 		static GraphicsAPI s_API;
 	};
 }
