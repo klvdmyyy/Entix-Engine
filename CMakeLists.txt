@@ -15,6 +15,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Binaries)
 
 include(FetchContent)
 
+set(SPDLOG_BUILD_PIC ON CACHE INTERNAL "") # Fix ld errors
+
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog
+  GIT_TAG v1.17.0
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(spdlog)
+
 FetchContent_Declare(
 	CLI11
 	GIT_REPOSITORY https://github.com/CLIUtils/CLI11

@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef _WIN32
+#ifdef _WIN32_T
 #include <Windows.h>
 #define GameMain() WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int mShowCmd)
 #define CollectArgs() int argc = __argc; char** argv = __argv

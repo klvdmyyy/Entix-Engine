@@ -1,6 +1,7 @@
 #include "GameMain.h"
 
 #include <Core/Application.h>
+#include <Core/Log.h>
 
 #include <RHI/RenderingDevice.h>
 
@@ -17,7 +18,10 @@ int GameMain()
 
 	Core::Application app(appSpec, argc, argv);
 
+	RHI::RenderingDevice* device = RHI::RenderingDevice::Create(RHI::GraphicsAPI::Vulkan);
+
 	app.Run();
 
+	delete device;
 	return 0;
 }

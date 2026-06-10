@@ -1,4 +1,4 @@
-if(WIN32)
+if(WIN32S)
 	add_executable(Game WIN32)
 else()
 	add_executable(Game)

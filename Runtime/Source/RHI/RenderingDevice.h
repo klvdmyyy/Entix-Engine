@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ERuntimeExport.h"
+
 #include <string>
 #include <cstddef>
 
@@ -31,7 +33,7 @@ namespace RHI
 #undef ADD_API
 	}
 
-	class RenderingDevice
+	class ERUNTIME_EXPORT RenderingDevice
 	{
 	public:
 		virtual ~RenderingDevice() = default;
@@ -43,9 +45,10 @@ namespace RHI
 
 		static RenderingDevice* Create(GraphicsAPI api, size_t index = 0);
 
-	private:
+	protected:
 		RenderingDevice() = default;
 
+	private:
 		static GraphicsAPI s_API;
 	};
 }

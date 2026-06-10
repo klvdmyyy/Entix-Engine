@@ -13,6 +13,8 @@ target_compile_definitions(EntixRuntime PRIVATE ERUNTIME_BUILD_DLL)
 
 target_link_libraries(EntixRuntime PRIVATE SDL3-shared CLI11)
 
+target_link_libraries(EntixRuntime PUBLIC spdlog::spdlog)
+
 target_include_directories (EntixRuntime PUBLIC "Source/")
 
 file(

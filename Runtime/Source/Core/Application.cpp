@@ -4,11 +4,16 @@
 
 #include <CLI/CLI.hpp>
 
+#include "Core/Log.h"
+
 namespace Core
 {
 	Application::Application(const ApplicationSpecification& spec, int argc, char** argv)
 		: m_Running(true)
 	{
+		Log::Init();
+		E_INFO("Initialized Log!");
+
 		EventBus::Get().AddListener(this);
 
 		CLI::App app{ std::format("{} - {}", spec.Name, spec.Description) };
@@ -20,14 +25,17 @@ namespace Core
 		}
 		catch (const CLI::ParseError& err)
 		{
+			/* Just ignore errors here. */
 			(void)err;
 		}
 
+		this->Init();
 		m_Window = Window::Create(spec.WindowSpec);
 	}
 
 	Application::~Application()
 	{
+		this->Shutdown();
 		EventBus::Get().RemoveListener(this);
 	}
 
