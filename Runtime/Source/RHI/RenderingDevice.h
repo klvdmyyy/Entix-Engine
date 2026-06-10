@@ -2,6 +2,8 @@
 
 #include "ERuntimeExport.h"
 
+#include "RHI/RenderingContext.h"
+
 #include <string>
 #include <cstddef>
 
@@ -38,15 +40,25 @@ namespace RHI
 	public:
 		virtual ~RenderingDevice() = default;
 
+		virtual RenderingContext* CreateContext(Core::Window& window) = 0;
+
+		/* Static methods */
+
+		static RenderingDevice* Create(GraphicsAPI api, size_t index = 0);
+
 		static GraphicsAPI GetAPI() noexcept
 		{
 			return s_API;
 		}
 
-		static RenderingDevice* Create(GraphicsAPI api, size_t index = 0);
-
 	protected:
 		RenderingDevice() = default;
+
+#ifdef NDEBUG
+		static constexpr bool ENABLE_VALIDATION_LAYERS = 0;
+#else
+		static constexpr bool ENABLE_VALIDATION_LAYERS = 1;
+#endif
 
 	private:
 		static GraphicsAPI s_API;
