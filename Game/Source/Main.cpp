@@ -9,6 +9,7 @@ int GameMain()
 {
 	CollectArgs();
 
+
 	Core::ApplicationSpecification appSpec =
 	{
 		.Name = "Entix Example Game",
@@ -18,10 +19,10 @@ int GameMain()
 
 	Core::Application app(appSpec, argc, argv);
 
-	RHI::RenderingDevice* device = RHI::RenderingDevice::Create(RHI::GraphicsAPI::Vulkan);
+	//RHI::RenderingDevice* device = RHI::RenderingDevice::Create(RHI::GraphicsAPI::OpenGL);
+	//delete device;
 
 	app.Run();
 
-	delete device;
 	return 0;
 }

@@ -2,7 +2,7 @@
 
 #include "Core/Log.h"
 
-#include <Drivers/glad/glad.h>
+#include <glad/glad.h>
 #include <SDL3/SDL.h>
 
 namespace Drivers
@@ -14,6 +14,7 @@ namespace Drivers
 
 		if constexpr (ENABLE_VALIDATION_LAYERS)
 		{
+			E_INFO("OpenGL Debug Messaging is enabled!");
 			/* TODO: Debug messenger initialization here */
 		}
 	}

@@ -50,10 +50,18 @@ namespace Core
 	};
 }
 
+#ifdef ERUNTIME_BUILD_DLL
 #define E_TRACE(...) ::Core::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define E_INFO(...) ::Core::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define E_WARN(...) ::Core::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define E_ERROR(...) ::Core::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define E_CRITICAL(...) ::Core::Log::GetCoreLogger()->critical(__VA_ARGS__)
+#else
+#define E_TRACE(...) ::Core::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define E_INFO(...) ::Core::Log::GetClientLogger()->info(__VA_ARGS__)
+#define E_WARN(...) ::Core::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define E_ERROR(...) ::Core::Log::GetClientLogger()->error(__VA_ARGS__)
+#define E_CRITICAL(...) ::Core::Log::GetClientLogger()->critical(__VA_ARGS__)
+#endif
 
 #define E_ASSERT(EXPR, ...) do { if(!(EXPR)) { E_CRITICAL("Assertion failed: '{0}'. Message: {1}", #EXPR, std::format(__VA_ARGS__)); std::exit(1); } } while(0)

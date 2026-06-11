@@ -16,11 +16,14 @@ target_link_libraries(EntixRuntime PRIVATE SDL3-shared CLI11)
 target_link_libraries(EntixRuntime PUBLIC spdlog::spdlog)
 
 target_include_directories (EntixRuntime PUBLIC "Source/")
+target_include_directories (EntixRuntime PRIVATE "ThirdParty/")
 
 file(
 	GLOB_RECURSE
 	ENTIX_RUNTIME_SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/*.c"
 )
 
 target_sources(
