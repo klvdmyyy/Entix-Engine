@@ -32,7 +32,7 @@ namespace ERUNTIME_NAMESPACE
         EventBus::Instance().RemoveListener(this);
     }
 
-    int Application::Run(int argc, char** argv)
+    void Application::Run(int argc, char** argv)
     {
         auto shader = Ref<Shader>(m_Context->CreateShader(VBOX_SIMPLE_SHADER));
 
@@ -82,7 +82,6 @@ namespace ERUNTIME_NAMESPACE
 
             FrameMark;
         }
-        return 0;
     }
 
     void Application::OnEvent(const Event& event)

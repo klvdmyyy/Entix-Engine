@@ -1,3 +1,4 @@
+// -*- mode: c++; -*-
 #pragma once
 
 #include "Core/String.h"
@@ -28,8 +29,7 @@ namespace ERUNTIME_NAMESPACE
 
         static Application& Instance() { return *s_Instance; }
 
-        [[nodiscard]]
-        int Run(int argc, char** argv);
+        void Run(int argc, char** argv);
 
         void OnEvent(const Event& event) final;
 
