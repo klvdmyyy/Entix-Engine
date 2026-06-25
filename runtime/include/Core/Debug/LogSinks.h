@@ -12,9 +12,21 @@ namespace ERUNTIME_NAMESPACE
         inline void Write(const LogEntry& entry) final
         {
             if(entry.Level == LogLevel::Error || entry.Level == LogLevel::Critical)
-                std::println(stderr, "{}:{} [{}:{}] {}", entry.SourceFile, entry.Line, entry.Category, entry.Level, entry.Message);
+                std::println(stderr, "{}{}{}[{}:{}] {}",
+                             entry.SourceFile.has_value() ? std::format("{}:", entry.SourceFile.value()) : "",
+                             entry.Line.has_value() ? std::format("{} ", entry.Line.value()) : "",
+                             entry.FunctionSignature.has_value() ? std::format("(in {}) ", entry.FunctionSignature.value()) : "",
+                             entry.Category,
+                             entry.Level,
+                             entry.Message);
             else
-                std::println("{}:{} [{}:{}] {}", entry.SourceFile, entry.Line, entry.Category, entry.Level, entry.Message);
+                std::println("{}{}{}[{}:{}] {}",
+                             entry.SourceFile.has_value() ? std::format("{}:", entry.SourceFile.value()) : "",
+                             entry.Line.has_value() ? std::format("{} ", entry.Line.value()) : "",
+                             entry.FunctionSignature.has_value() ? std::format("(in {}) ", entry.FunctionSignature.value()) : "",
+                             entry.Category,
+                             entry.Level,
+                             entry.Message);
         }
     };
 }

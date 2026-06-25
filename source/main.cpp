@@ -23,6 +23,9 @@ public:
         : Application(g_VBoxSpec)
     {
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>());
+
+        Debug::Error(LogCategory::IO, "Failed to read file!");
+        EX_LOG(Error, LogCategory::IO, "Failed to read file!");
     }
 
     ~VBoxApplication()

@@ -24,7 +24,6 @@ namespace ERUNTIME_NAMESPACE
     class ERUNTIME_API Application : EventListener
     {
     public:
-        Application(const ApplicationSpecification& spec);
         ~Application();
 
         static Application& Instance() { return *s_Instance; }
@@ -33,10 +32,17 @@ namespace ERUNTIME_NAMESPACE
 
         void OnEvent(const Event& event) final;
 
+        ApplicationSpecification GetSpec() const noexcept { return m_Spec; }
+        Window& GetWindow() const noexcept { return *m_Window; }
+        Context& GetContext() const noexcept { return *m_Context; }
+
+    protected:
+        Application(const ApplicationSpecification& spec);
+
     private:
         static Application* s_Instance;
 
-        ApplicationSpecification m_Spec;
+        const ApplicationSpecification m_Spec;
 
         Ref<Window> m_Window;
         Ref<Context> m_Context;

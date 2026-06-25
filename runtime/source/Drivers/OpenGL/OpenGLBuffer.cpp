@@ -1,5 +1,7 @@
 #include "Drivers/OpenGL/OpenGLBuffer.h"
 
+#include "Core/Debug/Log.h"
+
 namespace ERUNTIME_NAMESPACE
 {
     OpenGLVertexBuffer::OpenGLVertexBuffer(float* data, uint32_t size)

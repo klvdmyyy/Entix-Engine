@@ -1,3 +1,4 @@
+// -*- mode: c++; -*-
 #pragma once
 
 #include "Core/Base.h"
@@ -18,5 +19,6 @@ namespace ERUNTIME_NAMESPACE
 
     private:
         std::fstream m_File;
+        const std::filesystem::path k_Filepath;
     };
 }

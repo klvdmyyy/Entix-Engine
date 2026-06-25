@@ -1,8 +1,11 @@
 #include "Core/File.h"
 
+#include "Core/Debug/Log.h"
+
 namespace ERUNTIME_NAMESPACE
 {
     File::File(const std::filesystem::path& filepath)
+        : k_Filepath(filepath)
     {
         m_File.open(filepath, std::ios::in | std::ios::binary);
     }
@@ -23,12 +26,13 @@ namespace ERUNTIME_NAMESPACE
         if(size != -1)
         {
             result.resize(size);
-          m_File.seekg(0, std::ios::beg);
+            m_File.seekg(0, std::ios::beg);
             m_File.read(&result[0], size);
         }
         else
         {
-            /* TODO: Log the error. Couldn't read from file! */
+            // EX_LOG(Error, LogCategory::IO, "Can't read file: {}", k_Filepath);
+            
         }
 
         return result;
