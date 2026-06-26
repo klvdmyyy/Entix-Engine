@@ -14,6 +14,7 @@ namespace ERUNTIME_NAMESPACE::GUI {
         void Show();
         void Hide();
 
+        bool IsOpened() const noexcept { return m_show; }
         String GetName() const noexcept { return k_name; }
 
     private:

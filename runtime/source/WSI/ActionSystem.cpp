@@ -10,6 +10,31 @@
 using json = nlohmann::json;
 
 namespace ERUNTIME_NAMESPACE {
+    void ActionMap::Update()
+    {
+        for(auto& [name, action] : m_bindingMap) {
+            bool rawPressed = Input::IsKeyPressed(action.binding.scancode);
+
+            switch(action.state) {
+            case ActionState::Idle:
+                if(rawPressed) action.state = ActionState::Pressed;
+                break;
+
+            case ActionState::Pressed:
+                action.state = rawPressed ? ActionState::Held : ActionState::Released;
+                break;
+
+            case ActionState::Held:
+                if(!rawPressed) action.state = ActionState::Released;
+                break;
+
+            case ActionState::Released:
+                action.state = rawPressed ? ActionState::Pressed : ActionState::Idle;
+                break;
+            }
+        }
+    }
+    
     void ActionMap::AddAction(const String& name, const ActionBinding& binding)
     {
         if(m_bindingMap.contains(name)) {
@@ -17,7 +42,7 @@ namespace ERUNTIME_NAMESPACE {
             return;
         }
 
-        m_bindingMap.insert({name, binding});
+        m_bindingMap.insert({name, ActionData { .binding = binding }});
     }
 
     bool ActionMap::IsPressed(const String& name) const
@@ -26,8 +51,9 @@ namespace ERUNTIME_NAMESPACE {
             Debug::Warn(LogCategory::WSI, "Trying to check unexisting action in ActionMap! Action name: {}", name);
             return false;
         }
-        
-        return Input::IsKeyPressed(m_bindingMap.find(name)->second.scancode);
+
+        auto it = m_bindingMap.find(name);
+        return it->second.state == ActionState::Pressed;
     }
 
     ActionMap ActionMap::LoadFromFile(const std::filesystem::path filepath)

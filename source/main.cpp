@@ -5,6 +5,8 @@
 
 #include <Core/EntryPoint.h>
 
+#include <WSI/ActionSystem.h>
+
 #include <GUI/Window.h>
 
 using namespace ERUNTIME_NAMESPACE;
@@ -36,16 +38,30 @@ public:
 class VBoxApplication : public Application {
 public:
     VBoxApplication()
-        : Application(g_VBoxSpec)
+        : Application(g_VBoxSpec),
+          m_consoleWindow(GetGUIContext().CreateWindow<ConsoleWindow>())
     {
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>());
-        
-        GetGUIContext().CreateWindow<ConsoleWindow>();
     }
 
-    ~VBoxApplication()
+    void OnInit() final
     {
+        ActionSystem::Instance().PushContext(ActionContext{"Console"});
+        ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile(VBOX_DEFAULT_ACTION_MAP));
     }
+
+    void OnUpdate() final
+    {
+        if(ActionSystem::Instance().IsPressed("Console")) {
+            if(m_consoleWindow.IsOpened())
+                m_consoleWindow.Hide();
+            else
+                m_consoleWindow.Show();
+        }
+    }
+
+private:
+    ConsoleWindow& m_consoleWindow;
 };
 
 Entix::Application* Entix::CreateApplication()

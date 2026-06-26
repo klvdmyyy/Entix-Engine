@@ -14,6 +14,13 @@
 #include <filesystem>
 
 namespace ERUNTIME_NAMESPACE {
+    enum class ActionState {
+        Idle = 0,
+        Pressed,
+        Released,
+        Held,
+    };
+    
     // ---------------------------------------------------------------------
     // Привязки (бинды) для действий. Используются в качестве абстракции над разными
     // типами ввода (клавиатура, геймпад и т.д)
@@ -30,6 +37,8 @@ namespace ERUNTIME_NAMESPACE {
     class ActionMap {
     public:
         ActionMap() = default;
+
+        void Update();
 
         void AddAction(const String& name, const ActionBinding& binding);
 
@@ -53,7 +62,12 @@ namespace ERUNTIME_NAMESPACE {
         void SaveToFile(const std::filesystem::path filepath);
 
     private:
-        std::unordered_map<String, ActionBinding> m_bindingMap{};
+        struct ActionData {
+            ActionState state = ActionState::Idle;
+            ActionBinding binding;
+        };
+
+        std::unordered_map<String, ActionData> m_bindingMap{};
     };
 
     // ---------------------------------------------------------------------
@@ -100,6 +114,12 @@ namespace ERUNTIME_NAMESPACE {
     class ActionSystem {
     public:
         static ActionSystem& Instance();
+
+        FORCE_INLINE
+        inline void Update()
+        {
+            m_actionMap.Update();
+        }
 
         // ---------------------------------------------------------------------
         // Добавить контекст действий в стэк

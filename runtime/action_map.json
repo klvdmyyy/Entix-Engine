@@ -1,6 +1,15 @@
 {
     "actions": [
         {
+            "name": "Console",
+            "bindings": [
+                {
+                    "device": "Keyboard",
+                    "scancode": 53
+                }
+            ]
+        },
+        {
             "name": "Menu",
             "bindings": [
                 {

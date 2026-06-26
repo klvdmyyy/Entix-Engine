@@ -37,6 +37,8 @@ namespace ERUNTIME_NAMESPACE
 
     void Application::Run(int argc, char** argv)
     {
+        this->OnInit();
+        
         auto shader = Ref<Shader>(m_context->CreateShader(VBOX_SIMPLE_SHADER));
 
         auto vertex_array = Ref<VertexArray>(m_context->CreateVertexArray());
@@ -66,29 +68,13 @@ namespace ERUNTIME_NAMESPACE
         vertex_array->AddVertexBuffer(vertex_buffer);
         vertex_array->SetIndexBuffer(index_buffer);
 
-        ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveRight", "MoveLeft"});
-        ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "Jump"});
-
-        ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile(VBOX_DEFAULT_ACTION_MAP));
-
         while(m_running)
         {
             EventBus::Instance().ProcessEvents();
 
-            if(ActionSystem::Instance().IsPressed("MoveForward"))
-                EX_LOG(Trace, LogCategory::WSI, "MoveForward is pressed!");
+            ActionSystem::Instance().Update();
 
-            if(ActionSystem::Instance().IsPressed("MoveBackward"))
-                EX_LOG(Trace, LogCategory::WSI, "MoveBackward is pressed!");
-
-            if(ActionSystem::Instance().IsPressed("MoveLeft"))
-                EX_LOG(Trace, LogCategory::WSI, "MoveLeft is pressed!");
-
-            if(ActionSystem::Instance().IsPressed("MoveRight"))
-                EX_LOG(Trace, LogCategory::WSI, "MoveRight is pressed!");
-
-            if(ActionSystem::Instance().IsPressed("Jump"))
-                ActionSystem::Instance().PopContext();
+            this->OnUpdate();
 
             m_window->Update();
 
@@ -109,6 +95,8 @@ namespace ERUNTIME_NAMESPACE
 
             FrameMark;
         }
+
+        this->OnShutdown();
     }
 
     void Application::OnEvent(const Event& event)

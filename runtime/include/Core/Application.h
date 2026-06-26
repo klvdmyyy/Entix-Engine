@@ -34,6 +34,10 @@ namespace ERUNTIME_NAMESPACE
 
         void Run(int argc, char** argv);
 
+        virtual void OnInit() { }
+        virtual void OnUpdate() { }
+        virtual void OnShutdown() { }
+
         void OnEvent(const Event& event) final;
 
         ApplicationSpecification GetSpec() const noexcept { return k_spec; }
