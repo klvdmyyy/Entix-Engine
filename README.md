@@ -9,3 +9,4 @@
 - Tracy
 - googlebenchmark
 - googletest
+- nlohmann_json
