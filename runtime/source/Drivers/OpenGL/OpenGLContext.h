@@ -37,6 +37,8 @@ namespace ERUNTIME_NAMESPACE
 
         void Swap() final;
 
+        void InitGUI() final;
+
     private:
         Ref<Window> m_window;
         SDL_GLContext m_context;

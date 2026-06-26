@@ -12,6 +12,10 @@
 
 #include "Renderer/Context.h"
 
+#include "ECS/Scene.h"
+
+#include "GUI/Context.h"
+
 namespace ERUNTIME_NAMESPACE
 {
     struct ApplicationSpecification
@@ -26,15 +30,17 @@ namespace ERUNTIME_NAMESPACE
     public:
         ~Application();
 
-        static Application& Instance() { return *s_instance; }
+        static Application& Get() { return *s_instance; }
 
         void Run(int argc, char** argv);
 
         void OnEvent(const Event& event) final;
 
         ApplicationSpecification GetSpec() const noexcept { return k_spec; }
-        Window& GetWindow() const noexcept { return *m_window; }
-        Context& GetContext() const noexcept { return *m_context; }
+        Window& GetWindow() const { return *m_window; }
+        Context& GetContext() const { return *m_context; }
+        GUI::Context& GetGUIContext() const { return *m_guiContext; }
+        Scene& GetCurrentScene() const { return *m_scene; }
 
     protected:
         Application(const ApplicationSpecification& spec);
@@ -46,6 +52,9 @@ namespace ERUNTIME_NAMESPACE
 
         Ref<Window> m_window;
         Ref<Context> m_context;
+        Scope<GUI::Context> m_guiContext;
+
+        Scene* m_scene;
 
         bool m_running;
     };

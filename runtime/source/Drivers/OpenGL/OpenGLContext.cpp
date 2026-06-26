@@ -8,6 +8,12 @@
 
 #include <tracy/TracyOpenGL.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_opengl3.h>
+
+static constexpr const char* GUI_GLSL_VERSION = "#version 130";
+
 namespace ERUNTIME_NAMESPACE {
     OpenGLContext::OpenGLContext(const Ref<Window>& window)
         : m_window(window)
@@ -48,6 +54,12 @@ namespace ERUNTIME_NAMESPACE {
         glDrawElements(GL_TRIANGLES,
                        vertexArray->GetIndexBuffer()->GetCount(),
                        GL_UNSIGNED_INT, 0);
+    }
+
+    void OpenGLContext::InitGUI()
+    {
+        ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(m_window->GetWindowHandle()), m_context);
+        ImGui_ImplOpenGL3_Init(GUI_GLSL_VERSION);
     }
 
 

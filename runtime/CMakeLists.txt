@@ -67,7 +67,8 @@ target_link_libraries(entixruntime PRIVATE
   SDL3::SDL3-shared
   glad
   Tracy::TracyClient
-  nlohmann_json::nlohmann_json)
+  nlohmann_json::nlohmann_json
+  imgui)
 
 target_link_libraries(entixruntime PUBLIC EnTT::EnTT glm::glm)
 

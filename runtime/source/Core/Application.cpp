@@ -27,6 +27,7 @@ namespace ERUNTIME_NAMESPACE
         EventBus::Instance().AddListener(this);
         m_window = Ref<Window>(Window::Create(k_spec.windowSpec));
         m_context = Ref<Context>(Context::Create(m_window));
+        m_guiContext = CreateScope<GUI::Context>(m_context);
     }
 
     Application::~Application()
@@ -91,14 +92,18 @@ namespace ERUNTIME_NAMESPACE
 
             m_window->Update();
 
+            m_guiContext->OnPreUpdate();
+
             m_context->BeginScene();
 
             m_context->SetClearColor(0.2f, 0.2f, 0.2f);
             m_context->Clear();
 
             m_context->Submit(shader, vertex_array);
-
+            
             m_context->EndScene();
+
+            m_guiContext->OnPostRender();
 
             m_context->Swap();
 

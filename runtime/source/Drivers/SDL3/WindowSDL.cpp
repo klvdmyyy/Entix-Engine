@@ -3,6 +3,9 @@
 #include "Core/Assert.h"
 #include "Core/EventSystem.h"
 
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+
 namespace ERUNTIME_NAMESPACE {
     Window* Window::Create(const WindowSpecification& spec)
     {
@@ -54,6 +57,7 @@ namespace ERUNTIME_NAMESPACE {
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
+            ImGui_ImplSDL3_ProcessEvent(&event);
             switch(event.type)
             {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED: {

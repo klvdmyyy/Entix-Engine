@@ -5,6 +5,8 @@
 
 #include <Core/EntryPoint.h>
 
+#include <GUI/Window.h>
+
 using namespace ERUNTIME_NAMESPACE;
 
 static auto g_VBoxSpec = ApplicationSpecification {
@@ -17,15 +19,28 @@ static auto g_VBoxSpec = ApplicationSpecification {
     },
 };
 
+class ConsoleWindow : public GUI::Window {
+public:
+    ConsoleWindow()
+        : GUI::Window("Console")
+    {
+        // Show window at startup
+        Show();
+    }
+    
+    void Draw() final
+    {
+    }
+};
+
 class VBoxApplication : public Application {
 public:
     VBoxApplication()
         : Application(g_VBoxSpec)
     {
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>());
-
-        Debug::Error(LogCategory::IO, "Failed to read file!");
-        EX_LOG(Error, LogCategory::IO, "Failed to read file!");
+        
+        GetGUIContext().CreateWindow<ConsoleWindow>();
     }
 
     ~VBoxApplication()
