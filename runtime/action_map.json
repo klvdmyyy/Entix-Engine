@@ -1,0 +1,49 @@
+{
+    "actions": [
+        {
+            "name": "Jump",
+            "bindings": [
+                {
+                    "device": "Keyboard",
+                    "scancode": 44
+                }
+            ]
+        },
+        {
+            "name": "MoveForward",
+            "bindings": [
+                {
+                    "device": "Keyboard",
+                    "scancode": 26
+                }
+            ]
+        },
+        {
+            "name": "MoveBackward",
+            "bindings": [
+                {
+                    "device": "Keyboard",
+                    "scancode": 22
+                }
+            ]
+        },
+        {
+            "name": "MoveRight",
+            "bindings": [
+                {
+                    "device": "Keyboard",
+                    "scancode": 7
+                }
+            ]
+        },
+        {
+            "name": "MoveLeft",
+            "bindings": [
+                {
+                    "device": "Keyboard",
+                    "scancode": 4
+                }
+            ]
+        }
+    ]
+}

@@ -48,13 +48,26 @@ FetchContent_Declare(
   OVERRIDE_FIND_PACKAGE
 )
 
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+  GIT_TAG v3.12.0
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+
 set(TRACY_ON_DEMAND ON CACHE BOOL "" FORCE)
 set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Tracy)
 
 # set_target_properties(TracyClient PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-target_link_libraries(entixruntime PRIVATE SDL3::SDL3-shared glad Tracy::TracyClient)
+target_link_libraries(entixruntime PRIVATE
+  SDL3::SDL3-shared
+  glad
+  Tracy::TracyClient
+  nlohmann_json::nlohmann_json)
 
 target_link_libraries(entixruntime PUBLIC EnTT::EnTT glm::glm)
 

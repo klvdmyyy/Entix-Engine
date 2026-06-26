@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Types.h"
 #include "Core/String.h"
 #include "Core/Memory.h"
 
@@ -19,7 +20,7 @@ namespace ERUNTIME_NAMESPACE {
     // ---------------------------------------------------------------------
     struct ActionBinding {
         InputDevice device;
-        uint8_t scancode;
+        Uint8 scancode;
     };
 
     // ---------------------------------------------------------------------

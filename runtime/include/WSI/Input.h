@@ -1,25 +1,32 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Types.h"
 #include "Core/String.h"
 
 #include "Core/EventSystem.h"
 
 namespace ERUNTIME_NAMESPACE {
+    // ---------------------------------------------------------------------
+    // Тип устройства ввода (Клавиатура, геймпад и т.д)
+    // ---------------------------------------------------------------------
     enum class InputDevice {
         Unknown = 0,
 
         Keyboard,
     };
 
+    // ---------------------------------------------------------------------
+    // Событие ввода с клавиатуры
+    // ---------------------------------------------------------------------
     class KeyboardEvent : public Event {
     public:
-        KeyboardEvent(uint32_t code, bool pressed = true)
+        KeyboardEvent(Uint32 code, bool pressed = true)
             : k_code(code), k_pressed(pressed)
         {
         }
 
-        const uint32_t k_code;
+        const Uint32 k_code;
         const bool k_pressed;
 
         DEFINE_EVENT_TYPE(KeyboardEvent);
@@ -27,6 +34,6 @@ namespace ERUNTIME_NAMESPACE {
 
     class Input {
     public:
-        static bool IsKeyPressed(uint8_t scancode);
+        static bool IsKeyPressed(Uint8 scancode);
     };
 }

@@ -2,6 +2,13 @@
 
 #include "Core/Debug/Log.h"
 
+#include <vector>
+#include <fstream>
+
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 namespace ERUNTIME_NAMESPACE {
     void ActionMap::AddAction(const String& name, const ActionBinding& binding)
     {
@@ -25,8 +32,21 @@ namespace ERUNTIME_NAMESPACE {
 
     ActionMap ActionMap::LoadFromFile(const std::filesystem::path filepath)
     {
-        //...
-        return ActionMap{};
+        std::ifstream f(filepath);
+        json data = json::parse(f);
+
+        ActionMap actionMap;
+
+        for(auto action : data["actions"].get<std::vector<json>>()) {
+            actionMap.AddAction(action["name"].get<String>(),
+                                ActionBinding {
+                                    .device = InputDevice::Keyboard,
+                                    .scancode = action["bindings"].get<std::vector<json>>()[0]["scancode"].get<Uint8>(),
+                                });
+            
+        }
+        
+        return actionMap;
     }
 
     void ActionMap::SaveToFile(const std::filesystem::path filepath)

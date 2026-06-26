@@ -65,31 +65,28 @@ namespace ERUNTIME_NAMESPACE
         vertex_array->AddVertexBuffer(vertex_buffer);
         vertex_array->SetIndexBuffer(index_buffer);
 
-        ActionMap actionMap;
-        actionMap.AddAction("1", ActionBinding { .device = InputDevice::Keyboard, .scancode = 30 });
-        actionMap.AddAction("2", ActionBinding { .device = InputDevice::Keyboard, .scancode = 31 });
-        actionMap.AddAction("3", ActionBinding { .device = InputDevice::Keyboard, .scancode = 32 });
-        actionMap.AddAction("4", ActionBinding { .device = InputDevice::Keyboard, .scancode = 33 });
+        ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveRight", "MoveLeft"});
+        ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "Jump"});
 
-        ActionSystem::Instance().PushContext(ActionContext{"1", "2", "3"});
-        ActionSystem::Instance().PushContext(ActionContext{"1", "2", "4"});
-
-        ActionSystem::Instance().SetActionMap(actionMap);
+        ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile(VBOX_DEFAULT_ACTION_MAP));
 
         while(m_running)
         {
             EventBus::Instance().ProcessEvents();
 
-            if(ActionSystem::Instance().IsPressed("1"))
-                EX_LOG(Trace, LogCategory::WSI, "1 is pressed!");
+            if(ActionSystem::Instance().IsPressed("MoveForward"))
+                EX_LOG(Trace, LogCategory::WSI, "MoveForward is pressed!");
 
-            if(ActionSystem::Instance().IsPressed("2"))
-                EX_LOG(Trace, LogCategory::WSI, "2 is pressed!");
+            if(ActionSystem::Instance().IsPressed("MoveBackward"))
+                EX_LOG(Trace, LogCategory::WSI, "MoveBackward is pressed!");
 
-            if(ActionSystem::Instance().IsPressed("3"))
-                EX_LOG(Trace, LogCategory::WSI, "3 is pressed!");
+            if(ActionSystem::Instance().IsPressed("MoveLeft"))
+                EX_LOG(Trace, LogCategory::WSI, "MoveLeft is pressed!");
 
-            if(ActionSystem::Instance().IsPressed("4"))
+            if(ActionSystem::Instance().IsPressed("MoveRight"))
+                EX_LOG(Trace, LogCategory::WSI, "MoveRight is pressed!");
+
+            if(ActionSystem::Instance().IsPressed("Jump"))
                 ActionSystem::Instance().PopContext();
 
             m_window->Update();
