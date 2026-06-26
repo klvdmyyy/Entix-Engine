@@ -23,13 +23,24 @@ namespace ERUNTIME_NAMESPACE {
         EX_ASSERT(false, "Unknown log level provided: {}", static_cast<int>(level));
     }
 
+    String FormatLogEntry(const LogEntry& entry)
+    {
+        return std::format("{}{}{}[{}:{}] {}",
+                           entry.sourceFile.has_value() ? std::format("{}:", entry.sourceFile.value()) : "",
+                           entry.line.has_value() ? std::format("{} ", entry.line.value()) : "",
+                           entry.functionSignature.has_value() ? std::format("(in {}) ", entry.functionSignature.value()) : "",
+                           entry.category,
+                           entry.level,
+                           entry.message);
+    }
+
     Logger& Logger::Instance()
     {
         static Logger s_logger;
         return s_logger;
     }
 
-    void Logger::AddSink(Scope<LogSink> sink) {
+    void Logger::AddSink(Ref<LogSink> sink) {
         m_sinks.push_back(std::move(sink));
     }
 

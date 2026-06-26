@@ -26,6 +26,8 @@ namespace ERUNTIME_NAMESPACE
         constexpr auto WSI = "WSI";
         constexpr auto Renderer = "Renderer";
         constexpr auto Driver = "Driver";
+        
+        constexpr auto Console = "Console";
     }
 
     enum class LogLevel
@@ -50,6 +52,8 @@ namespace ERUNTIME_NAMESPACE
         std::optional<const char *> functionSignature;
     };
 
+    String FormatLogEntry(const LogEntry& entry);
+
     class ERUNTIME_API LogSink
         {
         public:
@@ -64,7 +68,7 @@ namespace ERUNTIME_NAMESPACE
         public:
         static Logger &Instance();
       
-        void AddSink(Scope<LogSink> sink);
+        void AddSink(Ref<LogSink> sink);
 
         void Log(LogLevel level, const char *category, StringView message,
                  std::optional<const char *> sourceFile = std::nullopt,
@@ -72,7 +76,7 @@ namespace ERUNTIME_NAMESPACE
                  std::optional<const char *> functionSignature = std::nullopt);
 
         private:
-        std::vector<Scope<LogSink>> m_sinks;
+        std::vector<Ref<LogSink>> m_sinks;
         std::mutex m_sync;
         };
 

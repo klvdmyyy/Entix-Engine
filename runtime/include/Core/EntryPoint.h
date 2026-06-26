@@ -7,14 +7,23 @@
 
 #include "Core/Application.h"
 
+#include "Core/Debug/Log.h"
+#include "Core/Debug/LogSinks.h"
+
 namespace ERUNTIME_NAMESPACE {
     extern Application* CreateApplication();
     
     int Main(int argc, char** argv)
     {
+        Logger::Instance().AddSink(CreateRef<StdoutLogSink>());
+        Logger::Instance().AddSink(Ref<LogSink>(&BufferLogSink::Instance(), [](void*){}));
+        
         auto app = CreateApplication();
+        
         app->Run(argc, argv);
+        
         delete app;
+        
         return 0;
     }
 }

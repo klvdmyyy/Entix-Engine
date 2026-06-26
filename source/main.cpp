@@ -7,7 +7,7 @@
 
 #include <WSI/ActionSystem.h>
 
-#include <GUI/Window.h>
+#include <GUI/ConsoleWindow.h>
 
 using namespace ERUNTIME_NAMESPACE;
 
@@ -21,27 +21,23 @@ static auto g_VBoxSpec = ApplicationSpecification {
     },
 };
 
-class ConsoleWindow : public GUI::Window {
-public:
-    ConsoleWindow()
-        : GUI::Window("Console")
-    {
-        // Show window at startup
-        Show();
-    }
-    
-    void Draw() final
-    {
-    }
-};
-
 class VBoxApplication : public Application {
 public:
     VBoxApplication()
         : Application(g_VBoxSpec),
-          m_consoleWindow(GetGUIContext().CreateWindow<ConsoleWindow>())
+          m_consoleWindow(GetGUIContext().CreateWindow<GUI::ConsoleWindow>())
     {
-        Logger::Instance().AddSink(CreateScope<StdoutLogSink>());
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
+        EX_LOG(Trace, LogCategory::Core, "HELLO");
     }
 
     void OnInit() final
@@ -61,7 +57,7 @@ public:
     }
 
 private:
-    ConsoleWindow& m_consoleWindow;
+    GUI::ConsoleWindow& m_consoleWindow;
 };
 
 Entix::Application* Entix::CreateApplication()

@@ -1,5 +1,7 @@
 #include "Core/StringCommandRunner.h"
 
+#include "Core/Debug/Log.h"
+
 #include <cctype>
 #include <format>
 
@@ -81,6 +83,7 @@ namespace ERUNTIME_NAMESPACE
         auto searchIt = m_commandMap.find(cmdSearchStr);
         if (searchIt == m_commandMap.end())
         {
+            Debug::Error(LogCategory::Console, "Command not found: {}", cmdSearchStr);
           return std::unexpected(std::format(
               "Failed to run unexisting command: {}", cmdSearchStr));
         }
