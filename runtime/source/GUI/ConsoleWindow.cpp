@@ -4,6 +4,7 @@
 #include "Core/StringCommandRunner.h"
 
 #include <algorithm>
+#include <format>
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -15,11 +16,27 @@ namespace ERUNTIME_NAMESPACE::GUI {
         // Hide console at startup.
         Hide();
 
+        StringCommandRunner::Instance().AddCommand({ .name = "help",    .description = "Prints help for registered command" },
+                                                   [](const CommandArgs& args, IO::Writer& writer) {
+                                                       if(args.Count() != 1) {
+                                                           writer.WriteLine("Usage: `help <cmd_name>`");
+                                                           return;
+                                                       }
+
+                                                       auto result = StringCommandRunner::Instance().GetSpec(args.Get(0));
+                                                       if(result) {
+                                                           auto spec = (*result);
+
+                                                           writer.WriteLineFmt("{} - {}", spec.name, spec.description);
+                                                       } else {
+                                                           writer.WriteLineFmt("Help fail: {}", result.error());
+                                                       }
+                                                   });
         StringCommandRunner::Instance().AddCommand({ .name = "history", .description = "Prints all console history" },
-                                                   [&](const CommandArgs& args) {
-                                                       Debug::Info(LogCategory::Console, "HISTORY:");
+                                                   [&](const CommandArgs& args, IO::Writer& writer) {
+                                                       writer.WriteLine("HISTORY:");
                                                        for(const auto& entry : m_history)
-                                                           Debug::Info(LogCategory::Console, "\t\t{}", entry);
+                                                           writer.WriteLineFmt("\t{}", entry);
                                                    });
     }
 
@@ -62,7 +79,10 @@ namespace ERUNTIME_NAMESPACE::GUI {
             if(!m_inputBuffer.empty()) {
                 m_history.push_back(m_inputBuffer);
                 m_historyIndex = static_cast<int>(m_history.size());
-                StringCommandRunner::Instance().Run(m_inputBuffer);
+                
+                m_writer.WriteLineFmt("> {}", m_inputBuffer);
+                StringCommandRunner::Instance().Run(m_inputBuffer, m_writer);
+                
                 m_inputBuffer = "";
                 m_autoScroll = true;
             }
@@ -93,17 +113,6 @@ namespace ERUNTIME_NAMESPACE::GUI {
             }
             return 1;
         }
-
-        // if (data->EventFlag == ImGuiInputTextFlags_EnterReturnsTrue) {
-        //     String cmd(data->Buf);
-        //     if(!cmd.empty()) {
-        //         m_history.push_back(cmd);
-        //         m_historyIndex = (int)m_history.size();
-        //         StringCommandRunner::Instance().Run(cmd);
-        //         data->Buf[0] = '\0';
-        //         m_autoScroll = true;
-        //     }
-        // }
         
         return 0;
     }

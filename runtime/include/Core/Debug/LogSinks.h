@@ -16,6 +16,14 @@ namespace ERUNTIME_NAMESPACE
 
         static BufferLogSink& Instance();
 
+        inline void WriteStr(const String& message)
+        {
+            if(m_entries.size() > MAX_ENTRY_COUNT)
+                m_entries.pop_front();
+
+            m_entries.push_back(message);
+        }
+
         inline void Write(const LogEntry& entry) final
         {
             if(m_entries.size() > MAX_ENTRY_COUNT)
@@ -30,6 +38,8 @@ namespace ERUNTIME_NAMESPACE
         }
 
     private:
+        BufferLogSink() = default;
+        
         std::deque<String> m_entries{};
     };
 

@@ -20,7 +20,7 @@ namespace ERUNTIME_NAMESPACE
     {
         std::vector<StringView> args;
 
-        size_t start, end;
+        std::size_t start, end;
 
         start = end = 0;
 
@@ -48,7 +48,7 @@ namespace ERUNTIME_NAMESPACE
         return s_runner;
     }
 
-    std::expected<void, String> StringCommandRunner::Run(StringView cmd)
+    void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
     {
         auto firstNonSpace = String::npos;
 
@@ -61,8 +61,10 @@ namespace ERUNTIME_NAMESPACE
             }
         }
 
-        if (firstNonSpace == String::npos)
-            return std::unexpected("Failed to run command: Can't find token start (maybe it's empty?)");
+        if (firstNonSpace == String::npos) {
+            Debug::Error(LogCategory::Console, "Failed to run command: Can't find token start (maybe it's empty?)");
+            return;
+        }
 
         auto firstTokenEnd = firstNonSpace;
         for (size_t i = firstNonSpace; i < cmd.size(); i++)
@@ -73,8 +75,10 @@ namespace ERUNTIME_NAMESPACE
           firstTokenEnd++;
         }
 
-        if (firstTokenEnd == String::npos)
-            return std::unexpected("Failed to run command: Can't find token end");
+        if (firstTokenEnd == String::npos) {
+            Debug::Error(LogCategory::Console, "Failed to run command: Can't find token end");
+            return;
+        }
 
         String cmdSearchStr = String(
             cmd.substr(firstNonSpace, firstTokenEnd - firstNonSpace));
@@ -84,56 +88,61 @@ namespace ERUNTIME_NAMESPACE
         if (searchIt == m_commandMap.end())
         {
             Debug::Error(LogCategory::Console, "Command not found: {}", cmdSearchStr);
-          return std::unexpected(std::format(
-              "Failed to run unexisting command: {}", cmdSearchStr));
+            return;
         }
 
         auto args = String(cmd.substr(
             firstTokenEnd, cmd.size() - firstTokenEnd));
 
-        (searchIt->second)(CommandArgs::Parse(args));
-
-        return {};
+        (searchIt->second)(CommandArgs::Parse(args), writer);
     }
 
-    std::expected<void, String> StringCommandRunner::AddCommand(CommandSpecification cmd, CommandCallback callback)
+    bool StringCommandRunner::AddCommand(CommandSpecification cmd, CommandCallback callback)
     {
         std::lock_guard<std::mutex> lock(m_sync);
 
         if (m_commandMap.contains(cmd.name))
         {
-            return std::unexpected(std::format("Failed to add command. Command already exists: {}", cmd.name));
+            Debug::Error(LogCategory::Console, "Failed to add command. Command already exists: {}", cmd.name);
+            return false;
         }
 
         m_commandSpecMap.insert({cmd.name, cmd});
         m_commandMap.insert({m_commandSpecMap.at(cmd.name).name, callback});
 
-        return {};
+        return true;
     }
 
-    std::expected<void, String> StringCommandRunner::RemoveCommand(StringView cmd)
+    bool StringCommandRunner::RemoveCommand(StringView cmd)
     {
         std::lock_guard<std::mutex> lock(m_sync);
 
         if(!m_commandMap.contains(cmd))
         {
-            return std::unexpected(std::format("Failed to remove command. Command doesn't exists: {}", cmd));
+            Debug::Error(LogCategory::Console, "Failed to remove command. Command doesn't exists: {}", cmd);
+            return false;
         }
 
         m_commandMap.erase(cmd);
-        m_commandSpecMap.erase(cmd);
+        m_commandSpecMap.erase(String(cmd));
 
-        return {};
+        return true;
     }
 
     std::expected<CommandSpecification, String> StringCommandRunner::GetSpec(StringView cmd) const
     {
-        if(!m_commandSpecMap.contains(cmd))
+        if(!m_commandSpecMap.contains(String(cmd)))
         {
-            return std::unexpected(std::format("Failed to get command specification. Command doesn't exists: {}", cmd));
+            for(auto [name, _] : m_commandMap) {
+                std::println("{}", name);
+            }
+            for(auto [name, _] : m_commandSpecMap) {
+                std::println("{}", name);
+            }
+            return std::unexpected(std::format("Failed to get command specification. Command doesn't exists: '{}'", cmd));
         }
 
-        return m_commandSpecMap.at(cmd);
+        return m_commandSpecMap.at(String(cmd));
     }
 
     void StringCommandRunner::Each(std::function<void(const CommandSpecification& spec)> callback) const
