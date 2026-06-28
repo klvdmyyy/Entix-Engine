@@ -59,6 +59,8 @@ namespace ERUNTIME_NAMESPACE
 
         bool RemoveCommand(StringView cmd);
 
+        std::vector<String> GetSuggestions(const String& prefix) const;
+        
         [[nodiscard]]
         std::expected<CommandSpecification, String> GetSpec(StringView cmd) const;
 

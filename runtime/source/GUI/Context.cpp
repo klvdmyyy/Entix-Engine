@@ -46,6 +46,8 @@ namespace ERUNTIME_NAMESPACE::GUI {
         ImGui::NewFrame();
         
         for(auto it = m_windows.begin(); it != m_windows.end(); it++) {
+            ImGui::SetNextWindowPos(ImVec2((*it)->GetStartXPos(), (*it)->GetStartYPos()), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowSize(ImVec2((*it)->GetStartWidth(), (*it)->GetStartHeight()), ImGuiCond_FirstUseEver);
             (*it)->BeginRender();
         }
     }

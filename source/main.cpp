@@ -27,17 +27,6 @@ public:
         : Application(g_VBoxSpec),
           m_consoleWindow(GetGUIContext().CreateWindow<GUI::ConsoleWindow>())
     {
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
-        EX_LOG(Trace, LogCategory::Core, "HELLO");
     }
 
     void OnInit() final

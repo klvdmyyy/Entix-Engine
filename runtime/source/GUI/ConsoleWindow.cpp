@@ -11,7 +11,7 @@
 
 namespace ERUNTIME_NAMESPACE::GUI {
     ConsoleWindow::ConsoleWindow()
-        : Window("Console"), m_writer(BufferLogSink::Instance())
+        : Window("Console", 500, 300, 50, 50), m_writer(BufferLogSink::Instance())
     {
         // Hide console at startup.
         Hide();
@@ -95,7 +95,17 @@ namespace ERUNTIME_NAMESPACE::GUI {
     {
         ImGuiInputTextCallbackData* data = static_cast<ImGuiInputTextCallbackData*>(data_);
         if(data->EventFlag == ImGuiInputTextFlags_CallbackCompletion) {
-            Debug::Error(LogCategory::Console, "Console doesn't support completion for now!");
+            auto suggestions = StringCommandRunner::Instance().GetSuggestions(data->Buf);
+            if(suggestions.size() == 1) {
+                data->DeleteChars(0, data->BufTextLen);
+                data->InsertChars(0, (suggestions[0] + " ").c_str());
+            } else if(suggestions.size() > 1) {
+                String options = "Options: ";
+                for(const auto& s : suggestions) {
+                    options += s + " ";
+                }
+                Debug::Info(LogCategory::Console, "{}", options);
+            }
             return 1;
         }
 

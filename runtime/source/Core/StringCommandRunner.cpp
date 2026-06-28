@@ -129,6 +129,17 @@ namespace ERUNTIME_NAMESPACE
         return true;
     }
 
+    std::vector<String> StringCommandRunner::GetSuggestions(const String& prefix) const
+    {
+        std::vector<String> suggestions;
+        for(const auto& [name, _] : m_commandSpecMap) {
+            if(name.find(prefix) == 0) {
+                suggestions.push_back(name);
+            }
+        }
+        return suggestions;
+    }
+
     std::expected<CommandSpecification, String> StringCommandRunner::GetSpec(StringView cmd) const
     {
         if(!m_commandSpecMap.contains(String(cmd)))
