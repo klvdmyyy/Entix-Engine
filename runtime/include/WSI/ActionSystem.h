@@ -48,6 +48,7 @@ namespace ERUNTIME_NAMESPACE {
         void Update();
 
         void AddAction(const String& name, const ActionBinding& binding);
+        void Bind(const String& name, const ActionBinding& binding);
 
         // ---------------------------------------------------------------------
         // Проверяют состояние бинда по имени действия.
@@ -171,6 +172,8 @@ namespace ERUNTIME_NAMESPACE {
         bool IsHeld(const String& name) const;
 
     private:
+        ActionSystem();
+
         ActionMap m_actionMap{};
         std::stack<ActionContext> m_contextStack{};
     };

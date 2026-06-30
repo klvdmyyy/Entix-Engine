@@ -45,6 +45,17 @@ namespace ERUNTIME_NAMESPACE {
         m_actionDataMap.insert({name, ActionData { .binding = binding }});
     }
 
+    void ActionMap::Bind(const String& name, const ActionBinding& binding)
+    {
+        auto it = m_actionDataMap.find(name);
+        
+        if(it == m_actionDataMap.end()) {
+            AddAction(name, binding);
+        } else {
+            it->second.binding = binding;
+        }
+    }
+
     bool ActionMap::IsPressed(const String& name) const
     {
         if(!m_actionDataMap.contains(name)) {
@@ -163,5 +174,18 @@ namespace ERUNTIME_NAMESPACE {
             return false;
 
         return m_actionMap.IsHeld(name);
+    }
+
+    ActionSystem::ActionSystem()
+    {
+        StringCommandRunner::Instance()
+            .AddCommand({ .name = "bind", .description = "Bind action to keyboard scancode." },
+                        [&](const CommandArgs& args, IO::Writer& writer) {
+                            if(args.Count() != 2) {
+                                writer.Write("Usage: bind <ACTION_NAME> <SCANCODE>");
+                                return;
+                            }
+                            Bind(String(args.Get(0)), std::stoi(String(args.Get(1))));
+                        });
     }
 }
