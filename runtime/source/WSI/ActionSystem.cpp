@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <fstream>
+#include <exception>
 
 #include <nlohmann/json.hpp>
 
@@ -186,10 +187,14 @@ namespace ERUNTIME_NAMESPACE {
                                 writer.Write("Usage: bind <ACTION_NAME> <SCANCODE>");
                                 return;
                             }
-                            m_actionMap.Bind(String(args.Get(0)), ActionBinding {
-                                    .device = InputDevice::Keyboard,
-                                    .scancode = std::stoi(String(args.Get(1)))
-                                });
+                            try {
+                                m_actionMap.Bind(String(args.Get(0)), ActionBinding {
+                                        .device = InputDevice::Keyboard,
+                                        .scancode = std::stoi(String(args.Get(1)))
+                                    });
+                            } catch(const std::exception& e) {
+                                writer.WriteFmt("Error: {}", e.what());
+                            }
                         });
     }
 }
