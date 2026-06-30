@@ -17,7 +17,7 @@ namespace ERUNTIME_NAMESPACE {
 
     class Scene {
     public:
-        Scene();
+        Scene(const Ref<Renderer::Context>& rendererContext);
         ~Scene();
 
         Entity CreateEntity(const String& name = String());

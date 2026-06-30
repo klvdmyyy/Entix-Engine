@@ -41,9 +41,12 @@ namespace ERUNTIME_NAMESPACE
         void OnEvent(const Event& event) final;
 
         ApplicationSpecification GetSpec() const noexcept { return k_spec; }
-        Window& GetWindow() const { return *m_window; }
-        Renderer::Context& GetRendererContext() const { return *m_rendererContext; }
+
+        Window* GetWindow() const { return m_window.get(); }
+        Renderer::Context* GetRendererContext() const { return m_rendererContext.get(); }
+
         GUI::Context& GetGUIContext() const { return *m_guiContext; }
+        
         Scene& GetCurrentScene() const { return *m_scene; }
 
     protected:

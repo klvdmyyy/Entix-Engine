@@ -70,4 +70,14 @@ namespace ERUNTIME_NAMESPACE {
         {
         }
     };
+
+    struct CameraComponent {
+        // SceneCamera camera;
+
+        bool primary = true;
+        bool fixedAspectRatio = false;
+
+        CameraComponent() = default;
+        CameraComponent(const CameraComponent&) = default;
+    };
 }

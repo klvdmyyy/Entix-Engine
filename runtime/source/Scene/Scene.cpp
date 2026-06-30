@@ -2,8 +2,11 @@
 
 #include "Scene/Entity.h"
 
+#include "Core/Resources/ResourceManager.h"
+
 namespace ERUNTIME_NAMESPACE {
-    Scene::Scene()
+    Scene::Scene(const Ref<Renderer::Context>& rendererContext)
+        : m_rendererContext(rendererContext)
     {
     }
 
@@ -26,7 +29,7 @@ namespace ERUNTIME_NAMESPACE {
 
         m_entityMap[uuid] = entity;
 
-        return entity;        
+        return entity;
     }
 
     Entity Scene::FindEntityByName(StringView name)
@@ -50,5 +53,31 @@ namespace ERUNTIME_NAMESPACE {
 
     void Scene::OnTick(float deltaTime)
     {
+        m_rendererContext->BeginScene();
+
+        m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
+        m_rendererContext->Clear();
+
+        {
+            auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
+            for(auto entity : group) {
+                auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
+                
+                m_rendererContext->Submit(ResourceManager::Instance().GetShader(mesh.material.shader), mesh.vertexArray);
+            }
+        }
+
+        // {
+        //     auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent);
+        //     auto camerasView = m_registry.view<TransformComponent, CameraComponent>();
+
+        //     for(auto [cameraTransform, camera] : camerasView.each()) {
+        //         for(auto [transform, mesh] : group.each()) {
+        //             m_rendererContext->Submit(ResourceManager::Instance().GetShader(mesh.material.shader), mesh.vertexArray);
+        //         }
+        //     }
+        // }
+
+        m_rendererContext->EndScene();
     }
 }

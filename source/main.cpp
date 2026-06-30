@@ -3,13 +3,21 @@
 #include <Core/Debug/Log.h>
 #include <Core/Debug/LogSinks.h>
 
+#include <Core/Resources/ResourceManager.h>
+
 #include <Core/EntryPoint.h>
 
 #include <WSI/ActionSystem.h>
 
+#include <Renderer/Context.h>
+#include <Renderer/VertexArray.h>
+#include <Renderer/Buffer.h>
+
 #include <GUI/ConsoleWindow.h>
 
-using namespace ERUNTIME_NAMESPACE;
+#include <Scene/Entity.h>
+
+#include "vbox.h"
 
 static auto g_VBoxSpec = ApplicationSpecification {
     .name = "VBox Game",
@@ -31,8 +39,10 @@ public:
 
     void OnInit() final
     {
-        ActionSystem::Instance().PushContext(ActionContext{"Console"});
-        ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile(VBOX_DEFAULT_ACTION_MAP));
+        ResourceManager::Instance().LoadShader(VBOX_SIMPLE_SHADER);
+
+        Entity square = GetCurrentScene().CreateEntity("Square");
+        square.AddComponent<StaticMeshComponent>(CreateExampleMesh(GetRendererContext()));
     }
 
     void OnTick() final
