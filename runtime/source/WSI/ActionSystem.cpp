@@ -7,7 +7,12 @@
 #include <fstream>
 #include <exception>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #include <nlohmann/json.hpp>
+
+#pragma GCC diagnostic pop
 
 using json = nlohmann::json;
 
@@ -190,7 +195,7 @@ namespace ERUNTIME_NAMESPACE {
                             try {
                                 m_actionMap.Bind(String(args.Get(0)), ActionBinding {
                                         .device = InputDevice::Keyboard,
-                                        .scancode = std::stoi(String(args.Get(1)))
+                                        .scancode = static_cast<Uint8>(std::stoi(String(args.Get(1)))),
                                     });
                             } catch(const std::exception& e) {
                                 writer.WriteFmt("Error: {}", e.what());
