@@ -8,6 +8,9 @@
 
 #include <glad/glad.h>
 
+// We don't include that in public API. We just can use `using namespace`
+using namespace ERUNTIME_NAMESPACE::Renderer;
+
 namespace ERUNTIME_NAMESPACE
 {
     class ERUNTIME_API OpenGLVertexArray : public VertexArray

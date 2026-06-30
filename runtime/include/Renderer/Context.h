@@ -9,7 +9,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 
-namespace ERUNTIME_NAMESPACE
+namespace ERUNTIME_NAMESPACE::Renderer
 {
     class ERUNTIME_API Context
     {

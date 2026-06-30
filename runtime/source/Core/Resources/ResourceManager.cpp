@@ -54,7 +54,7 @@ namespace ERUNTIME_NAMESPACE {
         return s_instance;
     }
 
-    const Ref<Shader>& ResourceManager::LoadShader(const String& filepath)
+    const Ref<Renderer::Shader>& ResourceManager::LoadShader(const String& filepath)
     {
         Debug::Info(LogCategory::Resources, "Loading shader '{}'", filepath);
         auto searchIt = m_shadersMap.find(filepath);
@@ -64,14 +64,14 @@ namespace ERUNTIME_NAMESPACE {
             return searchIt->second;
         }
 
-        auto loaded = Ref<Shader>(m_rendererContext->CreateShader(filepath));
+        auto loaded = Ref<Renderer::Shader>(m_rendererContext->CreateShader(filepath));
 
         m_shadersMap.insert({filepath, std::move(loaded)});
 
         return m_shadersMap.at(filepath);
     }
 
-    const Ref<Shader>& ResourceManager::GetShader(const String& filepath) const
+    const Ref<Renderer::Shader>& ResourceManager::GetShader(const String& filepath) const
     {
         return m_shadersMap.at(filepath);
     }

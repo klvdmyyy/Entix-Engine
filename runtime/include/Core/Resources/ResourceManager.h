@@ -17,20 +17,20 @@ namespace ERUNTIME_NAMESPACE {
         static ResourceManager& Instance();
 
         FORCE_INLINE
-        inline void SetRendererContext(const Ref<Context>& rendererContext)
+        inline void SetRendererContext(const Ref<Renderer::Context>& rendererContext)
         {
             m_rendererContext = rendererContext;
         }
 
-        const Ref<Shader>& LoadShader(const String& filepath);
-        const Ref<Shader>& GetShader(const String& filepath) const;
+        const Ref<Renderer::Shader>& LoadShader(const String& filepath);
+        const Ref<Renderer::Shader>& GetShader(const String& filepath) const;
         void ReloadShader(const String& filepath);
 
     private:
         ResourceManager();
 
-        Ref<Context> m_rendererContext;
+        Ref<Renderer::Context> m_rendererContext;
 
-        std::unordered_map<String, Ref<Shader>> m_shadersMap;
+        std::unordered_map<String, Ref<Renderer::Shader>> m_shadersMap;
     };
 }

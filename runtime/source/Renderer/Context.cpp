@@ -2,7 +2,7 @@
 
 #include "Drivers/OpenGL/OpenGLContext.h"
 
-namespace ERUNTIME_NAMESPACE
+namespace ERUNTIME_NAMESPACE::Renderer
 {
     Context* Context::Create(const Ref<Window> &window)
     {

@@ -35,14 +35,14 @@ namespace ERUNTIME_NAMESPACE
         void Run(int argc, char** argv);
 
         virtual void OnInit() { }
-        virtual void OnUpdate() { }
+        virtual void OnTick() { }
         virtual void OnShutdown() { }
 
         void OnEvent(const Event& event) final;
 
         ApplicationSpecification GetSpec() const noexcept { return k_spec; }
         Window& GetWindow() const { return *m_window; }
-        Context& GetContext() const { return *m_context; }
+        Renderer::Context& GetRendererContext() const { return *m_rendererContext; }
         GUI::Context& GetGUIContext() const { return *m_guiContext; }
         Scene& GetCurrentScene() const { return *m_scene; }
 
@@ -55,7 +55,7 @@ namespace ERUNTIME_NAMESPACE
         const ApplicationSpecification k_spec;
 
         Ref<Window> m_window;
-        Ref<Context> m_context;
+        Ref<Renderer::Context> m_rendererContext;
         Scope<GUI::Context> m_guiContext;
 
         Scene* m_scene;

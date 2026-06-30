@@ -13,7 +13,7 @@
 namespace ERUNTIME_NAMESPACE::GUI {
     class Context {
     public:
-        Context(const Ref<::ERUNTIME_NAMESPACE::Context>& rendererContext);
+        Context(const Ref<Renderer::Context>& rendererContext);
         ~Context();
         
         template<typename T, typename... Args>

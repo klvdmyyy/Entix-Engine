@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <optional>
 
-namespace ERUNTIME_NAMESPACE
+namespace ERUNTIME_NAMESPACE::Renderer
 {
     enum class ShaderStage
     {

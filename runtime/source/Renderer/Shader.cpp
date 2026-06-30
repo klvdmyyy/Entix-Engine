@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-namespace ERUNTIME_NAMESPACE
+namespace ERUNTIME_NAMESPACE::Renderer
 {
     std::optional<ShaderStage> ShaderStageFromString(const String& s)
     {

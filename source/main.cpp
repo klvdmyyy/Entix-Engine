@@ -35,7 +35,7 @@ public:
         ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile(VBOX_DEFAULT_ACTION_MAP));
     }
 
-    void OnUpdate() final
+    void OnTick() final
     {
         if(ActionSystem::Instance().IsPressed("Console")) {
             if(m_consoleWindow.IsOpened())

@@ -27,10 +27,10 @@ namespace ERUNTIME_NAMESPACE
         // Initialization
         EventBus::Instance().AddListener(this);
         m_window = Ref<Window>(Window::Create(k_spec.windowSpec));
-        m_context = Ref<Context>(Context::Create(m_window));
-        m_guiContext = CreateScope<GUI::Context>(m_context);
+        m_rendererContext = Ref<Renderer::Context>(Renderer::Context::Create(m_window));
+        m_guiContext = CreateScope<GUI::Context>(m_rendererContext);
         
-        ResourceManager::Instance().SetRendererContext(m_context);
+        ResourceManager::Instance().SetRendererContext(m_rendererContext);
     }
 
     Application::~Application()
@@ -41,11 +41,10 @@ namespace ERUNTIME_NAMESPACE
     void Application::Run(int argc, char** argv)
     {
         this->OnInit();
-        
-        // auto shader = Ref<Shader>(m_context->CreateShader(VBOX_SIMPLE_SHADER));
+
         ResourceManager::Instance().LoadShader(VBOX_SIMPLE_SHADER);
 
-        auto vertex_array = Ref<VertexArray>(m_context->CreateVertexArray());
+        auto vertex_array = Ref<Renderer::VertexArray>(m_rendererContext->CreateVertexArray());
 
         float vertices[] = {
             0.5f, 0.5f, 0.0f,
@@ -54,10 +53,10 @@ namespace ERUNTIME_NAMESPACE
             -0.5f, 0.5f, 0.0f
         };
 
-        auto vertex_buffer = Ref<VertexBuffer>(m_context->CreateVertexBuffer(vertices, sizeof(vertices)));
+        auto vertex_buffer = Ref<Renderer::VertexBuffer>(m_rendererContext->CreateVertexBuffer(vertices, sizeof(vertices)));
 
-        BufferLayout layout = {
-            { "a_Position", ShaderDataType::Float3 },
+        Renderer::BufferLayout layout = {
+            { "a_Position", Renderer::ShaderDataType::Float3 },
         };
 
         vertex_buffer->SetLayout(layout);
@@ -67,7 +66,7 @@ namespace ERUNTIME_NAMESPACE
             1, 2, 3
         };
 
-        auto index_buffer = Ref<IndexBuffer>(m_context->CreateIndexBuffer(indices, sizeof(indices)));
+        auto index_buffer = Ref<Renderer::IndexBuffer>(m_rendererContext->CreateIndexBuffer(indices, sizeof(indices)));
 
         vertex_array->AddVertexBuffer(vertex_buffer);
         vertex_array->SetIndexBuffer(index_buffer);
@@ -78,24 +77,24 @@ namespace ERUNTIME_NAMESPACE
 
             ActionSystem::Instance().Update();
 
-            this->OnUpdate();
+            this->OnTick();
 
             m_window->Update();
 
             m_guiContext->OnPreUpdate();
 
-            m_context->BeginScene();
+            m_rendererContext->BeginScene();
 
-            m_context->SetClearColor(0.2f, 0.2f, 0.2f);
-            m_context->Clear();
+            m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
+            m_rendererContext->Clear();
 
-            m_context->Submit(ResourceManager::Instance().GetShader(VBOX_SIMPLE_SHADER), vertex_array);
+            m_rendererContext->Submit(ResourceManager::Instance().GetShader(VBOX_SIMPLE_SHADER), vertex_array);
             
-            m_context->EndScene();
+            m_rendererContext->EndScene();
 
             m_guiContext->OnPostRender();
 
-            m_context->Swap();
+            m_rendererContext->Swap();
 
             FrameMark;
         }

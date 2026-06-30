@@ -4,6 +4,11 @@
 #include "Core/Base.h"
 #include "Core/Types.h"
 #include "Core/String.h"
+#include "Core/Memory.h"
+
+#include "Renderer/Context.h"
+
+#include <unordered_map>
 
 #include <entt/entt.hpp>
 
@@ -19,11 +24,17 @@ namespace ERUNTIME_NAMESPACE {
         Entity CreateEntityWithUUID(UUID uuid, const String& name = String());
         void DestroyEntity(Entity entity);
 
+        Entity FindEntityByName(StringView name);
+        Entity GetEntityByUUID(UUID uuid);
+
         void OnTick(float deltaTime);
 
     private:
         friend class Entity;
 
-        entt::registry m_registry;
+        std::unordered_map<UUID, entt::entity> m_entityMap{};
+        entt::registry m_registry{};
+
+        Ref<Renderer::Context> m_rendererContext;
     };
 }

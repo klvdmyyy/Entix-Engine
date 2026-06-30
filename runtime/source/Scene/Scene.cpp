@@ -19,14 +19,33 @@ namespace ERUNTIME_NAMESPACE {
     Entity Scene::CreateEntityWithUUID(UUID uuid, const String& name)
     {
         Entity entity = { m_registry.create(), this };
-        // entity.AddComponent<IDComponent>(uuid);
-        // entity.AddComponent<TransformComponent>();
-        // auto& tag = entity.AddComponent<TagComponent>();
-        // tag.name = name.empty() ? "Entity" : name;
+        entity.AddComponent<IDComponent>(uuid);
+        entity.AddComponent<TransformComponent>();
+        auto& tc = entity.AddComponent<TagComponent>();
+        tc.tag = name.empty() ? "Entity" : name;
 
-        // m_entityMap[uuid] = entity;
+        m_entityMap[uuid] = entity;
 
         return entity;        
+    }
+
+    Entity Scene::FindEntityByName(StringView name)
+    {
+        auto view = m_registry.view<TagComponent>();
+        for(auto entity : view) {
+            const TagComponent& tc = view.get<TagComponent>(entity);
+            if(tc.tag == name)
+                return Entity{ entity, this };
+        }
+        return Entity{};
+    }
+
+    Entity Scene::GetEntityByUUID(UUID uuid) {
+        auto it = m_entityMap.find(uuid);
+        if(it != m_entityMap.end())
+            return Entity{ it->second, this };
+
+        return Entity{};
     }
 
     void Scene::OnTick(float deltaTime)

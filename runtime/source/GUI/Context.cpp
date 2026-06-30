@@ -8,7 +8,7 @@
 #include <SDL3/SDL.h>
 
 namespace ERUNTIME_NAMESPACE::GUI {
-    Context::Context(const Ref<::ERUNTIME_NAMESPACE::Context>& rendererContext)
+    Context::Context(const Ref<Renderer::Context>& rendererContext)
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
