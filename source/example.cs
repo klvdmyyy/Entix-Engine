@@ -21,7 +21,7 @@ namespace Sandbox
             _mesh = GetComponent<StaticMeshComponent>();
         }
 
-        void OnUpdate()
+        void OnTick()
         {
             if(isRotating)
             {
