@@ -38,5 +38,6 @@ namespace ERUNTIME_NAMESPACE
 
     private:
         GLuint m_program;
+        const String k_name = String();
     };
 }

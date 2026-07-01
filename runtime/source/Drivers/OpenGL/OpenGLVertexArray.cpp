@@ -25,9 +25,9 @@ namespace ERUNTIME_NAMESPACE {
             return GL_FLOAT;
         case ShaderDataType::Float4:
             return GL_FLOAT;
-        case ShaderDataType::Mat3:
+        case ShaderDataType::Float3x3:
             return GL_FLOAT;
-        case ShaderDataType::Mat4:
+        case ShaderDataType::Float4x4:
             return GL_FLOAT;
         default:
             break;

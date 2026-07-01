@@ -41,6 +41,12 @@ public:
     {
         ResourceManager::Instance().LoadShader(VBOX_SIMPLE_SHADER);
 
+        Entity camera = GetCurrentScene().CreateEntity("Camera");
+        camera.AddComponent<CameraComponent>();
+
+        TransformComponent& cameraTransform = camera.GetComponent<TransformComponent>();
+        cameraTransform.position = Float3(0.0f, 0.0f, 2.0f);
+
         Entity square = GetCurrentScene().CreateEntity("Square");
         square.AddComponent<StaticMeshComponent>(CreateExampleMesh(GetRendererContext()));
     }

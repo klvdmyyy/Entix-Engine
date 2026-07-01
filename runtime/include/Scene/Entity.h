@@ -45,14 +45,14 @@ namespace ERUNTIME_NAMESPACE {
         template<typename T>
         T& GetComponent()
         {
-            EX_ASSERT(!HasComponent<T>(), "Entity doesn't have this component: {}", TypeName<T>());
+            EX_ASSERT(HasComponent<T>(), "Entity doesn't have this component: {}", TypeName<T>());
             return m_scene->m_registry.get<T>(m_entityHandle);
         }
 
         template<typename T>
         void RemoveComponent()
         {
-            EX_ASSERT(!HasComponent<T>(), "Entity doesn't have this component: {}", TypeName<T>());
+            EX_ASSERT(HasComponent<T>(), "Entity doesn't have this component: {}", TypeName<T>());
             return m_scene->m_registry.remove<T>(m_entityHandle);
         }
 

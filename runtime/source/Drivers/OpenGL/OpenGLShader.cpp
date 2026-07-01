@@ -111,10 +111,10 @@ namespace ERUNTIME_NAMESPACE
 
     void OpenGLShader::SetInt(const String& name, int value)
     {
-        glUniform1v(GetUniformLocation(name), value);
+        glUniform1i(GetUniformLocation(name), value);
     }
 
-    void OpenGLShader::SetIntArray(const String& name, int values, Uint32 count)
+    void OpenGLShader::SetIntArray(const String& name, int* values, Uint32 count)
     {
         glUniform1iv(GetUniformLocation(name), count, values);
     }
@@ -150,5 +150,10 @@ namespace ERUNTIME_NAMESPACE
     GLint OpenGLShader::GetUniformLocation(const String& name)
     {
         return glGetUniformLocation(m_program, name.c_str());
+    }
+
+    const String& OpenGLShader::GetName() const
+    {
+        return k_name;
     }
 }

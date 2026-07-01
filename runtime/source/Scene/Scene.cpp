@@ -3,6 +3,7 @@
 #include "Scene/Entity.h"
 
 #include "Core/Resources/ResourceManager.h"
+#include "Core/Debug/Log.h"
 
 namespace ERUNTIME_NAMESPACE {
     Scene::Scene(const Ref<Renderer::Context>& rendererContext)
@@ -53,30 +54,43 @@ namespace ERUNTIME_NAMESPACE {
 
     void Scene::OnTick(float deltaTime)
     {
-        m_rendererContext->BeginScene();
-
-        m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
-        m_rendererContext->Clear();
-
+        // Update camera
         {
-            auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
-            for(auto entity : group) {
-                auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
-                
-                m_rendererContext->Submit(ResourceManager::Instance().GetShader(mesh.material.shader), mesh.vertexArray);
+            auto view = m_registry.view<TransformComponent, CameraComponent>();
+            for(auto entity : view) {
+                auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+                camera.Update(transform, 800.0f / 600.0f);
             }
         }
 
-        // {
-        //     auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent);
-        //     auto camerasView = m_registry.view<TransformComponent, CameraComponent>();
+        // Render Mesh
+        m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
+        m_rendererContext->Clear();
 
-        //     for(auto [cameraTransform, camera] : camerasView.each()) {
-        //         for(auto [transform, mesh] : group.each()) {
-        //             m_rendererContext->Submit(ResourceManager::Instance().GetShader(mesh.material.shader), mesh.vertexArray);
-        //         }
-        //     }
-        // }
+        m_rendererContext->BeginScene();
+
+        {
+            auto camerasView = m_registry.view<TransformComponent, CameraComponent>();
+            auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
+            
+            for(auto cameraEntity : camerasView) {
+                auto camera = camerasView.get<CameraComponent>(cameraEntity);
+                
+                for(auto entity : group) {
+                    auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
+
+                    auto shader = ResourceManager::Instance().GetShader(mesh.material.shader);
+                    
+                    shader->Bind();
+                    shader->SetFloat4x4("model", transform.GetLocalMatrix());
+                    shader->SetFloat4x4("view", camera.GetView());
+                    shader->SetFloat4x4("projection", camera.GetProjection());
+                
+                    m_rendererContext->Submit(shader, mesh.vertexArray);
+                }
+            }
+        }
 
         m_rendererContext->EndScene();
     }
