@@ -2,6 +2,7 @@
 
 #include "Core/Base.h"
 #include "Core/String.h"
+#include "Core/Types.h"
 
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
@@ -41,5 +42,16 @@ namespace ERUNTIME_NAMESPACE::Renderer
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
+
+        virtual void SetInt(const String& name, int value) = 0;
+        virtual void SetIntArray(const String& name, int* values, Uint32 count) = 0;
+        virtual void SetFloat(const String& name, float value) = 0;
+        virtual void SetFloat2(const String& name, Float2 value) = 0;
+        virtual void SetFloat3(const String& name, Float3 value) = 0;
+        virtual void SetFloat4(const String& name, Float4 value) = 0;
+        virtual void SetFloat4x4(const String& name, Float4x4 value) = 0;
+
+        [[nodiscard]]
+        virtual const String& GetName() const = 0;
     };
 }

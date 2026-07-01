@@ -19,8 +19,8 @@ namespace ERUNTIME_NAMESPACE::Renderer
         Float2,
         Float3,
         Float4,
-        Mat3,
-        Mat4
+        Float3x3,
+        Float4x4
     };
 
     [[nodiscard]]
@@ -47,9 +47,9 @@ namespace ERUNTIME_NAMESPACE::Renderer
             return 4 * 3;
         case ShaderDataType::Float4:
             return 4 * 4;
-        case ShaderDataType::Mat3:
+        case ShaderDataType::Float3x3:
             return 4 * 3 * 3;
-        case ShaderDataType::Mat4:
+        case ShaderDataType::Float4x4:
             return 4 * 4 * 4;
         }
 
@@ -95,9 +95,9 @@ namespace ERUNTIME_NAMESPACE::Renderer
                 return 3;
             case ShaderDataType::Float4:
                 return 4;
-            case ShaderDataType::Mat3:
+            case ShaderDataType::Float3x3:
                 return 3 * 3;
-            case ShaderDataType::Mat4:
+            case ShaderDataType::Float4x4:
                 return 4 * 4;
             }
 

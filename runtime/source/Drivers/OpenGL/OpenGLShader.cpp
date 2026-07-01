@@ -3,6 +3,8 @@
 #include "Core/Assert.h"
 #include "Core/File.h"
 
+#include "Math/TypePtr.h"
+
 #include <tracy/Tracy.hpp>
 
 #include <vector>
@@ -105,5 +107,48 @@ namespace ERUNTIME_NAMESPACE
     void OpenGLShader::Unbind() const
     {
         glUseProgram(0);
+    }
+
+    void OpenGLShader::SetInt(const String& name, int value)
+    {
+        glUniform1v(GetUniformLocation(name), value);
+    }
+
+    void OpenGLShader::SetIntArray(const String& name, int values, Uint32 count)
+    {
+        glUniform1iv(GetUniformLocation(name), count, values);
+    }
+
+    void OpenGLShader::SetFloat(const String& name, float value)
+    {
+        glUniform1f(GetUniformLocation(name), value);
+    }
+
+    void OpenGLShader::SetFloat2(const String& name, Float2 value)
+    {
+        glUniform2f(GetUniformLocation(name), value.x, value.y);
+    }
+
+    void OpenGLShader::SetFloat3(const String& name, Float3 value)
+    {
+        glUniform3f(GetUniformLocation(name), value.x, value.y, value.z);
+    }
+
+    void OpenGLShader::SetFloat4(const String& name, Float4 value)
+    {
+        glUniform4f(GetUniformLocation(name),
+                    value.x, value.y,
+                    value.z, value.w);
+    }
+
+    void OpenGLShader::SetFloat4x4(const String& name, Float4x4 value)
+    {
+        glUniformMatrix4fv(GetUniformLocation(name),
+                           1, GL_FALSE, Math::ValuePtr(value));
+    }
+
+    GLint OpenGLShader::GetUniformLocation(const String& name)
+    {
+        return glGetUniformLocation(m_program, name.c_str());
     }
 }
