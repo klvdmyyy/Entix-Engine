@@ -22,6 +22,14 @@ public:
     void OnInit() final
     {
     }
+
+    void OnTick() final
+    {
+    }
+
+    void OnShutdown() final
+    {
+    }
 };
 
 Application* CreateApplication()
