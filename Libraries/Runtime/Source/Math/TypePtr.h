@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace ERUNTIME_NAMESPACE::Math {
+namespace Math {
     template<typename GenType>
     FORCE_INLINE
     inline typename GenType::value_type const* ValuePtr(GenType const& v)

@@ -6,9 +6,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-namespace ERUNTIME_NAMESPACE
-{
-    using Float2 = glm::vec2;
-    using Float3 = glm::vec3;
-    using Float4 = glm::vec4;
-}
+using Float2 = glm::vec2;
+using Float3 = glm::vec3;
+using Float4 = glm::vec4;

@@ -4,7 +4,4 @@
 
 #include <glm/mat4x4.hpp>
 
-namespace ERUNTIME_NAMESPACE
-{
-    using Float4x4 = glm::mat4;
-}
+using Float4x4 = glm::mat4;

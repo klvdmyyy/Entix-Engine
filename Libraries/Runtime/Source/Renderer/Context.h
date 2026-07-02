@@ -9,7 +9,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 
-namespace ERUNTIME_NAMESPACE::Renderer
+namespace Renderer
 {
     class ERUNTIME_API Context
     {
@@ -44,7 +44,7 @@ namespace ERUNTIME_NAMESPACE::Renderer
         // ---------------------------------------------------------------------
         // Инициализация интерфейса при помощи контекста рендеринга
         // ---------------------------------------------------------------------
-        virtual void InitImGui() = 0;
+        virtual void InitGUI() = 0;
 
     protected:
         Context() = default;

@@ -12,29 +12,27 @@
 
 #include <entt/entt.hpp>
 
-namespace ERUNTIME_NAMESPACE {
-    class Entity;
+class Entity;
 
-    class Scene {
-    public:
-        Scene(const Ref<Renderer::Context>& rendererContext);
-        ~Scene();
+class Scene {
+public:
+    Scene(const Ref<Renderer::Context>& rendererContext);
+    ~Scene();
 
-        Entity CreateEntity(const String& name = String());
-        Entity CreateEntityWithUUID(UUID uuid, const String& name = String());
-        void DestroyEntity(Entity entity);
+    Entity CreateEntity(const String& name = String());
+    Entity CreateEntityWithUUID(UUID uuid, const String& name = String());
+    void DestroyEntity(Entity entity);
 
-        Entity FindEntityByName(StringView name);
-        Entity GetEntityByUUID(UUID uuid);
+    Entity FindEntityByName(StringView name);
+    Entity GetEntityByUUID(UUID uuid);
 
-        void OnTick(float deltaTime);
+    void OnTick(float deltaTime);
 
-    private:
-        friend class Entity;
+private:
+    friend class Entity;
 
-        std::unordered_map<UUID, entt::entity> m_entityMap{};
-        entt::registry m_registry{};
+    std::unordered_map<UUID, entt::entity> m_entityMap{};
+    entt::registry m_registry{};
 
-        Ref<Renderer::Context> m_rendererContext;
-    };
-}
+    Ref<Renderer::Context> m_rendererContext;
+};

@@ -1,5 +1,5 @@
+#include "GameFramework/Application.h"
 
-#include "Core/Application.h"
 #include "Core/Assert.h"
 
 #include "Core/Resources/ResourceManager.h"
@@ -8,77 +8,68 @@
 
 #include <tracy/Tracy.hpp>
 
-namespace ERUNTIME_NAMESPACE
+Application* Application::s_instance = nullptr;
+
+Application::Application(const ApplicationSpecification& spec)
+    : k_spec(spec), m_running(true), m_scene(nullptr)
 {
-    Application* Application::s_instance = nullptr;
+    // Only one application instance for program.
+    EX_ASSERT(!s_instance, "failed to create application. application instance already exists");
 
-    Application::Application(const ApplicationSpecification& spec)
-        : k_spec(spec), m_running(true), m_scene(nullptr)
-    {
-        // Only one application instance for program.
-        EX_ASSERT(!s_instance, "failed to create application. application instance already exists");
+    // Setting up an application instance.
+    s_instance = this;
 
-        // Setting up an application instance.
-        s_instance = this;
+    // Tracing macro
+    ZoneScoped;
 
-        // Tracing macro
-        ZoneScoped;
+    // Initialization
+    EventBus::Instance().AddListener(this);
+    m_window = Ref<Window>(Window::Create(k_spec.windowSpec));
+    m_rendererContext = Ref<Renderer::Context>(Renderer::Context::Create(m_window));
 
-        // Initialization
-        EventBus::Instance().AddListener(this);
-        m_window = Ref<Window>(Window::Create(k_spec.windowSpec));
-        m_rendererContext = Ref<Renderer::Context>(Renderer::Context::Create(m_window));
-        m_guiContext = CreateScope<GUI::Context>(m_rendererContext);
-
-        m_scene = new Scene(m_rendererContext);
+    m_scene = new Scene(m_rendererContext);
         
-        ResourceManager::Instance().SetRendererContext(m_rendererContext);
+    ResourceManager::Instance().SetRendererContext(m_rendererContext);
+}
+
+Application::~Application()
+{
+    if(m_scene) {
+        delete m_scene;
+        m_scene = nullptr;
     }
 
-    Application::~Application()
-    {
-        if(m_scene) {
-            delete m_scene;
-            m_scene = nullptr;
-        }
+    EventBus::Instance().RemoveListener(this);
+}
 
-        EventBus::Instance().RemoveListener(this);
-    }
+void Application::Run(int argc, char** argv)
+{
+    this->OnInit();
 
-    void Application::Run(int argc, char** argv)
-    {
-        this->OnInit();
-
-        while(m_running)
-        {
-            EventBus::Instance().ProcessEvents();
+    while(m_running) {
+        EventBus::Instance().ProcessEvents();
             
-            ActionSystem::Instance().Update();
+        ActionSystem::Instance().Update();
 
-            this->OnTick();
+        this->OnTick();
 
-            m_window->Update();
+        m_window->Update();
 
-            m_guiContext->OnPreUpdate();
+        m_scene->OnTick(0.0f);
 
-            m_scene->OnTick(0.0f);
+        m_rendererContext->Swap();
 
-            m_guiContext->OnPostRender();
-
-            m_rendererContext->Swap();
-
-            FrameMark;
-        }
-
-        this->OnShutdown();
+        FrameMark;
     }
 
-    void Application::OnEvent(const Event& event)
-    {
-        EventDispatcher dispatcher(event);
+    this->OnShutdown();
+}
 
-        dispatcher.Dispatch<WindowCloseEvent>([&](const WindowCloseEvent& e) {
-            m_running = false;
-        });
-    }
+void Application::OnEvent(const Event& event)
+{
+    EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<WindowCloseEvent>([&](const WindowCloseEvent& e) {
+        m_running = false;
+    });
 }

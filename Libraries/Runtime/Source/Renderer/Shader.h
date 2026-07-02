@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <optional>
 
-namespace ERUNTIME_NAMESPACE::Renderer
+namespace Renderer
 {
     enum class ShaderStage
     {

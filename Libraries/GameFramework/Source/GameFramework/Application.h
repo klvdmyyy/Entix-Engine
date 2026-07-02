@@ -12,57 +12,48 @@
 
 #include "Renderer/Context.h"
 
-#include "Scene/Scene.h"
+#include "GameFramework/Scene.h"
 
-#include "GUI/Context.h"
-
-namespace ERUNTIME_NAMESPACE
+struct ApplicationSpecification
 {
-    struct ApplicationSpecification
-    {
-        String name;
-        String description;
-        WindowSpecification windowSpec;
-    };
+    String name;
+    String description;
+    WindowSpecification windowSpec;
+};
 
-    class ERUNTIME_API Application : EventListener
-    {
-    public:
-        ~Application();
+class Application : EventListener
+{
+ public:
+    ~Application();
 
-        static Application& Get() { return *s_instance; }
+    static Application& Get() { return *s_instance; }
 
-        void Run(int argc, char** argv);
+    void Run(int argc, char** argv);
 
-        virtual void OnInit() { }
-        virtual void OnTick() { }
-        virtual void OnShutdown() { }
+    virtual void OnInit() { }
+    virtual void OnTick() { }
+    virtual void OnShutdown() { }
 
-        void OnEvent(const Event& event) final;
+    void OnEvent(const Event& event) final;
 
-        ApplicationSpecification GetSpec() const noexcept { return k_spec; }
+    ApplicationSpecification GetSpec() const noexcept { return k_spec; }
 
-        Window* GetWindow() const { return m_window.get(); }
-        Renderer::Context* GetRendererContext() const { return m_rendererContext.get(); }
+    Window* GetWindow() const { return m_window.get(); }
+    Renderer::Context* GetRendererContext() const { return m_rendererContext.get(); }
+    Scene& GetCurrentScene() const { return *m_scene; }
 
-        GUI::Context& GetGUIContext() const { return *m_guiContext; }
-        
-        Scene& GetCurrentScene() const { return *m_scene; }
+ protected:
+    Application(const ApplicationSpecification& spec);
 
-    protected:
-        Application(const ApplicationSpecification& spec);
+ private:
+    static Application* s_instance;
 
-    private:
-        static Application* s_instance;
+    const ApplicationSpecification k_spec;
 
-        const ApplicationSpecification k_spec;
+    Ref<Window> m_window;
+    Ref<Renderer::Context> m_rendererContext;
 
-        Ref<Window> m_window;
-        Ref<Renderer::Context> m_rendererContext;
-        Scope<GUI::Context> m_guiContext;
+    Scene* m_scene;
 
-        Scene* m_scene;
-
-        bool m_running;
-    };
-}
+    bool m_running;
+};

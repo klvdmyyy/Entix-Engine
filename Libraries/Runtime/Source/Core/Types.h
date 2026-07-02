@@ -6,39 +6,37 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace ERUNTIME_NAMESPACE {
-    using Uint8 = uint8_t;
-    using Uint16 = uint16_t;
-    using Uint32 = uint32_t;
-    using Uint64 = uint64_t;
+using Uint8 = uint8_t;
+using Uint16 = uint16_t;
+using Uint32 = uint32_t;
+using Uint64 = uint64_t;
     
-    using Int8 = int8_t;
-    using Int16 = int16_t;
-    using Int32 = int32_t;
-    using Int64 = int64_t;
+using Int8 = int8_t;
+using Int16 = int16_t;
+using Int32 = int32_t;
+using Int64 = int64_t;
 
-    class UUID {
-    public:
-        UUID();
-        UUID(Uint64 uuid);
-        UUID(const UUID& other) = default;
+class UUID {
+public:
+    UUID();
+    UUID(Uint64 uuid);
+    UUID(const UUID& other) = default;
 
-        operator Uint64() const { return m_uuid; }
+    operator Uint64() const { return m_uuid; }
 
-    private:
-        Uint64 m_uuid;
-    };
-}
+private:
+    Uint64 m_uuid;
+};
 
 namespace std {
     template<typename T>
     struct hash;
 
     template<>
-    struct hash<::ERUNTIME_NAMESPACE::UUID>
+    struct hash<::UUID>
     {
-        std::size_t operator()(const ::ERUNTIME_NAMESPACE::UUID& uuid) const {
-            return (::ERUNTIME_NAMESPACE::Uint64)uuid;
+        std::size_t operator()(const ::UUID& uuid) const {
+            return (::Uint64)uuid;
         }
     };
 }

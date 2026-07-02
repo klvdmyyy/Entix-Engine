@@ -1,6 +1,6 @@
-add_executable(Voxenty)
+add_executable(Voxenty
+  Source/Main.cpp)
 
 target_link_libraries(Voxenty PRIVATE
   Entix::Runtime
-  Entix::Drivers
   Entix::GameFramework)

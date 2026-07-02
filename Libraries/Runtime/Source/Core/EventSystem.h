@@ -9,73 +9,70 @@
 
 /* Macro to help define event types */
 #define DEFINE_EVENT_TYPE(type)                                         \
-  static const char* GetStaticType() { return #type; }			\
-  virtual const char* GetType() const override { return GetStaticType(); } \
-  virtual ::ERUNTIME_NAMESPACE::Event* Clone() const override { return new type(*this); }
+    static const char* GetStaticType() { return #type; }                \
+    virtual const char* GetType() const override { return GetStaticType(); } \
+    virtual ::Event* Clone() const override { return new type(*this); }
 
-namespace ERUNTIME_NAMESPACE
-{
-    class ERUNTIME_API Event
+class ERUNTIME_API Event
     {
     public:
-        virtual ~Event() = default;
+    virtual ~Event() = default;
 
-        virtual const char* GetType() const = 0;
-        virtual Event* Clone() const = 0;
+    virtual const char* GetType() const = 0;
+    virtual Event* Clone() const = 0;
     };
 
-    class ERUNTIME_API EventListener
+class ERUNTIME_API EventListener
     {
     public:
-        virtual ~EventListener() = default;
-        virtual void OnEvent(const Event& event) = 0;
+    virtual ~EventListener() = default;
+    virtual void OnEvent(const Event& event) = 0;
     };
 
-    class ERUNTIME_API EventDispatcher
+class ERUNTIME_API EventDispatcher
     {
     public:
-        explicit EventDispatcher(const Event& e) : m_event(e)
-        {
-        }
+    explicit EventDispatcher(const Event& e) : m_event(e)
+    {
+    }
 
-        template<typename T, typename F>
-        bool Dispatch(const F& handler)
-        {
-            static_assert(std::is_base_of<Event, T>::value, "Can't dispatch event. Event type must be derived from core::Event");
+    template<typename T, typename F>
+    bool Dispatch(const F& handler)
+    {
+        static_assert(std::is_base_of<Event, T>::value, "Can't dispatch event. Event type must be derived from core::Event");
 
-            if (m_event.GetType() == T::GetStaticType())
+        if (m_event.GetType() == T::GetStaticType())
             {
-              handler(static_cast<const T &>(m_event));
+                handler(static_cast<const T &>(m_event));
                 return true;
             }
-            return false;
-        }
+        return false;
+    }
 
     private:
-        const Event& m_event;
+    const Event& m_event;
     };
 
-    class ERUNTIME_API EventBus
+class ERUNTIME_API EventBus
     {
     public:
-        static EventBus& Instance();
+    static EventBus& Instance();
 
-        EventBus(const EventBus&) = delete;
-        EventBus& operator=(const EventBus&) = delete;
+    EventBus(const EventBus&) = delete;
+    EventBus& operator=(const EventBus&) = delete;
 
-        void SetImmediateMode(bool immediate);
-        void AddListener(EventListener* listener);
-        void RemoveListener(EventListener* listener);
-        void PublishEvent(const Event& event);
-        void ProcessEvents();
+    void SetImmediateMode(bool immediate);
+    void AddListener(EventListener* listener);
+    void RemoveListener(EventListener* listener);
+    void PublishEvent(const Event& event);
+    void ProcessEvents();
 
     private:
-        std::vector<EventListener*> m_listeners;
-        std::queue<Scope<Event>> m_eventQueue;
-        std::mutex m_sync;
+    std::vector<EventListener*> m_listeners;
+    std::queue<Scope<Event>> m_eventQueue;
+    std::mutex m_sync;
 
-        bool m_immediateMode = true;
+    bool m_immediateMode = true;
 
-        EventBus() = default;
+    EventBus() = default;
     };
-}

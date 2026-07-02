@@ -7,18 +7,14 @@
 #include <filesystem>
 #include <fstream>
 
-namespace ERUNTIME_NAMESPACE
-{
-    class ERUNTIME_API File
-    {
-    public:
-        File(const std::filesystem::path& filepath);
-        ~File();
+class ERUNTIME_API File {
+ public:
+ File(const std::filesystem::path& filepath);
+ ~File();
 
-        String ReadStr();
+ String ReadStr();
 
-    private:
-        std::fstream m_file;
-        std::filesystem::path k_filepath;
-    };
-}
+ private:
+ std::fstream m_file;
+ std::filesystem::path k_filepath;
+};

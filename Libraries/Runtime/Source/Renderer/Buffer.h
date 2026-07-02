@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace ERUNTIME_NAMESPACE::Renderer
+namespace Renderer
 {
     enum class ShaderDataType {
         None = 0,

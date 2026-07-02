@@ -8,15 +8,12 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-namespace ERUNTIME_NAMESPACE
-{
-    using Quat = glm::quat;
+using Quat = glm::quat;
 
-    namespace Math {
-        FORCE_INLINE
-        inline constexpr Float4x4 ToFloat4x4(const Quat& q)
-        {
-            return glm::toMat4(q);
-        }
+namespace Math {
+    FORCE_INLINE
+    inline constexpr Float4x4 ToFloat4x4(const Quat& q)
+    {
+        return glm::toMat4(q);
     }
 }

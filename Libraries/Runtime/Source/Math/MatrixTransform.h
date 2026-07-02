@@ -8,7 +8,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace ERUNTIME_NAMESPACE::Math {
+namespace Math {
     FORCE_INLINE
     inline constexpr Float4x4 Translate(const Float4x4& m, const Float3& v)
     {

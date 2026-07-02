@@ -5,40 +5,37 @@
 
 #include <cstdint>
 
-namespace ERUNTIME_NAMESPACE
+using WindowID = std::uint32_t;
+
+class WindowCloseEvent : public Event
 {
-    using WindowID = std::uint32_t;
+public:
+    WindowCloseEvent(WindowID id)
+        : id(id)
+    {
+    }
 
-    class WindowCloseEvent : public Event
+    WindowID id;
+
+    DEFINE_EVENT_TYPE(WindowCloseEvent);
+};
+
+struct WindowSpecification
+{
+    std::uint32_t width;
+    std::uint32_t height;
+    String title;
+    bool resizable = false;
+    bool fullscreen = false;
+};
+
+class ERUNTIME_API Window
     {
     public:
-        WindowCloseEvent(WindowID id)
-            : id(id)
-        {
-        }
+    virtual ~Window() = default;
 
-        WindowID id;
+    virtual void Update() = 0;
+    virtual void* GetWindowHandle() const = 0;
 
-        DEFINE_EVENT_TYPE(WindowCloseEvent);
+    static Window* Create(const WindowSpecification& spec);
     };
-
-    struct WindowSpecification
-    {
-        std::uint32_t width;
-        std::uint32_t height;
-        String title;
-        bool resizable = false;
-        bool fullscreen = false;
-    };
-
-    class ERUNTIME_API Window
-    {
-    public:
-        virtual ~Window() = default;
-
-        virtual void Update() = 0;
-        virtual void* GetWindowHandle() const = 0;
-
-        static Window* Create(const WindowSpecification& spec);
-    };
-}

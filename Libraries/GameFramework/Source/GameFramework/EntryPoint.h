@@ -5,41 +5,37 @@
 
 #include "Core/Base.h"
 
-#include "Core/Application.h"
+#include "GameFramework/Application.h"
 
 #include "Core/Debug/Log.h"
 #include "Core/Debug/LogSinks.h"
 
-namespace ERUNTIME_NAMESPACE {
-    extern Application* CreateApplication();
+extern Application* CreateApplication();
     
-    int Main(int argc, char** argv)
-    {
-        Logger::Instance().AddSink(CreateRef<StdoutLogSink>());
-        Logger::Instance().AddSink(Ref<LogSink>(&BufferLogSink::Instance(), [](void*){}));
+static int GameMain(int argc, char** argv)
+{
+    Logger::Instance().AddSink(CreateRef<StdoutLogSink>());
+    Logger::Instance().AddSink(Ref<LogSink>(&BufferLogSink::Instance(), [](void*){}));
         
-        auto app = CreateApplication();
+    auto app = CreateApplication();
         
-        app->Run(argc, argv);
+    app->Run(argc, argv);
         
-        delete app;
+    delete app;
         
-        return 0;
-    }
+    return 0;
 }
 
 #if defined(PLATFORM_LINUX)
 int main(int argc, char** argv)
 {
-    return ::ERUNTIME_NAMESPACE::Main(argc, argv);
+    return ::GameMain(argc, argv);
 }
 #elif defined(PLATFORM_WINDOW)
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-    return ::ERUNTIME_NAMESPACE::Main(__argc, __argv);
+    return ::GameMain(__argc, __argv);
 }
 #else
 #error "No supported entry point for target platform."
 #endif
-
-// TODO...

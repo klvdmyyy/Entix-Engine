@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace ERUNTIME_NAMESPACE::Renderer
+namespace Renderer
 {
     class ERUNTIME_API VertexArray
     {

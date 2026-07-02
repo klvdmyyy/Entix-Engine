@@ -4,7 +4,7 @@
 #include "Core/Base.h"
 #include "Core/String.h"
 
-namespace ERUNTIME_NAMESPACE::IO {
+namespace IO {
     class Reader {
     public:
         virtual ~Reader() = default;

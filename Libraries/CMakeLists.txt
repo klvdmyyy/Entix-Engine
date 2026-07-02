@@ -49,3 +49,4 @@ FetchContent_MakeAvailable(nlohmann_json)
 
 add_subdirectory(Runtime)
 add_subdirectory(GameFramework)
+add_subdirectory(Vendor)

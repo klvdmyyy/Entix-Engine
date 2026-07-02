@@ -6,34 +6,32 @@
 
 #include "Core/EventSystem.h"
 
-namespace ERUNTIME_NAMESPACE {
-    // ---------------------------------------------------------------------
-    // Тип устройства ввода (Клавиатура, геймпад и т.д)
-    // ---------------------------------------------------------------------
-    enum class InputDevice {
-        Unknown = 0,
+// ---------------------------------------------------------------------
+// Тип устройства ввода (Клавиатура, геймпад и т.д)
+// ---------------------------------------------------------------------
+enum class InputDevice {
+    Unknown = 0,
 
-        Keyboard,
-    };
+    Keyboard,
+};
 
-    // ---------------------------------------------------------------------
-    // Событие ввода с клавиатуры
-    // ---------------------------------------------------------------------
-    class KeyboardEvent : public Event {
-    public:
-        KeyboardEvent(Uint32 code, bool pressed = true)
-            : k_code(code), k_pressed(pressed)
-        {
-        }
+// ---------------------------------------------------------------------
+// Событие ввода с клавиатуры
+// ---------------------------------------------------------------------
+class KeyboardEvent : public Event {
+public:
+    KeyboardEvent(Uint32 code, bool pressed = true)
+        : k_code(code), k_pressed(pressed)
+    {
+    }
 
-        const Uint32 k_code;
-        const bool k_pressed;
+    const Uint32 k_code;
+    const bool k_pressed;
 
-        DEFINE_EVENT_TYPE(KeyboardEvent);
-    };
+    DEFINE_EVENT_TYPE(KeyboardEvent);
+};
 
-    class Input {
-    public:
-        static bool IsKeyPressed(Uint8 scancode);
-    };
-}
+class Input {
+public:
+    static bool IsKeyPressed(Uint8 scancode);
+};

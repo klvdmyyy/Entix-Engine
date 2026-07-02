@@ -2,72 +2,69 @@
 
 #include <algorithm>
 
-namespace ERUNTIME_NAMESPACE
+EventBus& EventBus::Instance()
 {
-    EventBus& EventBus::Instance()
-    {
-        static EventBus s_bus;
-        return s_bus;
-    }
+    static EventBus s_bus;
+    return s_bus;
+}
 
-    void EventBus::SetImmediateMode(bool immediate)
-    {
-        m_immediateMode = immediate;
-    }
+void EventBus::SetImmediateMode(bool immediate)
+{
+    m_immediateMode = immediate;
+}
 
-    void EventBus::AddListener(EventListener* listener)
-    {
-        m_listeners.push_back(listener);
-    }
+void EventBus::AddListener(EventListener* listener)
+{
+    m_listeners.push_back(listener);
+}
 
-    void EventBus::RemoveListener(EventListener* listener)
-    {
-      auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
-      if (it != m_listeners.end()) {
+void EventBus::RemoveListener(EventListener* listener)
+{
+    auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
+    if (it != m_listeners.end()) {
         m_listeners.erase(it);
-        }
-        else {
-            /* TODO: Logging here (Trying to remove unexisting listener from event bus) */
-        }
     }
+    else {
+        /* TODO: Logging here (Trying to remove unexisting listener from event bus) */
+    }
+}
 
-    void EventBus::PublishEvent(const Event& event)
-    {
-        if(m_immediateMode)
+void EventBus::PublishEvent(const Event& event)
+{
+    if(m_immediateMode)
         {
             for(auto listener : m_listeners)
-            {
-                listener->OnEvent(event);
-            }
+                {
+                    listener->OnEvent(event);
+                }
         }
-        else
+    else
         {
             std::lock_guard<std::mutex> lock(m_sync);
             m_eventQueue.push(Scope<Event>(event.Clone()));
         }
+}
+
+void EventBus::ProcessEvents()
+{
+    if(m_immediateMode) return;
+
+    std::queue<Scope<Event>> current_events;
+
+    {
+        std::lock_guard<std::mutex> lock(m_sync);
+        std::swap(current_events, m_eventQueue);
     }
 
-    void EventBus::ProcessEvents()
-    {
-        if(m_immediateMode) return;
-
-        std::queue<Scope<Event>> current_events;
-
-        {
-            std::lock_guard<std::mutex> lock(m_sync);
-            std::swap(current_events, m_eventQueue);
-        }
-
-        while(!current_events.empty())
+    while(!current_events.empty())
         {
             auto& event = *current_events.front();
 
             for(auto listener : m_listeners)
-            {
-                listener->OnEvent(event);
-            }
+                {
+                    listener->OnEvent(event);
+                }
 
             current_events.pop();
         }
-    }
 }

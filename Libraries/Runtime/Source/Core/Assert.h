@@ -11,7 +11,7 @@
 #define EX_ASSERT(expr, fmt, ...)                                       \
     do {                                                                \
         if (!(expr)) {                                                  \
-            EX_LOG(Critical, ::ERUNTIME_NAMESPACE::LogCategory::Core,   \
+            EX_LOG(Critical, ::LogCategory::Core,                       \
                    "Assertion '{}' failed. Message: {}", #expr,         \
                    std::format(fmt,##__VA_ARGS__));                     \
             std::exit(1);                                               \

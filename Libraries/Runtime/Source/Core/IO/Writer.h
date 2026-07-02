@@ -7,7 +7,7 @@
 
 #include <format>
 
-namespace ERUNTIME_NAMESPACE::IO {
+namespace IO {
     class ERUNTIME_API Writer {
     public:
         virtual ~Writer() = default;

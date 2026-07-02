@@ -1,7 +1,7 @@
 #define GAME_MAIN
 #include <GameFramework.h>
 
-static const Entix::ApplicationSpecification g_spec = {
+static const ApplicationSpecification g_spec = {
     .name = "Voxenty",
     .description = "Simple Minecraft-like Game",
     .windowSpec = {
@@ -24,7 +24,7 @@ public:
     }
 };
 
-Application* Entix::CreateApplication()
+Application* CreateApplication()
 {
     return new Voxenty();
 }
