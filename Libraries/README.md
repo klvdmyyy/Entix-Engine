@@ -1,6 +1,6 @@
 # Engine Libraries (Modules)
 
-Entix Engine is a collection of many libraries (or modules). You can
+Entix Engine is a collection libraries (or modules). You can
 use only what you want and don't include unnecessary things to your project.
 
 ## Runtime

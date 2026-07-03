@@ -23,6 +23,7 @@ Application::Application(const ApplicationSpecification& spec)
     ZoneScoped;
 
     // Initialization
+    EventBus::Instance().SetImmediateMode(false);
     EventBus::Instance().AddListener(this);
     m_window = Ref<Window>(Window::Create(k_spec.windowSpec));
     m_rendererContext = Ref<Renderer::Context>(Renderer::Context::Create(m_window));

@@ -24,7 +24,7 @@ class ERUNTIME_API OpenGLContext : public Context
     VertexArray* CreateVertexArray() final;
         
     [[nodiscard]]
-    Shader* CreateShader(const String& filepath) final;
+    Shader* CreateShader(IO::Reader& shaderReader) final;
 
     [[nodiscard]]
     VertexBuffer* CreateVertexBuffer(float* data, uint32_t size) final;

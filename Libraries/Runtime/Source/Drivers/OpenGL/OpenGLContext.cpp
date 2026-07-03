@@ -69,9 +69,9 @@ VertexArray* OpenGLContext::CreateVertexArray()
 }
     
 [[nodiscard]]
-Shader* OpenGLContext::CreateShader(const String& filepath)
+Shader* OpenGLContext::CreateShader(IO::Reader& shaderReader)
 {
-    return new OpenGLShader(filepath);
+    return new OpenGLShader(shaderReader);
 }
 
 [[nodiscard]]

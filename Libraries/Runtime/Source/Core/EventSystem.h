@@ -36,11 +36,9 @@ class ERUNTIME_API EventDispatcher
     {
     }
 
-    template<typename T, typename F>
+    template<std::derived_from<Event> T, typename F>
     bool Dispatch(const F& handler)
     {
-        static_assert(std::is_base_of<Event, T>::value, "Can't dispatch event. Event type must be derived from core::Event");
-
         if (m_event.GetType() == T::GetStaticType())
             {
                 handler(static_cast<const T &>(m_event));

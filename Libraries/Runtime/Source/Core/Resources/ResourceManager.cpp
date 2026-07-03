@@ -5,6 +5,8 @@
 #include "Core/Assert.h"
 #include "Core/Debug/Log.h"
 
+#include "Core/FileReader.h"
+
 ResourceManager::ResourceManager()
 {
     StringCommandRunner::Instance()
@@ -63,7 +65,9 @@ const Ref<Renderer::Shader>& ResourceManager::LoadShader(const String& filepath)
         return searchIt->second;
     }
 
-    auto loaded = Ref<Renderer::Shader>(m_rendererContext->CreateShader(filepath));
+    FileReader shaderReader(filepath);
+
+    auto loaded = Ref<Renderer::Shader>(m_rendererContext->CreateShader(shaderReader));
 
     m_shadersMap.insert({filepath, std::move(loaded)});
 

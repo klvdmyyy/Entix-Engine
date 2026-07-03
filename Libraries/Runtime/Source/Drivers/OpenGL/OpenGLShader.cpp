@@ -50,10 +50,10 @@ static GLuint CompileOpenGLShader(const std::string &src,
     return shader;
 }
 
-OpenGLShader::OpenGLShader(const String& filepath)
+OpenGLShader::OpenGLShader(IO::Reader& shaderReader)
 {
     ZoneScoped;
-    auto source = File(filepath).ReadStr();
+    auto source = shaderReader.ReadStr();
 
     auto shaderSourceMap = GLSL_Preprocess(source);
 

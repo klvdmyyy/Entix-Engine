@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Core/Memory.h"
+#include "Core/IO/Reader.h"
 
 #include "WSI/Window.h"
 
@@ -23,7 +24,7 @@ namespace Renderer
         virtual VertexArray* CreateVertexArray() = 0;
 
         [[nodiscard]]
-        virtual Shader* CreateShader(const String& filepath) = 0;
+        virtual Shader* CreateShader(IO::Reader& shaderReader) = 0;
 
         [[nodiscard]]
         virtual VertexBuffer* CreateVertexBuffer(float* data, uint32_t size) = 0;

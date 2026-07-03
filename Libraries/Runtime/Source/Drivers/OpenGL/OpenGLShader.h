@@ -18,7 +18,7 @@ using namespace Renderer;
 class ERUNTIME_API OpenGLShader : public Shader
 {
  public:
-    OpenGLShader(const String& filepath);
+    OpenGLShader(IO::Reader& shaderReader);
     ~OpenGLShader();
 
     void Bind() const final;
