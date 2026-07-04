@@ -1,5 +1,8 @@
 #include "Core/FileReader.h"
 
+#include "Core/Assert.h"
+#include "Core/Debug/Log.h"
+
 FileReader::FileReader(const std::filesystem::path& filepath)
     : k_filepath(filepath), m_exists(false)
 {
@@ -28,7 +31,7 @@ String FileReader::ReadStr()
         m_file.seekg(0, std::ios::beg);
         m_file.read(&result[0], size);
     } else {
-        Debug::Error(LogCategory::IO, "Can't read file: {}", k_filepath);
+        Debug::Error(LogCategory::IO, std::format("Can't read file: {}", k_filepath));
     }
 
     return result;

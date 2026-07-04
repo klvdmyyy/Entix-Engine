@@ -24,12 +24,12 @@ public:
         m_entries.push_back(String(str));
     }
 
-    inline void Write(const LogEntry& entry) final
+    inline void WriteLogEntry(const LogEntry& entry) final
     {
         if(m_entries.size() > MAX_ENTRY_COUNT)
             m_entries.pop_front();
             
-        m_entries.push_back(FormatLogEntry(entry));
+        m_entries.push_back(entry.category.GetFormatter()->Format(entry));
     }
 
     const std::deque<String>& GetEntries() const noexcept
@@ -46,11 +46,11 @@ private:
 class StdoutLogSink : public LogSink
 {
 public:
-    inline void Write(const LogEntry& entry) final
+    inline void WriteLogEntry(const LogEntry& entry) final
     {
         if(entry.level == LogLevel::Error || entry.level == LogLevel::Critical)
-            std::println(stderr, "{}", FormatLogEntry(entry));
+            std::println(stderr, "{}", entry.category.GetFormatter()->Format(entry));
         else
-            std::println("{}", FormatLogEntry(entry));
+            std::println("{}", entry.category.GetFormatter()->Format(entry));
     }
 };

@@ -85,12 +85,11 @@ void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
     auto searchIt = m_commandMap.find(cmdSearchStr);
     if (searchIt == m_commandMap.end())
         {
-            Debug::Error(LogCategory::Console, "Command not found: {}", cmdSearchStr);
+            Debug::Error(LogCategory::Console, std::format("Command not found: {}", cmdSearchStr));
             return;
         }
 
-    auto args = String(cmd.substr(
-                                  firstTokenEnd, cmd.size() - firstTokenEnd));
+    auto args = String(cmd.substr(firstTokenEnd, cmd.size() - firstTokenEnd));
 
     (searchIt->second)(CommandArgs::Parse(args), writer);
 }
@@ -101,7 +100,7 @@ bool StringCommandRunner::AddCommand(CommandSpecification cmd, CommandCallback c
 
     if (m_commandMap.contains(cmd.name))
         {
-            Debug::Error(LogCategory::Console, "Failed to add command. Command already exists: {}", cmd.name);
+            Debug::Error(LogCategory::Console, std::format("Failed to add command. Command already exists: {}", cmd.name));
             return false;
         }
 
@@ -117,7 +116,7 @@ bool StringCommandRunner::RemoveCommand(StringView cmd)
 
     if(!m_commandMap.contains(cmd))
         {
-            Debug::Error(LogCategory::Console, "Failed to remove command. Command doesn't exists: {}", cmd);
+            Debug::Error(LogCategory::Console, std::format("Failed to remove command. Command doesn't exists: {}", cmd));
             return false;
         }
 

@@ -1,7 +1,7 @@
 #include "Drivers/OpenGL/OpenGLShader.h"
 
 #include "Core/Assert.h"
-#include "Core/File.h"
+#include "Core/FileReader.h"
 
 #include "Math/TypePtr.h"
 

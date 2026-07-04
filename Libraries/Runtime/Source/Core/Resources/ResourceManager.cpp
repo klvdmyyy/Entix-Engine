@@ -57,11 +57,11 @@ ResourceManager& ResourceManager::Instance()
 
 const Ref<Renderer::Shader>& ResourceManager::LoadShader(const String& filepath)
 {
-    Debug::Info(LogCategory::Resources, "Loading shader '{}'", filepath);
+    Debug::Info(LogCategory::Resource, std::format("Loading shader '{}'", filepath));
     auto searchIt = m_shadersMap.find(filepath);
 
     if(searchIt != m_shadersMap.end()) {
-        Debug::Warn(LogCategory::Resources, "Failed to load shader '{}'. This shader was already loaded!", filepath);
+        Debug::Warn(LogCategory::Resource, std::format("Failed to load shader '{}'. This shader was already loaded!", filepath));
         return searchIt->second;
     }
 
@@ -81,15 +81,16 @@ const Ref<Renderer::Shader>& ResourceManager::GetShader(const String& filepath) 
 
 void ResourceManager::ReloadShader(const String& filepath)
 {
-    Debug::Info(LogCategory::Resources, "Reloading shader '{}'", filepath);
+    Debug::Info(LogCategory::Resource, std::format("Reloading shader '{}'", filepath));
 
     auto searchIt = m_shadersMap.find(filepath);
 
     if(searchIt == m_shadersMap.end()) {
-        Debug::Error(LogCategory::Resources, "Failed to reload shader '{}'. Shader doesn't exists!", filepath);
+        Debug::Error(LogCategory::Resource, std::format("Failed to reload shader '{}'. Shader doesn't exists!", filepath));
         return;
     }
 
-    searchIt->second.reset(m_rendererContext->CreateShader(filepath));
+    FileReader shaderReader(filepath);
+    searchIt->second.reset(m_rendererContext->CreateShader(shaderReader));
 }
 

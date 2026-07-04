@@ -1,6 +1,8 @@
 #define GAME_MAIN
 #include <GameFramework.h>
 
+#include <Core/Debug/Log.h>
+
 static const ApplicationSpecification g_spec = {
     .name = "Voxenty",
     .description = "Simple Minecraft-like Game",
@@ -21,6 +23,7 @@ public:
 
     void OnInit() final
     {
+        EX_LOG(Warning, LogCategory::IO, "Hello, {}!", "World");
     }
 
     void OnTick() final

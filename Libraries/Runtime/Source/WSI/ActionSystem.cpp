@@ -44,7 +44,7 @@ void ActionMap::Update()
 void ActionMap::AddAction(const String& name, const ActionBinding& binding)
 {
     if(m_actionDataMap.contains(name)) {
-        Debug::Warn(LogCategory::WSI, "Trying to add an already existing action to ActionMap! Action name: {}", name);
+        Debug::Warn(LogCategory::WSI, std::format("Trying to add an already existing action to ActionMap! Action name: {}", name));
         return;
     }
 
@@ -65,7 +65,7 @@ void ActionMap::Bind(const String& name, const ActionBinding& binding)
 bool ActionMap::IsPressed(const String& name) const
 {
     if(!m_actionDataMap.contains(name)) {
-        Debug::Warn(LogCategory::WSI, "Trying to check state of unexisting action in ActionMap! Action name: {}", name);
+        Debug::Warn(LogCategory::WSI, std::format("Trying to check state of unexisting action in ActionMap! Action name: {}", name));
         return false;
     }
 
@@ -76,7 +76,7 @@ bool ActionMap::IsPressed(const String& name) const
 bool ActionMap::IsReleased(const String& name) const
 {
     if(!m_actionDataMap.contains(name)) {
-        Debug::Warn(LogCategory::WSI, "Trying to check state of unexisting action in ActionMap! Action name: {}", name);
+        Debug::Warn(LogCategory::WSI, std::format("Trying to check state of unexisting action in ActionMap! Action name: {}", name));
         return false;
     }
 
@@ -87,7 +87,7 @@ bool ActionMap::IsReleased(const String& name) const
 bool ActionMap::IsHeld(const String& name) const
 {
     if(!m_actionDataMap.contains(name)) {
-        Debug::Warn(LogCategory::WSI, "Trying to check state of unexisting action in ActionMap! Action name: {}", name);
+        Debug::Warn(LogCategory::WSI, std::format("Trying to check state of unexisting action in ActionMap! Action name: {}", name));
         return false;
     }
 
@@ -123,7 +123,7 @@ void ActionMap::SaveToFile(const std::filesystem::path filepath)
 void ActionContext::AddAction(const String& name)
 {
     if(m_actionSet.contains(name))
-        Debug::Warn(LogCategory::WSI, "Trying to add an already existing action to ActionContext! Action name: {}", name);
+        Debug::Warn(LogCategory::WSI, std::format("Trying to add an already existing action to ActionContext! Action name: {}", name));
         
     m_actionSet.insert(name);
 }
@@ -147,7 +147,7 @@ void ActionSystem::PushContext(const ActionContext& context)
 void ActionSystem::PopContext()
 {
     if(m_contextStack.empty()) {
-        Debug::Warn(LogCategory::WSI, "Trying to call PopContext in ActionSystem when m_contextStack is empty!");
+        Debug::Warn(LogCategory::WSI, std::format("Trying to call PopContext in ActionSystem when m_contextStack is empty!"));
         return;
     }
     m_contextStack.pop();

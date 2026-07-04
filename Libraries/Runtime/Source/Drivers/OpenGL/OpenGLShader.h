@@ -4,6 +4,8 @@
 #include "Core/Base.h"
 #include "Core/String.h"
 
+#include "Core/IO/Reader.h"
+
 #include "Renderer/Shader.h"
 
 #include <glad/glad.h>

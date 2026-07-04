@@ -4,134 +4,78 @@
 #include "Core/Base.h"
 #include "Core/Memory.h"
 
+#include "Core/Debug/LogEntry.h"
+
 #include <algorithm>
-#include <sstream>
-#include <type_traits>
 #include <mutex>
 #include <format>
 #include <vector>
-#include <chrono>
-#include <optional>
+#include <source_location>
 
-#define EX_LOG(LEVEL, CATEGORY, FMT, ...)                               \
-    ::Logger::Instance().Log(::LogLevel::LEVEL, CATEGORY,               \
-                             std::format(FMT, ##__VA_ARGS__), __FILE__, __LINE__, __FUNCTION__)
+#define EX_LOG(Level, Category, Fmt, ...) \
+    ::Logger::Instance().Log(LogLevel::Level, Category, std::format(Fmt,##__VA_ARGS__))
 
-namespace LogCategory
-{
-    constexpr auto Core = "Core";
-    constexpr auto IO = "I/O";
-    constexpr auto WSI = "WSI";
-    constexpr auto Renderer = "Renderer";
-    constexpr auto Driver = "Driver";
-    constexpr auto Resources = "Resources";
-    constexpr auto Console = "Console";
-}
-
-enum class LogLevel
-    {
-        Trace = 0,
-        Info,
-        Warning,
-        Error,
-        Critical,
-    };
-
-[[nodiscard]]
-const StringView LogLevelToString(const LogLevel& level);
-
-struct LogEntry
-{
-    LogLevel level;
-    const char *category;
-    StringView message;
-    std::optional<const char *> sourceFile;
-    std::optional<int> line;
-    std::optional<const char *> functionSignature;
-};
-
-String FormatLogEntry(const LogEntry& entry);
-
-class ERUNTIME_API LogSink
-    {
-    public:
+class LogSink {
+public:
     LogSink() = default;
     virtual ~LogSink() = default;
 
-    virtual void Write(const LogEntry &item) = 0;
-    };
+    virtual void WriteLogEntry(const LogEntry &item) = 0;
+};
 
-class ERUNTIME_API Logger
-    {
-    public:
+class Logger {
+public:
     static Logger &Instance();
       
     void AddSink(Ref<LogSink> sink);
 
-    void Log(LogLevel level, const char *category, StringView message,
-             std::optional<const char *> sourceFile = std::nullopt,
-             std::optional<int> line = std::nullopt,
-             std::optional<const char *> functionSignature = std::nullopt);
+    void Log(LogLevel level, LogCategory category, StringView message,
+             std::source_location location = std::source_location::current());
 
-    private:
+private:
     std::vector<Ref<LogSink>> m_sinks;
     std::mutex m_sync;
-    };
+};
 
 
 namespace Debug {
 #define LINSTANCE() Logger::Instance()
 
-    template<typename... Args>
-    void Trace(const char* category, std::format_string<Args...> fmt, Args&&... args)
+    FORCE_INLINE
+    inline constexpr void Trace(LogCategory category, StringView message,
+                                std::source_location location = std::source_location::current())
     {
-        LINSTANCE().Log(LogLevel::Trace, category, std::format(fmt, std::forward<Args>(args)...));
+        LINSTANCE().Log(LogLevel::Trace, category, message, location);
     }
 
-    template<typename... Args>
-    void Info(const char* category, std::format_string<Args...> fmt, Args&&... args)
+    FORCE_INLINE
+    inline constexpr void Info(LogCategory category, StringView message,
+                               std::source_location location = std::source_location::current())
     {
-        LINSTANCE().Log(LogLevel::Info, category, std::format(fmt, std::forward<Args>(args)...));
+        LINSTANCE().Log(LogLevel::Info, category, message, location);
     }
 
-    template<typename... Args>
-    void Warn(const char* category, std::format_string<Args...> fmt, Args&&... args)
+    FORCE_INLINE
+    inline constexpr void Warn(LogCategory category, StringView message,
+                               std::source_location location = std::source_location::current())
     {
-        LINSTANCE().Log(LogLevel::Warning, category, std::format(fmt, std::forward<Args>(args)...));
+        LINSTANCE().Log(LogLevel::Warning, category, message, location);
     }
 
-    template<typename... Args>
-    void Error(const char* category, std::format_string<Args...> fmt, Args&&... args)
+    FORCE_INLINE
+    inline constexpr void Error(LogCategory category, StringView message,
+                                std::source_location location = std::source_location::current())
     {
-        LINSTANCE().Log(LogLevel::Error, category, std::format(fmt, std::forward<Args>(args)...));
+        LINSTANCE().Log(LogLevel::Error, category, message, location);
     }
-
-    template<typename... Args>
-    void Critical(const char* category, std::format_string<Args...> fmt, Args&&... args)
+    
+    FORCE_INLINE
+    inline constexpr void Critical(LogCategory category, StringView message,
+                                   std::source_location location = std::source_location::current())
     {
-        LINSTANCE().Log(LogLevel::Critical, category, std::format(fmt, std::forward<Args>(args)...));
+        LINSTANCE().Log(LogLevel::Critical, category, message, location);
     }
         
 #undef LINSTANCE
 }
 
-template<>
-struct std::formatter<LogLevel, char>
-{
-    template<class ParseContext>
-    constexpr ParseContext::iterator parse(ParseContext& ctx)
-    {
-        auto it = ctx.begin();
-        return it;
-    }
-
-    template<typename FmtContext>
-    FmtContext::iterator format(LogLevel level,
-                                FmtContext &ctx) const
-    {
-        std::ostringstream out;
-        out << LogLevelToString(level);
-
-        return std::ranges::copy(std::move(out).str(), ctx.out()).out;
-    }
-};
