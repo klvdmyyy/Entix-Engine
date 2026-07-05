@@ -44,5 +44,7 @@ list(FILTER VBOX_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Ve
 include(formatting)
 clang_format(format ${PROJECT_CL_FILES})
 
+set(ENTIX_SHADERS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
+
 add_subdirectory(Libraries)
 add_subdirectory(Projects)

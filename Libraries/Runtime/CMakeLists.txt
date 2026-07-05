@@ -1,6 +1,7 @@
 add_library(EntixRuntime SHARED)
 
-target_compile_definitions(EntixRuntime PRIVATE ERUNTIME_BUILD_DLL)
+target_compile_definitions(EntixRuntime PRIVATE
+  ERUNTIME_BUILD_DLL)
 
 target_include_directories(EntixRuntime PUBLIC
   Source/)
@@ -20,5 +21,11 @@ file(
 )
 
 target_sources(EntixRuntime PRIVATE ${ENTIX_RUNTIME_SOURCES})
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Source/Core/Base.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/Source/Core/Base.h
+  @ONLY
+)
 
 add_library(Entix::Runtime ALIAS EntixRuntime)
