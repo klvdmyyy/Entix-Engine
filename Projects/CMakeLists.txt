@@ -1,1 +1,2 @@
-add_subdirectory(Voxenty)
+add_subdirectory(Editor)
+add_subdirectory(VoxelGame)

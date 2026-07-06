@@ -4,20 +4,20 @@
 #include "EditorLayer.h"
 
 static const ApplicationSpecification g_spec = {
-    .name = "Voxenty",
-    .description = "Example Entix Engine Project (Editor-like thing)",
+    .name = "Entix Editor",
+    .description = "Editor for Entix-Engine",
     .windowSpec = {
         .width = 800,
         .height = 600,
-        .title = "Voxenty 1.0",
+        .title = "Entix Engine 1.0",
         .resizable = false,
     },
 };
 
-class Voxenty : public Application
+class EntixEditor : public Application
 {
 public:
-    Voxenty() : Application(g_spec)
+    EntixEditor() : Application(g_spec)
     {
         PushOverlay<GUILayer>();
         PushLayer<EditorLayer>();
@@ -26,5 +26,5 @@ public:
 
 Application* CreateApplication()
 {
-    return new Voxenty();
+    return new EntixEditor();
 }
