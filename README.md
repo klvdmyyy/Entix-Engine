@@ -1,13 +1,1 @@
-# VBox - Voxel Sandbox Game
-
-
-## External Libraries
-
-- glad
-- EnTT
-- glm
-- Tracy
-- googlebenchmark
-- googletest
-- nlohmann_json
-- imgui (docking branch)
+# Entix Engine - Modular 3D Engine written in C++

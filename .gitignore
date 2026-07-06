@@ -5,14 +5,14 @@
 .vs
 
 # CMake build files
-build/
-out/
+[Bb]uild/
+[Oo]ut/
 
 # Binaries
-bin/
+[Bb]in/
 
 # Configured file
-runtime/include/Core/Base.h
+Libraries/Runtime/Source/Core/Base.h
 
 # TAGS files
 TAGS
