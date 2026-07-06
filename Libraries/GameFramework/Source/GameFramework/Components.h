@@ -12,6 +12,8 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 
+class Entity;
+
 struct IDComponent {
     UUID id;
 
@@ -33,16 +35,13 @@ struct TagComponent {
 
 struct TransformComponent {
 public:
-    Float3 position;
-    Float3 rotation;
-    Float3 scale;
+    Float3 position = Float3(0.0f, 0.0f, 0.0f);
+    Float3 rotation = Float3(0.0f, 0.0f, 0.0f);
+    Float3 scale = Float3(1.0f, 1.0f, 1.0f);
 
-    TransformComponent()
-        : position(Float3(0.0f, 0.0f, 0.0f)),
-          rotation(Float3(0.0f, 0.0f, 0.0f)),
-          scale(Float3(1.0f, 1.0f, 1.0f))
-    {
-    }
+    Entity* parent = nullptr;
+
+    TransformComponent() = default;
 
     TransformComponent(const TransformComponent&) = default;
 
@@ -50,6 +49,11 @@ public:
                        Float3 rotation,
                        Float3 scale)
         : position(position), rotation(rotation), scale(scale)
+    {
+    }
+
+    TransformComponent(Entity* parentEntity)
+        : parent(parentEntity)
     {
     }
 

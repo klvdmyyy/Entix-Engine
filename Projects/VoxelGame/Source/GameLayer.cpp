@@ -19,7 +19,7 @@ void GameLayer::OnAttach()
     Entity camera = scene.CreateEntity("PlayerCamera");
 
     // Set camera child of player
-    camera.AddOrReplaceComponent<TransformComponent>(player);
+    camera.AddOrReplaceComponent<TransformComponent>(&player);
 }
 
 void GameLayer::OnTick(float deltaTime)
