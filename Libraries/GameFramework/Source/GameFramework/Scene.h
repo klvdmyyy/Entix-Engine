@@ -27,6 +27,7 @@ public:
     Entity GetEntityByUUID(UUID uuid);
 
     void OnTick(float deltaTime);
+    void OnRender();
 
 private:
     friend class Entity;

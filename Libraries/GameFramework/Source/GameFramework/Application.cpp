@@ -45,25 +45,33 @@ Application::~Application()
 
 void Application::Run(int argc, char** argv)
 {
-    this->OnInit();
-
     while(m_running) {
         EventBus::Instance().ProcessEvents();
             
         ActionSystem::Instance().Update();
 
-        this->OnTick();
-
         m_window->Update();
 
-        m_scene->OnTick(0.0f);
+        for(auto& layer : m_layerStack) {
+            layer->OnTick(0.0f);
+        }
+
+        for(auto& layer : m_layerStack) {
+            layer->OnPreRender();
+        }
+        
+        for(auto& layer : m_layerStack) {
+            layer->OnRender();
+        }
+        
+        for(auto& layer : m_layerStack) {
+            layer->OnPostRender();
+        }
 
         m_rendererContext->Swap();
 
         FrameMark;
     }
-
-    this->OnShutdown();
 }
 
 void Application::OnEvent(const Event& event)

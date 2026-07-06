@@ -59,8 +59,26 @@ void OpenGLContext::InitGUI()
 {
     ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(m_window->GetWindowHandle()), m_context);
     ImGui_ImplOpenGL3_Init(GUI_GLSL_VERSION);
+
+    m_window->EnableGUIUpdate();
 }
 
+void OpenGLContext::ShutdownGUI()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+}
+
+void OpenGLContext::NewGUIFrame()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+}
+
+void OpenGLContext::RenderGUI()
+{
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
 [[nodiscard]]
 VertexArray* OpenGLContext::CreateVertexArray()

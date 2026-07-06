@@ -1,11 +1,11 @@
 #define GAME_MAIN
 #include <GameFramework.h>
 
-#include "SquareMesh.h"
+#include "EditorLayer.h"
 
 static const ApplicationSpecification g_spec = {
     .name = "Voxenty",
-    .description = "Simple Minecraft-like Game",
+    .description = "Example Entix Engine Project (Editor-like thing)",
     .windowSpec = {
         .width = 800,
         .height = 600,
@@ -19,33 +19,12 @@ class Voxenty : public Application
 public:
     Voxenty() : Application(g_spec)
     {
+        PushOverlay<GUILayer>();
+        PushLayer<EditorLayer>();
     }
 
-    void OnInit() final
-    {
-        ResourceManager::Instance().LoadShader(EX_GET_SHADER("SimpleShader.glsl"));
-        
-        auto& scene = GetCurrentScene();
-
-        Entity square = scene.CreateEntity("Square");
-
-        square.AddComponent<StaticMeshComponent>(CreateSquareMesh(GetRendererContext()));
-
-        Entity camera = scene.CreateEntity("Camera");
-
-        camera.AddComponent<CameraComponent>();
-
-        TransformComponent& cameraTransform = camera.GetComponent<TransformComponent>();
-        cameraTransform.position = Float3(0.0f, 0.0f, 2.0f);
-    }
-
-    void OnTick() final
-    {
-    }
-
-    void OnShutdown() final
-    {
-    }
+private:
+    GUILayer* m_guiLayer;
 };
 
 Application* CreateApplication()

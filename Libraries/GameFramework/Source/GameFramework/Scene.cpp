@@ -62,13 +62,16 @@ void Scene::OnTick(float deltaTime)
             camera.Update(transform, 800.0f / 600.0f);
         }
     }
+}
 
-    // Render Mesh
+void Scene::OnRender()
+{
     m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
     m_rendererContext->Clear();
 
     m_rendererContext->BeginScene();
 
+    // Render Static Mesh
     {
         auto camerasView = m_registry.view<TransformComponent, CameraComponent>();
         auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);

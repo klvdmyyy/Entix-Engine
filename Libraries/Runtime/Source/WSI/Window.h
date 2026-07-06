@@ -29,13 +29,15 @@ struct WindowSpecification
     bool fullscreen = false;
 };
 
-class ERUNTIME_API Window
-    {
-    public:
+class Window {
+public:
     virtual ~Window() = default;
 
     virtual void Update() = 0;
+    
     virtual void* GetWindowHandle() const = 0;
 
+    virtual void EnableGUIUpdate() = 0;
+
     static Window* Create(const WindowSpecification& spec);
-    };
+};

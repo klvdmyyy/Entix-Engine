@@ -17,6 +17,10 @@ class ERUNTIME_API WindowSDL : public Window {
         return static_cast<void*>(m_window);
     }
 
+    void EnableGUIUpdate() final;
+
  private:
     SDL_Window* m_window;
+
+    bool m_guiEnabled = false;
 };

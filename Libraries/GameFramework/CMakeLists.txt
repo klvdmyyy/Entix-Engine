@@ -3,7 +3,8 @@ add_library(EntixGameFramework SHARED)
 target_include_directories(EntixGameFramework PUBLIC Source/)
 
 target_link_libraries(EntixGameFramework PRIVATE
-  Tracy::TracyClient)
+  Tracy::TracyClient
+  Vendor::ImGui)
 
 target_link_libraries(EntixGameFramework PUBLIC
   Entix::Runtime

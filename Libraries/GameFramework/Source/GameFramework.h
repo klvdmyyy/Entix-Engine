@@ -11,6 +11,9 @@
 
 #include "GameFramework/Application.h"
 
+// Built-in Layers
+#include "GameFramework/GUILayer.h"
+
 /**********************
  *    Entry Point     *
  **********************/

@@ -47,6 +47,10 @@ namespace Renderer
         // ---------------------------------------------------------------------
         virtual void InitGUI() = 0;
 
+        virtual void ShutdownGUI() = 0;
+        virtual void NewGUIFrame() = 0;
+        virtual void RenderGUI() = 0;
+
     protected:
         Context() = default;
     };
