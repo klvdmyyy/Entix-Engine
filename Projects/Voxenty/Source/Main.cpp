@@ -22,9 +22,6 @@ public:
         PushOverlay<GUILayer>();
         PushLayer<EditorLayer>();
     }
-
-private:
-    GUILayer* m_guiLayer;
 };
 
 Application* CreateApplication()
