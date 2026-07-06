@@ -2,6 +2,8 @@
 
 #include "GameFramework/Entity.h"
 
+#include "GameFramework/ScriptableEntity.h"
+
 #include "Core/Resources/ResourceManager.h"
 #include "Core/Debug/Log.h"
 

@@ -117,3 +117,19 @@ private:
     Float4x4 m_view;
     Float4x4 m_projection;
 };
+
+class ScriptableEntity;
+
+struct NativeScriptComponent {
+    ScriptableEntity* instance = nullptr;
+
+    std::function<ScriptableEntity*()> InstantiateScript;
+    std::function<void(NativeScriptComponent*)> DestroyScript;
+
+    template<typename T>
+    void Bind()
+    {
+        InstantiateScript = [](){ return static_cast<ScriptableEntity*>(new T()); };
+        DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
+    }
+};

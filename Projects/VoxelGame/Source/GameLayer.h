@@ -7,6 +7,8 @@ class GameLayer : public Layer {
 public:
     GameLayer();
 
+    void OnAttach() final;
+
     void OnTick(float deltaTime) final;
     void OnRender() final;
 };

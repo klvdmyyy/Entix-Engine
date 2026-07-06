@@ -11,6 +11,8 @@
 
 #include "GameFramework/Application.h"
 
+#include "GameFramework/ScriptableEntity.h"
+
 // Built-in Layers
 #include "GameFramework/GUILayer.h"
 
