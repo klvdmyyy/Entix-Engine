@@ -53,7 +53,7 @@ Entity Scene::GetEntityByUUID(UUID uuid) {
     return Entity{};
 }
 
-void Scene::OnTick(float deltaTime)
+void Scene::OnTick(Timestep deltaTime)
 {
     // Update camera
     {
@@ -62,6 +62,22 @@ void Scene::OnTick(float deltaTime)
             auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
             camera.Update(transform, 800.0f / 600.0f);
+        }
+    }
+
+    // Update scripts
+    {
+        auto view = m_registry.view<NativeScriptComponent>();
+        for(auto entity : view) {
+            auto& nsc = view.get<NativeScriptComponent>(entity);
+
+            if(!nsc.instance) {
+                nsc.instance = nsc.InstantiateScript();
+                nsc.instance->m_entity = Entity{ entity, this };
+                nsc.instance->OnCreate();
+            }
+
+            nsc.instance->OnTick(deltaTime);
         }
     }
 }

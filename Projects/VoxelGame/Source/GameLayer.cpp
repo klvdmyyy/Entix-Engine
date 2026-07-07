@@ -1,6 +1,8 @@
 #include "GameLayer.h"
 
-#include "PlayerController.h"
+#include "SquareMesh.h"
+
+#include "Scripts/Player.h"
 
 GameLayer::GameLayer()
     : Layer("GameLayer")
@@ -9,20 +11,23 @@ GameLayer::GameLayer()
 
 void GameLayer::OnAttach()
 {
+    ResourceManager::Instance().LoadShader(EX_GET_SHADER("SimpleShader.glsl"));
+    
     Scene& scene = Application::Get().GetCurrentScene();
 
     Entity player = scene.CreateEntity("Player");
-
-    NativeScriptComponent& playerScript = player.AddComponent<NativeScriptComponent>();
-    playerScript.Bind<PlayerController>();
+    player.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
+    player.AddComponent<NativeScriptComponent>().Bind<Player>();
 
     Entity camera = scene.CreateEntity("PlayerCamera");
 
-    // Set camera child of player
+    camera.AddComponent<CameraComponent>();
+
     camera.AddOrReplaceComponent<TransformComponent>(&player);
+    camera.GetComponent<TransformComponent>().position.z = 2.0f;
 }
 
-void GameLayer::OnTick(float deltaTime)
+void GameLayer::OnTick(Timestep deltaTime)
 {
     Application::Get().GetCurrentScene().OnTick(deltaTime);
 }

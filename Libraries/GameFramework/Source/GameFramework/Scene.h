@@ -6,6 +6,8 @@
 #include "Core/String.h"
 #include "Core/Memory.h"
 
+#include "Core/Timestep.h"
+
 #include "Renderer/Context.h"
 
 #include <unordered_map>
@@ -26,7 +28,7 @@ public:
     Entity FindEntityByName(StringView name);
     Entity GetEntityByUUID(UUID uuid);
 
-    void OnTick(float deltaTime);
+    void OnTick(Timestep deltaTime);
     void OnRender();
 
 private:

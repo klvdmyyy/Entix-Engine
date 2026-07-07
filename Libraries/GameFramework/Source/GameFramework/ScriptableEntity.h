@@ -3,9 +3,11 @@
 
 #include "GameFramework/Entity.h"
 
+#include "Core/Timestep.h"
+
 class ScriptableEntity {
 public:
-    virtual ~ScriptableEntity();
+    virtual ~ScriptableEntity() = default;
 
     template<typename T>
     T& GetComponent()
@@ -16,7 +18,7 @@ public:
 protected:
     virtual void OnCreate() { }
     virtual void OnDestroy() { }
-    virtual void OnTick(float deltaTime) { }
+    virtual void OnTick(Timestep deltaTime) { }
 
 private:
     friend class Scene;

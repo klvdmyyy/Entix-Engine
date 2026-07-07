@@ -125,15 +125,20 @@ private:
 class ScriptableEntity;
 
 struct NativeScriptComponent {
-    ScriptableEntity* instance = nullptr;
+    using InstantiateFunction = std::function<Scope<ScriptableEntity>()>;
+    // using DestroyFunction = std::function<void(NativeScriptComponent*)>;
+    
+    Scope<ScriptableEntity> instance;
 
-    std::function<ScriptableEntity*()> InstantiateScript;
-    std::function<void(NativeScriptComponent*)> DestroyScript;
+    InstantiateFunction InstantiateScript;
+    // DestroyFunction DestroyScript;
 
     template<typename T>
     void Bind()
     {
-        InstantiateScript = [](){ return static_cast<ScriptableEntity*>(new T()); };
-        DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
+        InstantiateScript = [](){ return Scope<ScriptableEntity>(new T()); };
+        // DestroyScript = [](NativeScriptComponent* nsc) { nsc->instance.reset(nullptr); };
     }
+
+    NativeScriptComponent() = default;
 };

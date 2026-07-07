@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Core/String.h"
+#include "Core/Timestep.h"
 
 class Layer {
 public:
@@ -13,7 +14,7 @@ public:
 
     virtual void OnAttach() { }
     virtual void OnDetach() { }
-    virtual void OnTick([[maybe_unused]] float deltaTime) { }
+    virtual void OnTick([[maybe_unused]] Timestep deltaTime) { }
     
     virtual void OnPreRender() { }
     virtual void OnRender() { }

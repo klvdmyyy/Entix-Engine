@@ -9,6 +9,6 @@ public:
 
     void OnAttach() final;
 
-    void OnTick(float deltaTime) final;
+    void OnTick(Timestep deltaTime) final;
     void OnRender() final;
 };

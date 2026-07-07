@@ -1,6 +1,7 @@
 #include "GameFramework/Application.h"
 
 #include "Core/Assert.h"
+#include "Core/Time.h"
 
 #include "Core/Resources/ResourceManager.h"
 
@@ -45,15 +46,19 @@ Application::~Application()
 
 void Application::Run(int argc, char** argv)
 {
+    Uint32 previousTicks = Time::GetTicks();
+    
     while(m_running) {
+        Uint32 currentTicks = Time::GetTicks();
+        Timestep deltaTime = (currentTicks - previousTicks) / 1000.0f;
+
         EventBus::Instance().ProcessEvents();
-            
         ActionSystem::Instance().Update();
 
         m_window->Update();
 
         for(auto& layer : m_layerStack) {
-            layer->OnTick(0.0f);
+            layer->OnTick(deltaTime);
         }
 
         for(auto& layer : m_layerStack) {
@@ -69,6 +74,8 @@ void Application::Run(int argc, char** argv)
         }
 
         m_rendererContext->Swap();
+
+        previousTicks = currentTicks;
 
         FrameMark;
     }
