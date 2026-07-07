@@ -7,6 +7,10 @@
 #include "Core/Resources/ResourceManager.h"
 #include "Core/Debug/Log.h"
 
+#include <unordered_map>
+#include <functional>
+#include <vector>
+
 Scene::Scene(const Ref<Renderer::Context>& rendererContext)
     : m_rendererContext(rendererContext)
 {
@@ -54,7 +58,50 @@ Entity Scene::GetEntityByUUID(UUID uuid) {
 }
 
 void Scene::OnTick(Timestep deltaTime)
-{
+{   
+    // Update transformations
+    {
+        auto view = m_registry.view<TransformComponent>();
+
+        std::unordered_map<entt::entity, entt::entity> parentMap;
+        std::vector<entt::entity> roots;
+
+        for(auto entity : view) {
+            auto& transform = view.get<TransformComponent>(entity);
+            transform.UpdateLocalMatrix();
+
+            if(transform.parent != entt::null) {
+                parentMap[entity] = transform.parent;
+            } else {
+                roots.push_back(entity);
+            }
+        }
+
+        std::unordered_map<entt::entity, std::vector<entt::entity>> childrenMap;
+        for(auto [child, parent] : parentMap) {
+            childrenMap[parent].push_back(child);
+        }
+
+        std::function<void(entt::entity, const Float4x4&)> updateWorld =
+            [&](entt::entity entity, const Float4x4& parentWorld)
+            {
+                auto& transform = view.get<TransformComponent>(entity);
+                transform.UpdateWorldMatrix(parentWorld);
+
+                auto it = childrenMap.find(entity);
+                if(it != childrenMap.end()) {
+                    const auto& worldMatrix = transform.GetWorldMatrix();
+                    for(auto child : it->second) {
+                        updateWorld(child, worldMatrix);
+                    }
+                }
+            };
+
+        for(auto root : roots) {
+            updateWorld(root, Float4x4(1.0f));
+        }
+    }
+
     // Update camera
     {
         auto view = m_registry.view<TransformComponent, CameraComponent>();
@@ -103,7 +150,7 @@ void Scene::OnRender()
                 auto shader = ResourceManager::Instance().GetShader(mesh.material.shader);
                     
                 shader->Bind();
-                shader->SetFloat4x4("model", transform.GetLocalMatrix());
+                shader->SetFloat4x4("model", transform.GetWorldMatrix());
                 shader->SetFloat4x4("view", camera.GetView());
                 shader->SetFloat4x4("projection", camera.GetProjection());
                 

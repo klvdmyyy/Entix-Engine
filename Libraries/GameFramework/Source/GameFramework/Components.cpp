@@ -1,19 +1,36 @@
 #include "GameFramework/Components.h"
 
+#include "GameFramework/Entity.h"
+
 #include "Math/MatrixTransform.h"
 #include "Math/Quat.h"
 
-Float4x4 TransformComponent::GetLocalMatrix() const noexcept
+TransformComponent::TransformComponent(Entity parentEntity)
+    : parent((entt::entity)parentEntity)
+{
+}
+
+void TransformComponent::UpdateLocalMatrix()
 {
     Float4x4 rot = Math::ToFloat4x4(Quat(rotation));
-
-    return Math::Translate(Float4x4(1.0f), position)
+    
+    m_localMatrix = Math::Translate(Float4x4(1.0f), position)
         * rot * Math::Scale(Float4x4(1.0f), scale);
 }
 
-Float4x4 TransformComponent::GetWorldMatrix(const Float4x4& parentWorld) const noexcept
+void TransformComponent::UpdateWorldMatrix(const Float4x4& parentWorld)
 {
-    return parentWorld * GetLocalMatrix();
+    m_worldMatrix = parentWorld * GetLocalMatrix();
+}
+
+const Float4x4& TransformComponent::GetLocalMatrix() const noexcept
+{
+    return m_localMatrix;
+}
+
+const Float4x4& TransformComponent::GetWorldMatrix() const noexcept
+{
+    return m_worldMatrix;
 }
 
 void CameraComponent::Update(const TransformComponent& transform, float aspect)

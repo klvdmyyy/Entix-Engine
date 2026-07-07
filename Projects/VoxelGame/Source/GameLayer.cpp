@@ -16,14 +16,17 @@ void GameLayer::OnAttach()
     Scene& scene = Application::Get().GetCurrentScene();
 
     Entity player = scene.CreateEntity("Player");
-    player.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
     player.AddComponent<NativeScriptComponent>().Bind<Player>();
+    
+    Entity playerMesh = scene.CreateEntity("PlayerMesh");
+    playerMesh.AddOrReplaceComponent<TransformComponent>(player); // Make PlayerMesh child of Player
+    playerMesh.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
 
-    Entity camera = scene.CreateEntity("PlayerCamera");
+    Entity camera = scene.CreateEntity("Camera");
 
     camera.AddComponent<CameraComponent>();
 
-    camera.AddOrReplaceComponent<TransformComponent>(&player);
+    // camera.AddOrReplaceComponent<TransformComponent>(&player);
     camera.GetComponent<TransformComponent>().position.z = 2.0f;
 }
 

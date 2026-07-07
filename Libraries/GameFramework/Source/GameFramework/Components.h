@@ -12,6 +12,10 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 
+#include <entt/entt.hpp>
+
+#include <optional>
+
 class Entity;
 
 struct IDComponent {
@@ -34,12 +38,11 @@ struct TagComponent {
 };
 
 struct TransformComponent {
-public:
     Float3 position = Float3(0.0f, 0.0f, 0.0f);
     Float3 rotation = Float3(0.0f, 0.0f, 0.0f);
     Float3 scale = Float3(1.0f, 1.0f, 1.0f);
 
-    Entity* parent = nullptr;
+    entt::entity parent = entt::null;
 
     TransformComponent() = default;
 
@@ -52,16 +55,20 @@ public:
     {
     }
 
-    TransformComponent(Entity* parentEntity)
-        : parent(parentEntity)
-    {
-    }
+    TransformComponent(Entity parentEntity);
+
+    void UpdateLocalMatrix();
+    void UpdateWorldMatrix(const Float4x4& parentWorld);
 
     [[nodiscard]]
-    Float4x4 GetLocalMatrix() const noexcept;
+    const Float4x4& GetLocalMatrix() const noexcept;
 
     [[nodiscard]]
-    Float4x4 GetWorldMatrix(const Float4x4& parentWorld) const noexcept;
+    const Float4x4& GetWorldMatrix() const noexcept;
+
+private:
+    Float4x4 m_localMatrix = Float4x4(1.0f);
+    Float4x4 m_worldMatrix = Float4x4(1.0f);
 };
 
 struct StaticMeshComponent {
