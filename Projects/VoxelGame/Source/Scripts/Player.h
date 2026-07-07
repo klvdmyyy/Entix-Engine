@@ -5,7 +5,6 @@
 
 class Player : public ScriptableEntity {
 public:
-    float rotationSpeed = 1.0f;
 
 protected:
     void OnCreate() final;

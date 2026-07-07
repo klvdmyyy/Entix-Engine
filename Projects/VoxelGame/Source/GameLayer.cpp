@@ -4,6 +4,8 @@
 
 #include "Scripts/Player.h"
 
+#include <WSI/ActionSystem.h>
+
 GameLayer::GameLayer()
     : Layer("GameLayer")
 {
@@ -12,11 +14,13 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
     ResourceManager::Instance().LoadShader(EX_GET_SHADER("SimpleShader.glsl"));
+    ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("../Projects/Editor/action_map.json"));
+    ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward"});
     
     Scene& scene = Application::Get().GetCurrentScene();
 
     Entity player = scene.CreateEntity("Player");
-    // player.AddComponent<NativeScriptComponent>().Bind<Player>();
+    player.AddComponent<NativeScriptComponent>().Bind<Player>();
     player.GetComponent<TransformComponent>().position.z = 2.0f;
 
     Entity playerCamera = scene.CreateEntity("Camera");
