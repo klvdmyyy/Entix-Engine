@@ -5,10 +5,46 @@
 
 #include "Math/Matrix.h"
 #include "Math/Vector.h"
+#include "Math/Quat.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
+
 namespace Math {
+    FORCE_INLINE
+    inline constexpr void Decompose(const Float4x4& m,
+                                    Float3& s,
+                                    Quat& r,
+                                    Float3& p,
+                                    Float3& skew,
+                                    Float4& perspective)
+    {
+        glm::decompose(m, s, r, p, skew, perspective);
+    }
+    
+    FORCE_INLINE
+    inline constexpr void Decompose(const Float4x4& m,
+                                    Float3& p,
+                                    Float3& r,
+                                    Float3& s)
+    {
+        Quat rot;
+        Float3 skew;
+        Float4 perspective;
+
+        Decompose(m, s, rot, p, skew, perspective);
+
+        r = glm::eulerAngles(rot);
+    }
+
+    FORCE_INLINE
+    inline constexpr float Length(Float3 v)
+    {
+        return glm::length(v);
+    }
+    
     FORCE_INLINE
     inline constexpr Float4x4 Translate(const Float4x4& m, const Float3& v)
     {

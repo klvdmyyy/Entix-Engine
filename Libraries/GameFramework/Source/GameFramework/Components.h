@@ -66,6 +66,15 @@ struct TransformComponent {
     [[nodiscard]]
     const Float4x4& GetWorldMatrix() const noexcept;
 
+    [[nodiscard]]
+    Float3 GetWorldPosition() const noexcept;
+
+    [[nodiscard]]
+    Float3 GetWorldRotation() const noexcept;
+
+    [[nodiscard]]
+    Float3 GetWorldScale() const noexcept;
+
 private:
     Float4x4 m_localMatrix = Float4x4(1.0f);
     Float4x4 m_worldMatrix = Float4x4(1.0f);

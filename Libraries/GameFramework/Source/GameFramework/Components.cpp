@@ -33,10 +33,31 @@ const Float4x4& TransformComponent::GetWorldMatrix() const noexcept
     return m_worldMatrix;
 }
 
+Float3 TransformComponent::GetWorldPosition() const noexcept {
+    return Float3(m_worldMatrix[3]);
+}
+
+Float3 TransformComponent::GetWorldRotation() const noexcept {
+    Float3 worldPos;
+    Float3 worldRot;
+    Float3 worldScale;
+    Math::Decompose(m_worldMatrix, worldPos, worldRot, worldScale);
+    return worldRot;
+}
+
+Float3 TransformComponent::GetWorldScale() const noexcept {
+    Float3 worldScale;
+    // Можно извлечь как длину колонок
+    worldScale.x = Math::Length(Float3(m_worldMatrix[0]));
+    worldScale.y = Math::Length(Float3(m_worldMatrix[1]));
+    worldScale.z = Math::Length(Float3(m_worldMatrix[2]));
+    return worldScale;
+}
+
 void CameraComponent::Update(const TransformComponent& transform, float aspect)
 {
-    m_yaw = YAW + transform.rotation.x;
-    m_pitch = PITCH + transform.rotation.y;
+    m_yaw = YAW + transform.GetWorldRotation().x;
+    m_pitch = PITCH + transform.GetWorldRotation().y;
 
     Float3 front;
     front.x = Math::Cos(Math::Radians(m_yaw)) * Math::Cos(Math::Radians(m_pitch));
@@ -47,6 +68,6 @@ void CameraComponent::Update(const TransformComponent& transform, float aspect)
     m_right = Math::Normalize(Math::Cross(front, m_worldUp));
     m_up = Math::Normalize(Math::Cross(m_right, m_front));
 
-    m_view = Math::LookAt(transform.position, transform.position + m_front, m_up);
+    m_view = Math::LookAt(transform.GetWorldPosition(), transform.GetWorldPosition() + m_front, m_up);
     m_projection = Math::Perspective(fov, aspect, 0.1f, 100.0f);
 }

@@ -16,18 +16,15 @@ void GameLayer::OnAttach()
     Scene& scene = Application::Get().GetCurrentScene();
 
     Entity player = scene.CreateEntity("Player");
-    player.AddComponent<NativeScriptComponent>().Bind<Player>();
+    // player.AddComponent<NativeScriptComponent>().Bind<Player>();
+    player.GetComponent<TransformComponent>().position.z = 2.0f;
+
+    Entity playerCamera = scene.CreateEntity("Camera");
+    playerCamera.AddOrReplaceComponent<TransformComponent>(player);
+    playerCamera.AddComponent<CameraComponent>();
     
-    Entity playerMesh = scene.CreateEntity("PlayerMesh");
-    playerMesh.AddOrReplaceComponent<TransformComponent>(player); // Make PlayerMesh child of Player
-    playerMesh.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
-
-    Entity camera = scene.CreateEntity("Camera");
-
-    camera.AddComponent<CameraComponent>();
-
-    // camera.AddOrReplaceComponent<TransformComponent>(&player);
-    camera.GetComponent<TransformComponent>().position.z = 2.0f;
+    Entity square = scene.CreateEntity("Square");
+    square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
 }
 
 void GameLayer::OnTick(Timestep deltaTime)
