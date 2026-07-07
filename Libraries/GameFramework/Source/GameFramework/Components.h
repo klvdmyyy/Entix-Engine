@@ -121,6 +121,11 @@ public:
         return m_projection;
     }
 
+    [[nodiscard]]
+    inline const Float3& GetFront() const noexcept {
+        return m_front;
+    }
+
 private:
     Float3 m_front = Float3(0.0f, 0.0f, -1.0f);
     Float3 m_right;

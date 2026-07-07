@@ -3,6 +3,7 @@
 #include "SquareMesh.h"
 
 #include "Scripts/Player.h"
+#include "Scripts/PlayerCamera.h"
 
 #include <WSI/ActionSystem.h>
 
@@ -26,6 +27,7 @@ void GameLayer::OnAttach()
     Entity playerCamera = scene.CreateEntity("Camera");
     playerCamera.AddOrReplaceComponent<TransformComponent>(player);
     playerCamera.AddComponent<CameraComponent>();
+    playerCamera.AddComponent<NativeScriptComponent>().Bind<PlayerCamera>();
     
     Entity square = scene.CreateEntity("Square");
     square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
