@@ -126,15 +126,20 @@ public:
         return m_front;
     }
 
+    [[nodiscard]]
+    inline const Float3& GetRight() const noexcept {
+        return m_right;
+    }
+
+    float m_yaw = YAW;
+    float m_pitch = PITCH;
+
 private:
     Float3 m_front = Float3(0.0f, 0.0f, -1.0f);
     Float3 m_right;
 
     static constexpr float YAW = -90.0f;
     static constexpr float PITCH = 0.0f;
-
-    float m_yaw = YAW;
-    float m_pitch = PITCH;
 
     Float3 m_up;
     Float3 m_worldUp = Float3(0.0f, 1.0f, 0.0f);

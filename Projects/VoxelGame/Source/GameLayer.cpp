@@ -16,7 +16,7 @@ void GameLayer::OnAttach()
 {
     ResourceManager::Instance().LoadShader(EX_GET_SHADER("SimpleShader.glsl"));
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("../Projects/Editor/action_map.json"));
-    ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward"});
+    ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveLeft", "MoveRight"});
     
     Scene& scene = Application::Get().GetCurrentScene();
 

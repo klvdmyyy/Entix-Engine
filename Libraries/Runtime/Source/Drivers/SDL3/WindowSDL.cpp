@@ -3,6 +3,8 @@
 #include "Core/Assert.h"
 #include "Core/EventSystem.h"
 
+#include "WSI/Input.h"
+
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 
@@ -61,6 +63,11 @@ void WindowSDL::Update()
         switch(event.type) {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED: {
             WindowCloseEvent e(event.window.windowID);
+            EventBus::Instance().PublishEvent(e);
+            break;
+        }
+        case SDL_EVENT_MOUSE_MOTION: {
+            MouseMotionEvent e(event.motion.x, event.motion.y);
             EventBus::Instance().PublishEvent(e);
             break;
         }
