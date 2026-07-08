@@ -105,7 +105,3 @@ namespace IO {
         }
     };
 }
-
-void test()
-{
-}
