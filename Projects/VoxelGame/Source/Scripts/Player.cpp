@@ -72,6 +72,9 @@ void Player::OnTick(Timestep deltaTime)
     Float3 movementF = dirF * movementSpeed;
     Float3 movementR = dirR * movementSpeed;
 
+    if(ActionSystem::Instance().IsPressed("Menu"))
+        Application::Get().Quit();
+
     if(ActionSystem::Instance().IsHeld("MoveForward"))
         transform->position -= movementF * (float)deltaTime;
 

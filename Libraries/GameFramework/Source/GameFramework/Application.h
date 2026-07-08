@@ -31,6 +31,12 @@ class Application : EventListener
 
     static Application& Get() { return *s_instance; }
 
+    FORCE_INLINE
+    inline void Quit() noexcept
+    {
+        m_running = false;
+    }
+    
     void Run(int argc, char** argv);
 
     void OnEvent(const Event& event) final;
