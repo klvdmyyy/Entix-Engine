@@ -101,6 +101,10 @@ struct StaticMeshComponent {
 struct CameraComponent {
 public:
     float fov = 45.0f;
+    
+    float yaw = DEFAULT_YAW;
+    float pitch = DEFAULT_PITCH;
+
     bool primary = true;
     bool fixedAspectRatio = false;
 
@@ -131,15 +135,12 @@ public:
         return m_right;
     }
 
-    float m_yaw = YAW;
-    float m_pitch = PITCH;
-
 private:
     Float3 m_front = Float3(0.0f, 0.0f, -1.0f);
     Float3 m_right;
 
-    static constexpr float YAW = -90.0f;
-    static constexpr float PITCH = 0.0f;
+    static constexpr float DEFAULT_YAW = -90.0f;
+    static constexpr float DEFAULT_PITCH = 0.0f;
 
     Float3 m_up;
     Float3 m_worldUp = Float3(0.0f, 1.0f, 0.0f);

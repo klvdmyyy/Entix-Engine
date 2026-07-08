@@ -61,8 +61,8 @@ void Player::OnTick(Timestep deltaTime)
     m_xOffset *= sensitivity;
     m_yOffset *= sensitivity;
 
-    camera->m_yaw += m_xOffset;
-    camera->m_pitch += m_yOffset;
+    camera->yaw += m_xOffset;
+    camera->pitch += m_yOffset;
 
     // Movement
     

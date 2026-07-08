@@ -56,8 +56,8 @@ Float3 TransformComponent::GetWorldScale() const noexcept {
 
 void CameraComponent::Update(const TransformComponent& transform, float aspect)
 {
-    // m_yaw = YAW + transform.GetWorldRotation().x;
-    // m_pitch = PITCH + transform.GetWorldRotation().y;
+    float m_yaw = yaw + transform.GetWorldRotation().x;
+    float m_pitch = pitch + transform.GetWorldRotation().y;
 
     Float3 front;
     front.x = Math::Cos(Math::Radians(m_yaw)) * Math::Cos(Math::Radians(m_pitch));
