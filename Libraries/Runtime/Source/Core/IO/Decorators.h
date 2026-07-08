@@ -77,7 +77,6 @@ namespace IO {
         DEFINE_READER_DECORATOR(TextReader);
         
     public:
-
         String Read(size_t size)
         {
             String result(size, '\0');

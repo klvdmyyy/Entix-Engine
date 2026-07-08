@@ -34,12 +34,15 @@ namespace IO {
 
     class ReaderDecorator : public Reader {
     public:
-        explicit ReaderDecorator(Scope<Reader> inner)
-            : m_inner(std::move(inner))
+        explicit ReaderDecorator(Reader* inner, bool takeOwnership = false)
+            : m_inner(inner), m_ownsInner(takeOwnership)
         {
         }
 
-        virtual ~ReaderDecorator() = default;
+        virtual ~ReaderDecorator()
+        {
+            if(m_ownsInner) delete m_inner;
+        }
 
         size_t Read(void* buffer, size_t size) override { return m_inner->Read(buffer, size); }
         void Seek(Int64 offset, SeekOrigin origin) override { return m_inner->Seek(offset, origin); }
@@ -47,22 +50,27 @@ namespace IO {
         size_t Size() const override { return m_inner->Size(); }
 
     protected:
-        Scope<Reader> m_inner;
+        Reader* m_inner;
+        bool m_ownsInner;
     };
 
-    class WriterDecorator : public Writer {
+    class WriterDecorator {
     public:
-        explicit WriterDecorator(Scope<Writer> inner)
-            : m_inner(std::move(inner))
+        explicit WriterDecorator(Writer* inner, bool takeOwnership = false)
+            : m_inner(inner), m_ownsInner(takeOwnership)
         {
         }
 
-        virtual ~WriterDecorator() = default;
+        virtual ~WriterDecorator()
+        {
+            if(m_ownsInner) delete m_inner;
+        }
 
         size_t Write(const void* buffer, size_t size) override { return m_inner->Write(buffer, size); }
         void Flush() override { return m_inner->Flush(); }
 
     protected:
-        Scope<Writer> m_inner;
+        Writer* m_inner;
+        bool m_ownsInner;
     };
 }
