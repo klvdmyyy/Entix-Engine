@@ -5,6 +5,7 @@
 
 class Player : public ScriptableEntity {
 public:
+    float movementSpeed = 1.0f;
 
 protected:
     void OnCreate() final;
@@ -12,4 +13,8 @@ protected:
     void OnDestroy() final;
 
 private:
+    Scene* scene = nullptr;
+    
+    TransformComponent* transform = nullptr;
+    CameraComponent* playerCamera = nullptr;
 };

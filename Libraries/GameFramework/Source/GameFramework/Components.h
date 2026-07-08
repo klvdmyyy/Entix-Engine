@@ -147,18 +147,18 @@ class ScriptableEntity;
 
 struct NativeScriptComponent {
     using InstantiateFunction = std::function<Scope<ScriptableEntity>()>;
-    // using DestroyFunction = std::function<void(NativeScriptComponent*)>;
+    using DestroyFunction = std::function<void(NativeScriptComponent*)>;
     
     Scope<ScriptableEntity> instance;
 
     InstantiateFunction InstantiateScript;
-    // DestroyFunction DestroyScript;
+    DestroyFunction DestroyScript;
 
     template<typename T>
     void Bind()
     {
         InstantiateScript = [](){ return Scope<ScriptableEntity>(new T()); };
-        // DestroyScript = [](NativeScriptComponent* nsc) { nsc->instance.reset(nullptr); };
+        DestroyScript = [](NativeScriptComponent* nsc) { nsc->instance.reset(nullptr); };
     }
 
     NativeScriptComponent() = default;
