@@ -35,7 +35,9 @@ public:
 
     virtual void Update() = 0;
     
-    virtual void* GetWindowHandle() const = 0;
+    virtual void* GetWindowHandle() const noexcept = 0;
+
+    virtual void GrabCursor(bool value = true) = 0;
 
     virtual void EnableGUIUpdate() = 0;
 

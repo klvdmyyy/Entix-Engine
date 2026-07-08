@@ -12,10 +12,12 @@ class ERUNTIME_API WindowSDL : public Window {
 
     void Update() final;
         
-    void* GetWindowHandle() const final
+    void* GetWindowHandle() const noexcept final
     {
         return static_cast<void*>(m_window);
     }
+
+    void GrabCursor(bool value = true) final;
 
     void EnableGUIUpdate() final;
 
@@ -23,4 +25,5 @@ class ERUNTIME_API WindowSDL : public Window {
     SDL_Window* m_window;
 
     bool m_guiEnabled = false;
+    bool m_isCursorGrabbed = false;
 };

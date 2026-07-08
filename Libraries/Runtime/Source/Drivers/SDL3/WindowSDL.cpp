@@ -59,6 +59,16 @@ void WindowSDL::Update()
     while(SDL_PollEvent(&event)) {
         if(m_guiEnabled)
             ImGui_ImplSDL3_ProcessEvent(&event);
+
+        if(m_isCursorGrabbed) {
+            int x, y;
+            SDL_GetWindowSize(m_window, &x, &y);
+
+            x /= 2;
+            y /= 2;
+            
+            SDL_WarpMouseInWindow(m_window, x, y);
+        }
         
         switch(event.type) {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED: {
@@ -67,14 +77,32 @@ void WindowSDL::Update()
             break;
         }
         case SDL_EVENT_MOUSE_MOTION: {
-            MouseMotionEvent e(event.motion.x, event.motion.y);
-            EventBus::Instance().PublishEvent(e);
+            if(m_isCursorGrabbed) {
+                int x, y;
+                SDL_GetWindowSize(m_window, &x, &y);
+
+                x /= 2;
+                y /= 2;
+
+                MouseMotionEvent e(event.motion.x - x, y - event.motion.y);
+                EventBus::Instance().PublishEvent(e);
+            } else {
+                MouseMotionEvent e(event.motion.x, event.motion.y);
+                EventBus::Instance().PublishEvent(e);
+            }
             break;
         }
         default:
             break;
         }
     }
+}
+
+void WindowSDL::GrabCursor(bool value)
+{
+    m_isCursorGrabbed = value;
+    SDL_SetWindowRelativeMouseMode(m_window, value);
+    // SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
 }
 
 void WindowSDL::EnableGUIUpdate()

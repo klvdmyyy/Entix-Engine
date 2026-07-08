@@ -21,11 +21,15 @@ void Player::OnEvent(const Event& event)
 
     dispatcher.Dispatch<MouseMotionEvent>([&](const MouseMotionEvent& event)
     {
+        camera->yaw += event.k_xPosition * sensitivity;
+        camera->pitch += event.k_yPosition * sensitivity;
     });
 }
 
 void Player::OnCreate()
 {
+    Application::Get().GetWindow()->GrabCursor(true);
+
     scene = &Application::Get().GetCurrentScene();
     
     transform = &GetComponent<TransformComponent>();
@@ -39,31 +43,6 @@ void Player::OnCreate()
 
 void Player::OnTick(Timestep deltaTime)
 {
-    // Mouse motion
-
-    float xPos = 0.0f;
-    float yPos = 0.0f;
-
-    Input::GetCursorPosition(xPos, yPos);
-
-    if(m_firstMouseMotion) {
-        m_lastX = xPos;
-        m_lastY = yPos;
-        m_firstMouseMotion = false;
-    }
-
-    m_xOffset = xPos - m_lastX;
-    m_yOffset = m_lastY - yPos;
-
-    m_lastX = xPos;
-    m_lastY = yPos;
-
-    m_xOffset *= sensitivity;
-    m_yOffset *= sensitivity;
-
-    camera->yaw += m_xOffset;
-    camera->pitch += m_yOffset;
-
     // Movement
     
     Float3 dirF = camera->GetFront();
