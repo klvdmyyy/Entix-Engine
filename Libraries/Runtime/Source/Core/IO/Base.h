@@ -34,7 +34,7 @@ namespace IO {
 
     class ReaderDecorator : public Reader {
     public:
-        explicit ReaderDecorator(Reader* inner, bool takeOwnership = false)
+        explicit ReaderDecorator(Reader* inner, bool takeOwnership = true)
             : m_inner(inner), m_ownsInner(takeOwnership)
         {
         }
@@ -56,7 +56,7 @@ namespace IO {
 
     class WriterDecorator {
     public:
-        explicit WriterDecorator(Writer* inner, bool takeOwnership = false)
+        explicit WriterDecorator(Writer* inner, bool takeOwnership = true)
             : m_inner(inner), m_ownsInner(takeOwnership)
         {
         }
