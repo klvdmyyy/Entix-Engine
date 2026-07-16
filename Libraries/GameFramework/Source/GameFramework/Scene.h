@@ -22,11 +22,11 @@ public:
     ~Scene();
 
     Entity CreateEntity(const String& name = String());
-    Entity CreateEntityWithUUID(UUID uuid, const String& name = String());
+    Entity CreateEntityWithUuid(Uuid uuid, const String& name = String());
     void DestroyEntity(Entity entity);
 
     Entity FindEntityByName(StringView name);
-    Entity GetEntityByUUID(UUID uuid);
+    Entity GetEntityByUuid(Uuid uuid);
 
     void OnTick(Timestep deltaTime);
     void OnRender();
@@ -34,7 +34,7 @@ public:
 private:
     friend class Entity;
 
-    std::unordered_map<UUID, entt::entity> m_entityMap{};
+    std::unordered_map<Uuid, entt::entity> m_entityMap{};
     entt::registry m_registry{};
 
     Ref<Renderer::Context> m_rendererContext;

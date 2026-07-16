@@ -74,3 +74,12 @@ class ERUNTIME_API EventBus
 
     EventBus() = default;
     };
+    
+template<std::derived_from<Event> T, typename F>
+FORCE_INLINE
+inline void DispatchEvent(const Event& event, F fn)
+{
+    EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<T>(fn);
+}

@@ -18,12 +18,12 @@
 
 class Entity;
 
-struct IDComponent {
-    UUID id;
+struct IdComponent {
+    Uuid id;
 
-    IDComponent() = default;
-    IDComponent(const IDComponent&) = default;
-    IDComponent(UUID uuid) : id(uuid) {}
+    IdComponent() = default;
+    IdComponent(const IdComponent&) = default;
+    IdComponent(Uuid uuid) : id(uuid) {}
 };
 
 struct TagComponent {

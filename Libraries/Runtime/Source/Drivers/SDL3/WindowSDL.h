@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 #pragma once
 
-#include "WSI/Window.h"
+#include "Core/Window.h"
 
 #include <SDL3/SDL.h>
 

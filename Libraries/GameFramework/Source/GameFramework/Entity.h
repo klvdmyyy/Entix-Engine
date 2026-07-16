@@ -59,7 +59,7 @@ public:
     operator entt::entity() const { return m_entityHandle; }
     operator Uint32() const { return (Uint32)m_entityHandle; }
 
-    UUID GetUUID() { return GetComponent<IDComponent>().id; }
+    Uuid GetUuid() { return GetComponent<IdComponent>().id; }
     const String& GetName() { return GetComponent<TagComponent>().tag; }
         
 private:       

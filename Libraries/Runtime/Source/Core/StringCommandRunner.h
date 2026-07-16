@@ -5,7 +5,7 @@
 #include "Core/Types.h"
 #include "Core/Assert.h"
 
-#include "Core/IO/Writer.h"
+#include "Core/IO/Base.h"
 
 #include <expected>
 #include <unordered_map>

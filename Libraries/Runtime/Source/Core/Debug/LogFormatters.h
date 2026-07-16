@@ -7,14 +7,14 @@
 #include <filesystem>
 #include <print>
 
-class DefaultFormatter : public LogFormatter {
+class ERUNTIME_API DefaultFormatter : public LogFormatter {
 public:
     String Format(LogEntry entry) const noexcept final
     {
         auto filepath = std::filesystem::path(entry.location.file_name());
 
         return std::format("{}({}:{}) [{}:{}] {}",
-                           filepath.filename(),
+                           filepath.filename().string(),
                            entry.location.line(),
                            entry.location.column(),
                            // entry.location.function_name(),
@@ -24,7 +24,7 @@ public:
     }
 };
 
-class ConsoleFormatter : public LogFormatter {
+class ERUNTIME_API ConsoleFormatter : public LogFormatter {
 public:
     String Format(LogEntry entry) const noexcept final
     {

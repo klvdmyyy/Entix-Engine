@@ -4,27 +4,33 @@
 
 #include "Core/Types.h"
 
-#include "Core/IO/Writer.h"
+#include "Core/IO/Base.h"
 
 #include <print>
 #include <deque>
 
-class BufferLogSink : public LogSink, public IO::Writer
+class ERUNTIME_API BufferLogSink : public LogSink, public IO::Writer
 {
 public:
     static constexpr Uint64 MAX_ENTRY_COUNT = 100;
 
     static BufferLogSink& Instance();
 
-    void Write(StringView str) final
+    size_t Write(const void* buffer, size_t size) final
     {
         if(m_entries.size() > MAX_ENTRY_COUNT)
             m_entries.pop_front();
-            
+        
+        String str;
+        str.resize(size);
+        str = static_cast<const char*>(buffer);
+
         m_entries.push_back(String(str));
+
+        return size;
     }
 
-    inline void WriteLogEntry(const LogEntry& entry) final
+    void WriteLogEntry(const LogEntry& entry) final
     {
         if(m_entries.size() > MAX_ENTRY_COUNT)
             m_entries.pop_front();
@@ -43,7 +49,7 @@ private:
     std::deque<String> m_entries{};
 };
 
-class StdoutLogSink : public LogSink
+class ERUNTIME_API StdoutLogSink : public LogSink
 {
 public:
     inline void WriteLogEntry(const LogEntry& entry) final

@@ -15,7 +15,7 @@
 #define EX_LOG(Level, Category, Fmt, ...) \
     ::Logger::Instance().Log(LogLevel::Level, Category, std::format(Fmt,##__VA_ARGS__))
 
-class LogSink {
+class ERUNTIME_API LogSink {
 public:
     LogSink() = default;
     virtual ~LogSink() = default;
@@ -23,7 +23,7 @@ public:
     virtual void WriteLogEntry(const LogEntry &item) = 0;
 };
 
-class Logger {
+class ERUNTIME_API Logger {
 public:
     static Logger &Instance();
       
@@ -36,46 +36,3 @@ private:
     std::vector<Ref<LogSink>> m_sinks;
     std::mutex m_sync;
 };
-
-
-namespace Debug {
-#define LINSTANCE() Logger::Instance()
-
-    FORCE_INLINE
-    inline constexpr void Trace(LogCategory category, StringView message,
-                                std::source_location location = std::source_location::current())
-    {
-        LINSTANCE().Log(LogLevel::Trace, category, message, location);
-    }
-
-    FORCE_INLINE
-    inline constexpr void Info(LogCategory category, StringView message,
-                               std::source_location location = std::source_location::current())
-    {
-        LINSTANCE().Log(LogLevel::Info, category, message, location);
-    }
-
-    FORCE_INLINE
-    inline constexpr void Warn(LogCategory category, StringView message,
-                               std::source_location location = std::source_location::current())
-    {
-        LINSTANCE().Log(LogLevel::Warning, category, message, location);
-    }
-
-    FORCE_INLINE
-    inline constexpr void Error(LogCategory category, StringView message,
-                                std::source_location location = std::source_location::current())
-    {
-        LINSTANCE().Log(LogLevel::Error, category, message, location);
-    }
-    
-    FORCE_INLINE
-    inline constexpr void Critical(LogCategory category, StringView message,
-                                   std::source_location location = std::source_location::current())
-    {
-        LINSTANCE().Log(LogLevel::Critical, category, message, location);
-    }
-        
-#undef LINSTANCE
-}
-

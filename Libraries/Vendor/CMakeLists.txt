@@ -44,6 +44,9 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui-docking/backends/imgui_impl_opengl3.cpp
 )
 
+target_link_libraries(imgui PRIVATE
+  SDL3::SDL3-shared)
+
 target_sources(imgui PRIVATE
   ${IMGUI_SOURCES}
   ${IMGUI_SDL_SOURCES}

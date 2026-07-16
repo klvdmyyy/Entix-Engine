@@ -26,13 +26,15 @@ static int GameMain(int argc, char** argv)
     return 0;
 }
 
-#if defined(PLATFORM_LINUX)
+#if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
 int main(int argc, char** argv)
 {
     return ::GameMain(argc, argv);
 }
-#elif defined(PLATFORM_WINDOW)
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+#elif defined(PLATFORM_WINDOWS)
+#include <Windows.h>
+
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
     return ::GameMain(__argc, __argv);
 }

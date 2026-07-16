@@ -22,13 +22,13 @@ Scene::~Scene()
 
 Entity Scene::CreateEntity(const String& name)
 {
-    return CreateEntityWithUUID(UUID(), name);
+    return CreateEntityWithUuid(Uuid(), name);
 }
 
-Entity Scene::CreateEntityWithUUID(UUID uuid, const String& name)
+Entity Scene::CreateEntityWithUuid(Uuid uuid, const String& name)
 {
     Entity entity = { m_registry.create(), this };
-    entity.AddComponent<IDComponent>(uuid);
+    entity.AddComponent<IdComponent>(uuid);
     entity.AddComponent<TransformComponent>();
     auto& tc = entity.AddComponent<TagComponent>();
     tc.tag = name.empty() ? "Entity" : name;
@@ -49,7 +49,7 @@ Entity Scene::FindEntityByName(StringView name)
     return Entity{};
 }
 
-Entity Scene::GetEntityByUUID(UUID uuid) {
+Entity Scene::GetEntityByUuid(Uuid uuid) {
     auto it = m_entityMap.find(uuid);
     if(it != m_entityMap.end())
         return Entity{ it->second, this };

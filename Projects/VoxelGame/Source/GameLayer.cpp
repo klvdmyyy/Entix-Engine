@@ -3,9 +3,8 @@
 #include "SquareMesh.h"
 
 #include "Scripts/Player.h"
-#include "Scripts/PlayerCamera.h"
 
-#include <WSI/ActionSystem.h>
+#include <Input/ActionSystem.h>
 
 GameLayer::GameLayer()
     : Layer("GameLayer")
@@ -15,7 +14,7 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
     ResourceManager::Instance().LoadShader(EX_GET_SHADER("SimpleShader.glsl"));
-    ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("../Projects/Editor/action_map.json"));
+    ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
     ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Menu"});
     
     Scene& scene = Application::Get().GetCurrentScene();
@@ -27,7 +26,6 @@ void GameLayer::OnAttach()
     Entity playerCamera = scene.CreateEntity("Camera");
     playerCamera.AddOrReplaceComponent<TransformComponent>(player);
     playerCamera.AddComponent<CameraComponent>();
-    playerCamera.AddComponent<NativeScriptComponent>().Bind<PlayerCamera>();
     
     Entity square = scene.CreateEntity("Square");
     square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));

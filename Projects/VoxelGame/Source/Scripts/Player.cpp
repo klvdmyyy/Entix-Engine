@@ -1,9 +1,7 @@
 #include "Player.h"
 
-#include <WSI/ActionSystem.h>
-#include <WSI/Input.h>
-
-#include <cmath>
+#include <Input/Events.h>
+#include <Input/Actions.h>
 
 Player::Player()
 {
@@ -51,19 +49,19 @@ void Player::OnTick(Timestep deltaTime)
     Float3 movementF = dirF * movementSpeed;
     Float3 movementR = dirR * movementSpeed;
 
-    if(ActionSystem::Instance().IsPressed("Menu"))
+    if(Input::IsActionPressed("Menu"))
         Application::Get().Quit();
 
-    if(ActionSystem::Instance().IsHeld("MoveForward"))
+    if(Input::IsActionHeld("MoveForward"))
         transform->position -= movementF * (float)deltaTime;
 
-    if(ActionSystem::Instance().IsHeld("MoveBackward"))
+    if(Input::IsActionHeld("MoveBackward"))
         transform->position += movementF * (float)deltaTime;
 
-    if(ActionSystem::Instance().IsHeld("MoveLeft"))
+    if(Input::IsActionHeld("MoveLeft"))
         transform->position += movementR * (float)deltaTime;
 
-    if(ActionSystem::Instance().IsHeld("MoveRight"))
+    if(Input::IsActionHeld("MoveRight"))
         transform->position -= movementR * (float)deltaTime;
 }
 

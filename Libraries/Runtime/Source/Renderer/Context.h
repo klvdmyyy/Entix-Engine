@@ -2,9 +2,9 @@
 #pragma once
 
 #include "Core/Memory.h"
-#include "Core/IO/Reader.h"
+#include "Core/IO/Base.h"
 
-#include "WSI/Window.h"
+#include "Core/Window.h"
 
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"

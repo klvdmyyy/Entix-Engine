@@ -60,7 +60,7 @@ void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
         }
 
     if (firstNonSpace == String::npos) {
-        Debug::Error(LogCategory::Console, "Failed to run command: Can't find token start (maybe it's empty?)");
+        EX_LOG(Error, LogCategory::Console, "Failed to run command: Can't find token start (maybe it's empty?)");
         return;
     }
 
@@ -74,7 +74,7 @@ void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
         }
 
     if (firstTokenEnd == String::npos) {
-        Debug::Error(LogCategory::Console, "Failed to run command: Can't find token end");
+        EX_LOG(Error, LogCategory::Console, "Failed to run command: Can't find token end");
         return;
     }
 
@@ -85,7 +85,7 @@ void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
     auto searchIt = m_commandMap.find(cmdSearchStr);
     if (searchIt == m_commandMap.end())
         {
-            Debug::Error(LogCategory::Console, std::format("Command not found: {}", cmdSearchStr));
+            EX_LOG(Error, LogCategory::Console, "Command not found: {}", cmdSearchStr);
             return;
         }
 
@@ -100,7 +100,7 @@ bool StringCommandRunner::AddCommand(CommandSpecification cmd, CommandCallback c
 
     if (m_commandMap.contains(cmd.name))
         {
-            Debug::Error(LogCategory::Console, std::format("Failed to add command. Command already exists: {}", cmd.name));
+            EX_LOG(Error, LogCategory::Console, "Failed to add command. Command already exists: {}", cmd.name);
             return false;
         }
 
@@ -116,7 +116,7 @@ bool StringCommandRunner::RemoveCommand(StringView cmd)
 
     if(!m_commandMap.contains(cmd))
         {
-            Debug::Error(LogCategory::Console, std::format("Failed to remove command. Command doesn't exists: {}", cmd));
+            EX_LOG(Error, LogCategory::Console, "Failed to remove command. Command doesn't exists: {}", cmd);
             return false;
         }
 

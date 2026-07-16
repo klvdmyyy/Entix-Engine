@@ -16,11 +16,11 @@ using Int16 = int16_t;
 using Int32 = int32_t;
 using Int64 = int64_t;
 
-class UUID {
+class Uuid {
 public:
-    UUID();
-    UUID(Uint64 uuid);
-    UUID(const UUID& other) = default;
+    Uuid();
+    Uuid(Uint64 uuid);
+    Uuid(const Uuid& other) = default;
 
     operator Uint64() const { return m_uuid; }
 
@@ -33,9 +33,9 @@ namespace std {
     struct hash;
 
     template<>
-    struct hash<::UUID>
+    struct hash<::Uuid>
     {
-        std::size_t operator()(const ::UUID& uuid) const {
+        std::size_t operator()(const ::Uuid& uuid) const {
             return (::Uint64)uuid;
         }
     };

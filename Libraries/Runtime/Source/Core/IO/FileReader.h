@@ -2,6 +2,10 @@
 #pragma once
 
 #include "Core/IO/Base.h"
+#include "Core/String.h"
+
+#include <filesystem>
+#include <fstream>
 
 namespace IO {
     class FileReader : public Reader {
@@ -17,9 +21,10 @@ namespace IO {
         const std::filesystem::path& GetPath() const { return k_filepath; }
 
     private:
-        std::fstream m_file;
+        mutable std::fstream m_file;
         
         size_t m_fileSize;
         const std::filesystem::path k_filepath;
+        bool m_exists = false;
     };
 }

@@ -16,10 +16,10 @@ enum class LogLevel {
 };
 
 [[nodiscard]]
-const StringView LogLevelToString(const LogLevel& level);
+ERUNTIME_API const StringView LogLevelToString(const LogLevel& level);
 
 template<>
-struct std::formatter<LogLevel, char>
+struct ERUNTIME_API std::formatter<LogLevel, char>
 {
     template<class ParseContext>
     constexpr ParseContext::iterator parse(ParseContext& ctx)

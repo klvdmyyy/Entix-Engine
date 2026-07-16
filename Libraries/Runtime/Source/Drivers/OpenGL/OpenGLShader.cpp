@@ -1,7 +1,9 @@
 #include "Drivers/OpenGL/OpenGLShader.h"
 
 #include "Core/Assert.h"
-#include "Core/FileReader.h"
+
+#include "Core/IO/Decorators.h"
+#include "Core/IO/FileReader.h"
 
 #include "Math/TypePtr.h"
 
@@ -53,7 +55,8 @@ static GLuint CompileOpenGLShader(const std::string &src,
 OpenGLShader::OpenGLShader(IO::Reader& shaderReader)
 {
     ZoneScoped;
-    auto source = shaderReader.ReadStr();
+
+    auto source = IO::TextReader::CreateNonOwned(shaderReader).ReadAll();
 
     auto shaderSourceMap = GLSL_Preprocess(source);
 

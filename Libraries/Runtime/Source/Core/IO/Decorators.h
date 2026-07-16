@@ -18,7 +18,7 @@
     }                                           \
                                                 \
 private:                                        \
- TYPE(Reader* writer, bool owns)                \
+ TYPE(Reader* inner, bool owns)                \
      : ReaderDecorator(inner, owns)             \
  {                                              \
  }
@@ -36,7 +36,7 @@ private:                                        \
     }                                           \
                                                 \
 private:                                        \
- TYPE(Writer* writer, bool owns)                \
+ TYPE(Writer* inner, bool owns)                \
      : WriterDecorator(inner, owns)             \
  {                                              \
  }
@@ -48,7 +48,7 @@ namespace IO {
     public:
         void Write(const String& str)
         {
-            const auto writtenSize = Write(static_cast<const void*>(&str[0]), str.size());
+            const auto writtenSize = m_inner->Write(&str[0], str.size());
             EX_ASSERT(writtenSize == str.size(), "Failed to write text data.");
         }
 
@@ -99,7 +99,7 @@ namespace IO {
         {
             auto size = m_inner->Size() - m_inner->Tell();
             String result(size, '\0');
-            auto readedSize = m_inner->Read(result.data(), size);
+            auto readedSize = m_inner->Read(&result[0], size);
             EX_ASSERT(readedSize == size, "Failed to read text data!");
             return result;
         }

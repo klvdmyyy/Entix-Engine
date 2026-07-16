@@ -1,4 +1,4 @@
-#include "WSI/Input.h"
+#include "Input/Base.h"
 
 #include <SDL3/SDL.h>
 

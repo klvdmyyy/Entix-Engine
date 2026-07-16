@@ -8,7 +8,7 @@
 #include "Core/Debug/Log.h"
 #include "Core/StringCommandRunner.h"
 
-#include "WSI/Window.h"
+#include "Core/Window.h"
 
 #include "Renderer/Context.h"
 
@@ -29,7 +29,7 @@ class Application : EventListener
  public:
     ~Application();
 
-    static Application& Get() { return *s_instance; }
+    static Application& Get();
 
     FORCE_INLINE
     inline void Quit() noexcept
@@ -77,8 +77,6 @@ class Application : EventListener
     Application(const ApplicationSpecification& spec);
 
  private:
-    static Application* s_instance;
-
     const ApplicationSpecification k_spec;
 
     LayerStack m_layerStack;

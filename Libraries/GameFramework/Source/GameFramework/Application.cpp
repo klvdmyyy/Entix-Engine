@@ -5,20 +5,25 @@
 
 #include "Core/Resources/ResourceManager.h"
 
-#include "WSI/ActionSystem.h"
+#include "Input/ActionSystem.h"
 
 #include <tracy/Tracy.hpp>
 
-Application* Application::s_instance = nullptr;
+static Application* g_instance = nullptr;
+
+Application& Application::Get()
+{
+    return *g_instance;
+}
 
 Application::Application(const ApplicationSpecification& spec)
     : k_spec(spec), m_running(true), m_scene(nullptr)
 {
     // Only one application instance for program.
-    EX_ASSERT(!s_instance, "failed to create application. application instance already exists");
+    EX_ASSERT(!g_instance, "failed to create application. application instance already exists");
 
     // Setting up an application instance.
-    s_instance = this;
+    g_instance = this;
 
     // Tracing macro
     ZoneScoped;

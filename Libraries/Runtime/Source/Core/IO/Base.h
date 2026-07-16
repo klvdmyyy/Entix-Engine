@@ -29,7 +29,7 @@ namespace IO {
         }
 
         virtual size_t Write(const void* buffer, size_t size) = 0;
-        virtual void Flush() = 0;
+        virtual void Flush() {};
     };
 
     class ReaderDecorator : public Reader {
@@ -54,7 +54,7 @@ namespace IO {
         bool m_ownsInner;
     };
 
-    class WriterDecorator {
+    class WriterDecorator : public Writer {
     public:
         explicit WriterDecorator(Writer* inner, bool takeOwnership = true)
             : m_inner(inner), m_ownsInner(takeOwnership)

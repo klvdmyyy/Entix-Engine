@@ -14,16 +14,16 @@ struct LogEntry;
 class LogFormatter;
 class LogCategory;
 
-class LogFormatter {
+class ERUNTIME_API LogFormatter {
 public:
     virtual ~LogFormatter() = default;
 
     virtual String Format(LogEntry entry) const noexcept = 0;
 };
 
-class LogCategory {
+class ERUNTIME_API LogCategory {
 public:
-    LogCategory(const char* name, const LogFormatter* formatter)
+    LogCategory(const char* name, LogFormatter* formatter)
         : k_name(name), k_formatter(formatter)
     {
     }
@@ -44,7 +44,7 @@ private:
     const LogFormatter* k_formatter;
 };
 
-struct LogEntry
+struct ERUNTIME_API LogEntry
 {
     LogLevel level;
     LogCategory category;

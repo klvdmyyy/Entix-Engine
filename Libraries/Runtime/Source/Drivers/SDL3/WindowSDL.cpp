@@ -3,7 +3,7 @@
 #include "Core/Assert.h"
 #include "Core/EventSystem.h"
 
-#include "WSI/Input.h"
+#include "Input/Events.h"
 
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -101,8 +101,8 @@ void WindowSDL::Update()
 void WindowSDL::GrabCursor(bool value)
 {
     m_isCursorGrabbed = value;
-    SDL_SetWindowRelativeMouseMode(m_window, value);
-    // SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
+    EX_ASSERT(SDL_SetWindowRelativeMouseMode(m_window, value), "Failed to set window relative mouse mode!");
+    SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
 }
 
 void WindowSDL::EnableGUIUpdate()
