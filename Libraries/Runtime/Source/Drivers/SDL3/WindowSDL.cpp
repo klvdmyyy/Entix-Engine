@@ -102,7 +102,7 @@ void WindowSDL::GrabCursor(bool value)
 {
     m_isCursorGrabbed = value;
     EX_ASSERT(SDL_SetWindowRelativeMouseMode(m_window, value), "Failed to set window relative mouse mode!");
-    SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
+    // SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
 }
 
 void WindowSDL::EnableGUIUpdate()
