@@ -39,7 +39,7 @@ class ERUNTIME_API EventDispatcher
     template<std::derived_from<Event> T, typename F>
     bool Dispatch(const F& handler)
     {
-        if (m_event.GetType() == T::GetStaticType())
+        if (std::strcmp(m_event.GetType(), T::GetStaticType()) == 0)
             {
                 handler(static_cast<const T &>(m_event));
                 return true;
