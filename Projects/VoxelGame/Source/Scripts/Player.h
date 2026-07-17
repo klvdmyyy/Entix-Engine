@@ -19,14 +19,6 @@ protected:
     void OnEvent(const Event& event) final;
 
 private:
-    bool m_firstMouseMotion = true;
-    
-    float m_lastX = 0.0f;
-    float m_lastY = 0.0f;
-
-    float m_xOffset = 0.0f;
-    float m_yOffset = 0.0f;
-    
     Scene* scene = nullptr;
     
     TransformComponent* transform = nullptr;
