@@ -46,7 +46,7 @@ void OpenGLContext::Swap()
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(m_window->GetWindowHandle()));
 }
 
-void OpenGLContext::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray)
+void OpenGLContext::Submit(Shader* shader, const Ref<VertexArray>& vertexArray)
 {
     shader->Bind();
     vertexArray->Bind();
@@ -87,9 +87,9 @@ VertexArray* OpenGLContext::CreateVertexArray()
 }
     
 [[nodiscard]]
-Shader* OpenGLContext::CreateShader(IO::Reader& shaderReader)
+Shader* OpenGLContext::CreateShader(const ResourceId& id)
 {
-    return new OpenGLShader(shaderReader);
+    return new OpenGLShader(id);
 }
 
 [[nodiscard]]

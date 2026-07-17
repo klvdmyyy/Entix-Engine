@@ -9,6 +9,8 @@
 #include "Math/Vector.h"
 #include "Math/MatrixTransform.h"
 
+#include "Resources/ResourceHandle.h"
+
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 
@@ -81,12 +83,6 @@ private:
 };
 
 struct StaticMeshComponent {
-    Ref<Renderer::VertexArray> vertexArray;
-
-    struct Material {
-        String shader{};
-    } material{};
-
     StaticMeshComponent()
         : vertexArray(nullptr)
     {
@@ -95,6 +91,19 @@ struct StaticMeshComponent {
     StaticMeshComponent(const Ref<Renderer::VertexArray> vertexArray)
         : vertexArray(vertexArray)
     {
+    }
+
+    Ref<Renderer::VertexArray> vertexArray;
+
+    struct Material {
+        ResourceHandle<Renderer::Shader> shader{};
+    } material{};
+
+    // Helper function to make shader setting more simple
+    FORCE_INLINE
+    inline void SetShader(ResourceHandle<Renderer::Shader> shader)
+    {
+        material.shader = std::move(shader);
     }
 };
 

@@ -52,9 +52,21 @@ static GLuint CompileOpenGLShader(const std::string &src,
     return shader;
 }
 
-OpenGLShader::OpenGLShader(IO::Reader& shaderReader)
+OpenGLShader::OpenGLShader(const ResourceId& id)
+    : Shader(id)
+{
+}
+
+bool OpenGLShader::CompileFromStream(IO::Reader& shaderReader)
 {
     ZoneScoped;
+    
+    if(m_isCompiled) {
+        EX_LOG(Info, LogCategory::Driver, "OpenGL program is already linked. Force reloading shaders!");
+
+        m_isCompiled = false;
+        glDeleteProgram(m_program);
+    }
 
     auto source = IO::TextReader::CreateNonOwned(shaderReader).ReadAll();
 
@@ -88,13 +100,17 @@ OpenGLShader::OpenGLShader(IO::Reader& shaderReader)
             glDeleteShader(fragShader);
 
             EX_ASSERT(false, "failed to link shader program. error: {}",
-                      infoLog.data());
+                            infoLog.data());
+
+            return false;
 
             /* TODO: Error log + Assertion!!!!!! Failed to link program. Info message in `info_log` variable */
         }
 
     glDetachShader(m_program, vertShader);
     glDetachShader(m_program, fragShader);
+
+    return true;
 }
 
 OpenGLShader::~OpenGLShader()

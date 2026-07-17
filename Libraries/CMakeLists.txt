@@ -34,7 +34,7 @@ FetchContent_Declare(
   OVERRIDE_FIND_PACKAGE
 )
 
-set(TRACY_ON_DEMAND ON CACHE BOOL "" FORCE)
+set(TRACY_ON_DEMAND OFF CACHE BOOL "" FORCE)
 set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Tracy)
 

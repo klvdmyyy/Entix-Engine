@@ -4,12 +4,17 @@
 
 #include "GameFramework/ScriptableEntity.h"
 
-#include "Core/Resources/ResourceManager.h"
 #include "Core/Debug/Log.h"
+
+#include "Resources/ResourceManager.h"
+
+#include "GameFramework/ShaderLoader.h"
 
 #include <unordered_map>
 #include <functional>
 #include <vector>
+
+#include <tracy/Tracy.hpp>
 
 Scene::Scene(const Ref<Renderer::Context>& rendererContext)
     : m_rendererContext(rendererContext)
@@ -59,8 +64,10 @@ Entity Scene::GetEntityByUuid(Uuid uuid) {
 
 void Scene::OnTick(Timestep deltaTime)
 {   
+    constexpr const char* TRANSFORM_FRAME = "Update transformations";
     // Update transformations
     {
+        FrameMarkStart(TRANSFORM_FRAME);
         auto view = m_registry.view<TransformComponent>();
 
         std::unordered_map<entt::entity, entt::entity> parentMap;
@@ -100,20 +107,28 @@ void Scene::OnTick(Timestep deltaTime)
         for(auto root : roots) {
             updateWorld(root, Float4x4(1.0f));
         }
+        FrameMarkEnd(TRANSFORM_FRAME);
     }
+
+    constexpr const char* CAMERA_FRAME = "Update camera";
 
     // Update camera
     {
+        FrameMarkStart(CAMERA_FRAME);
         auto view = m_registry.view<TransformComponent, CameraComponent>();
         for(auto entity : view) {
             auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
             camera.Update(transform, 800.0f / 600.0f);
         }
+        FrameMarkEnd(CAMERA_FRAME);
     }
+
+    constexpr const char* NATIVE_SCRIPT_FRAME = "Updating native scripts";
 
     // Update scripts
     {
+        FrameMarkStart(NATIVE_SCRIPT_FRAME);
         auto view = m_registry.view<NativeScriptComponent>();
         for(auto entity : view) {
             auto& nsc = view.get<NativeScriptComponent>(entity);
@@ -126,15 +141,22 @@ void Scene::OnTick(Timestep deltaTime)
 
             nsc.instance->OnTick(deltaTime);
         }
+        FrameMarkEnd(NATIVE_SCRIPT_FRAME);
     }
 }
 
+static constexpr const char* RENDERING_FRAME = "Scene OnRender";
+
 void Scene::OnRender()
 {
+    FrameMarkStart(RENDERING_FRAME);
+
     m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
     m_rendererContext->Clear();
 
     m_rendererContext->BeginScene();
+
+    constexpr const char* STATIC_MESH_FRAME = "StaticMesh rendering";
 
     // Render Static Mesh
     {
@@ -145,19 +167,24 @@ void Scene::OnRender()
             auto camera = camerasView.get<CameraComponent>(cameraEntity);
                 
             for(auto entity : group) {
+                FrameMarkStart(STATIC_MESH_FRAME);
                 auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
 
-                auto shader = ResourceManager::Instance().GetShader(mesh.material.shader);
-                    
+                auto& shader = mesh.material.shader;
+                EX_DEBUG_ASSERT(shader.IsValid(), "Usage of invalid shader in material!");
+                
                 shader->Bind();
                 shader->SetFloat4x4("model", transform.GetWorldMatrix());
                 shader->SetFloat4x4("view", camera.GetView());
                 shader->SetFloat4x4("projection", camera.GetProjection());
                 
-                m_rendererContext->Submit(shader, mesh.vertexArray);
+                m_rendererContext->Submit(shader.Get(), mesh.vertexArray);
+                FrameMarkEnd(STATIC_MESH_FRAME);
             }
         }
     }
 
     m_rendererContext->EndScene();
+
+    FrameMarkEnd(RENDERING_FRAME);
 }

@@ -3,8 +3,6 @@
 #include "Core/Assert.h"
 #include "Core/Time.h"
 
-#include "Core/Resources/ResourceManager.h"
-
 #include "Input/ActionSystem.h"
 
 #include <tracy/Tracy.hpp>
@@ -35,8 +33,6 @@ Application::Application(const ApplicationSpecification& spec)
     m_rendererContext = Ref<Renderer::Context>(Renderer::Context::Create(m_window));
 
     m_scene = new Scene(m_rendererContext);
-        
-    ResourceManager::Instance().SetRendererContext(m_rendererContext);
 }
 
 Application::~Application()

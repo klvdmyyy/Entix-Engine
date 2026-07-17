@@ -24,7 +24,7 @@ namespace Renderer
         virtual VertexArray* CreateVertexArray() = 0;
 
         [[nodiscard]]
-        virtual Shader* CreateShader(IO::Reader& shaderReader) = 0;
+        virtual Shader* CreateShader(const ResourceId& id) = 0;
 
         [[nodiscard]]
         virtual VertexBuffer* CreateVertexBuffer(float* data, uint32_t size) = 0;
@@ -38,7 +38,7 @@ namespace Renderer
         virtual void SetClearColor(float r = 1.0f, float g = 1.0f, float b = 1.0f) = 0;
         virtual void Clear() = 0;
 
-        virtual void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertex_array) = 0;
+        virtual void Submit(Shader* shader, const Ref<VertexArray>& vertex_array) = 0;
 
         virtual void Swap() = 0;
 

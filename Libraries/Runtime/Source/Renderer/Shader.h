@@ -4,8 +4,12 @@
 #include "Core/String.h"
 #include "Core/Types.h"
 
+#include "Core/IO/Base.h"
+
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
+
+#include "Resources/Resource.h"
 
 #include <cstdint>
 #include <unordered_map>
@@ -35,10 +39,13 @@ namespace Renderer
      */
     ERUNTIME_API std::unordered_map<ShaderStage, String> GLSL_Preprocess(const String& source);
 
-    class ERUNTIME_API Shader
+    class ERUNTIME_API Shader : public Resource
     {
     public:
+        Shader(const ResourceId& id) : Resource(id) {}
         virtual ~Shader() = default;
+
+        virtual bool CompileFromStream(IO::Reader& reader) = 0;
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;

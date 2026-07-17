@@ -4,6 +4,10 @@
 
 #include "Scripts/Player.h"
 
+#include <GameFramework/ShaderLoader.h>
+
+#include <Resources/ResourceManager.h>
+
 #include <Input/ActionSystem.h>
 
 GameLayer::GameLayer()
@@ -13,7 +17,10 @@ GameLayer::GameLayer()
 
 void GameLayer::OnAttach()
 {
-    ResourceManager::Instance().LoadShader(EX_GET_SHADER("SimpleShader.glsl"));
+    auto& rm = ResourceManager::Instance();
+
+    rm.RegisterLoader<ShaderLoader>(Application::Get().GetRendererContext());
+
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
     ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Menu"});
     
@@ -28,7 +35,9 @@ void GameLayer::OnAttach()
     playerCamera.AddComponent<CameraComponent>();
     
     Entity square = scene.CreateEntity("Square");
-    square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
+    StaticMeshComponent& mesh = square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
+
+    mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>(EX_GET_SHADER("SimpleShader.glsl"));
 }
 
 void GameLayer::OnTick(Timestep deltaTime)

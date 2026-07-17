@@ -2,8 +2,6 @@
 
 #include <GameFramework.h>
 
-#include <Core/Resources/ResourceManager.h>
-
 inline StaticMeshComponent CreateSquareMesh(Renderer::Context* rendererContext)
 {    
     auto vertex_array = Ref<Renderer::VertexArray>(rendererContext->CreateVertexArray());
@@ -38,7 +36,6 @@ inline StaticMeshComponent CreateSquareMesh(Renderer::Context* rendererContext)
 
     StaticMeshComponent mesh;
     mesh.vertexArray = vertex_array;
-    mesh.material.shader = EX_GET_SHADER("SimpleShader.glsl");
 
     return mesh;
 }
