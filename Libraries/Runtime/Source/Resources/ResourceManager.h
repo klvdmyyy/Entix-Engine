@@ -81,27 +81,43 @@ private:
     template<std::derived_from<Resource> T, std::derived_from<ResourceLoader> Loader>
     ResourceHandle<T> LoadInternal(const ResourceId& id, [[maybe_unused]] LoadMode mode)
     {
+        std::lock_guard<std::mutex> guard(m_sync);
+
+        // Start load tracing
         this->LoadStart();
 
+        // Check if required loader exists.
         EX_ASSERT(m_loaders.contains(typeid(Loader).hash_code()), "Using unregistered loader for resource. Loader: '{}'", TypeName<Loader>());
 
+        // Check if required resource already exists
         if(!m_resources.contains(id)) {
             EX_LOG(Trace, LogCategory::Resource, "Loading '{}' using {}", (String)id, TypeName<Loader>());
-            Scope<ResourceLoader>& loader = m_loaders.at(typeid(Loader).hash_code());
+            if(mode == LoadMode::Async) {
+                EX_LOG(Error, LogCategory::Resource, "Async resource loading is unimplemented for now. Resource loading are skipped. Handle object of resource can throw the assertion!");
+                this->LoadEnd();
+                return ResourceHandle<T>();
+            } else {
+                Scope<ResourceLoader>& loader = m_loaders.at(typeid(Loader).hash_code());
 
-            auto fileReader = CreateScope<IO::FileReader>((std::filesystem::path)id);
+                auto fileReader = CreateScope<IO::FileReader>((std::filesystem::path)id);
 
-            m_resources[id] = loader->LoadInternal(*fileReader, id);
+                m_resources[id] = loader->LoadInternal(*fileReader, id);
+            }
         } else {
             EX_LOG(Trace, LogCategory::Resource, "'{}' is already loaded. Just returning it!", (String)id);
         }
 
+        // Check for resource type mismatches
         auto res = dynamic_cast<T*>(m_resources[id].get());
         EX_ASSERT(res, "Failed to cast resource provided by loader to '{}' type!", TypeName<T>());
 
+        // Set resource as Ready To Use
         res->SetState(Resource::State::Ready);
 
+        // End load tracing
         this->LoadEnd();
+
+        // Return the resource handle object
         return ResourceHandle<T>(res->GetId(), res);
     }
 

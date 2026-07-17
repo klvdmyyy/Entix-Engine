@@ -38,6 +38,7 @@ void GameLayer::OnAttach()
     StaticMeshComponent& mesh = square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
 
     mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>(EX_GET_SHADER("SimpleShader.glsl"));
+    rm.LoadAsync<Renderer::Shader, ShaderLoader>("SOME_SORT_OF_SHADER!");
 }
 
 void GameLayer::OnTick(Timestep deltaTime)

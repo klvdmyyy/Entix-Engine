@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include <tracy/Tracy.hpp>
+
 EventBus& EventBus::Instance()
 {
     static EventBus s_bus;
@@ -33,10 +35,12 @@ void EventBus::PublishEvent(const Event& event)
 {
     if(m_immediateMode)
         {
+            ZoneScopedN("Immediate Frame Processing");
             for(auto listener : m_listeners)
                 {
                     listener->OnEvent(event);
                 }
+            
         }
     else
         {
@@ -47,8 +51,11 @@ void EventBus::PublishEvent(const Event& event)
 
 void EventBus::ProcessEvents()
 {
-    if(m_immediateMode) return;
+    if(m_immediateMode)
+        return;
 
+    ZoneScoped;
+    
     std::queue<Scope<Event>> current_events;
 
     {

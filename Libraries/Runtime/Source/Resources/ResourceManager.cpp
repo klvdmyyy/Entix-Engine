@@ -2,8 +2,7 @@
 
 #include <tracy/TracyC.h>
 
-#define RM_FRAME_NAME "Loading resources"
-
+// Global TracyZone context for Resource Manager.
 static TracyCZoneCtx g_traceZoneCtx;
 
 ResourceManager &ResourceManager::Instance() {
@@ -17,9 +16,12 @@ size_t ResourceManager::GetTotalMemoryUsage() const { return size_t(); }
 
 size_t ResourceManager::GetResourceCount() const { return size_t(); }
 
+// We don't need to include that in header file. Just use it
+// as additional methods
+
 void ResourceManager::LoadStart()
 {
-  TracyCZone(ctx, true);
+  TracyCZoneN(ctx, "Resource Loading", true);
   g_traceZoneCtx = ctx;
 }
 

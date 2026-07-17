@@ -77,7 +77,7 @@ void Application::Run(int argc, char** argv)
         m_rendererContext->Swap();
 
         previousTicks = currentTicks;
-
+        
         FrameMark;
     }
 }

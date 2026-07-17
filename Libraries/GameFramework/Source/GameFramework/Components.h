@@ -98,13 +98,6 @@ struct StaticMeshComponent {
     struct Material {
         ResourceHandle<Renderer::Shader> shader{};
     } material{};
-
-    // Helper function to make shader setting more simple
-    FORCE_INLINE
-    inline void SetShader(ResourceHandle<Renderer::Shader> shader)
-    {
-        material.shader = std::move(shader);
-    }
 };
 
 struct CameraComponent {
