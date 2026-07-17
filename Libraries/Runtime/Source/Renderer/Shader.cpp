@@ -18,7 +18,8 @@ namespace Renderer
 
     std::unordered_map<ShaderStage, String> GLSL_Preprocess(const String& source)
     {
-      ZoneScoped;
+        ZoneScoped;
+        
         std::unordered_map<ShaderStage, String> shader_sources;
 
         const char* type_token = "#type";

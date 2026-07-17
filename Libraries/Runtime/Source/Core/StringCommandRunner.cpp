@@ -5,6 +5,8 @@
 #include <cctype>
 #include <format>
 
+#include <tracy/Tracy.hpp>
+
 /*
   Command Args
 */
@@ -16,6 +18,8 @@ CommandArgs::CommandArgs(const std::vector<StringView>& args)
 
 CommandArgs CommandArgs::Parse(StringView str)
 {
+    ZoneScopedN("CommandArgs Parsing");
+
     std::vector<StringView> args;
 
     std::size_t start, end;
@@ -48,6 +52,8 @@ StringCommandRunner& StringCommandRunner::Instance()
 
 void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
 {
+    ZoneScopedN("StringCommandRunner Command Execution");
+
     auto firstNonSpace = String::npos;
 
     for(size_t i = 0; i < cmd.size(); i++)
@@ -96,6 +102,8 @@ void StringCommandRunner::Run(StringView cmd, IO::Writer& writer)
 
 bool StringCommandRunner::AddCommand(CommandSpecification cmd, CommandCallback callback)
 {
+    ZoneScoped;
+
     std::lock_guard<std::mutex> lock(m_sync);
 
     if (m_commandMap.contains(cmd.name))
@@ -112,6 +120,8 @@ bool StringCommandRunner::AddCommand(CommandSpecification cmd, CommandCallback c
 
 bool StringCommandRunner::RemoveCommand(StringView cmd)
 {
+    ZoneScoped;
+
     std::lock_guard<std::mutex> lock(m_sync);
 
     if(!m_commandMap.contains(cmd))

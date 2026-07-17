@@ -27,11 +27,15 @@ Scene::~Scene()
 
 Entity Scene::CreateEntity(const String& name)
 {
+    ZoneScoped;
+
     return CreateEntityWithUuid(Uuid(), name);
 }
 
 Entity Scene::CreateEntityWithUuid(Uuid uuid, const String& name)
 {
+    ZoneScoped;
+
     Entity entity = { m_registry.create(), this };
     entity.AddComponent<IdComponent>(uuid);
     entity.AddComponent<TransformComponent>();
@@ -45,6 +49,8 @@ Entity Scene::CreateEntityWithUuid(Uuid uuid, const String& name)
 
 Entity Scene::FindEntityByName(StringView name)
 {
+    ZoneScoped;
+
     auto view = m_registry.view<TagComponent>();
     for(auto entity : view) {
         const TagComponent& tc = view.get<TagComponent>(entity);
@@ -55,6 +61,8 @@ Entity Scene::FindEntityByName(StringView name)
 }
 
 Entity Scene::GetEntityByUuid(Uuid uuid) {
+    ZoneScoped;
+
     auto it = m_entityMap.find(uuid);
     if(it != m_entityMap.end())
         return Entity{ it->second, this };
@@ -62,8 +70,12 @@ Entity Scene::GetEntityByUuid(Uuid uuid) {
     return Entity{};
 }
 
+static constexpr const char* TICK_FRAME = "Scene OnTick";
+
 void Scene::OnTick(Timestep deltaTime)
 {   
+    FrameMarkStart(TICK_FRAME);
+
     constexpr const char* TRANSFORM_FRAME = "Update transformations";
     // Update transformations
     {
@@ -143,6 +155,8 @@ void Scene::OnTick(Timestep deltaTime)
         }
         FrameMarkEnd(NATIVE_SCRIPT_FRAME);
     }
+
+    FrameMarkEnd(TICK_FRAME);
 }
 
 static constexpr const char* RENDERING_FRAME = "Scene OnRender";

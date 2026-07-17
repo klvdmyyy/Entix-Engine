@@ -16,10 +16,16 @@
 
 #pragma GCC diagnostic pop
 
+#include <tracy/Tracy.hpp>
+
 using json = nlohmann::json;
+
+static constexpr const char* UPDATE_FRAME = "ActionSystem Update";
 
 void ActionMap::Update()
 {
+    FrameMarkStart(UPDATE_FRAME);
+
     for(auto& [name, action] : m_actionDataMap) {
         bool rawPressed = Input::IsKeyPressed(action.binding.scancode);
 
@@ -41,10 +47,14 @@ void ActionMap::Update()
             break;
         }
     }
+
+    FrameMarkEnd(UPDATE_FRAME);
 }
     
 void ActionMap::AddAction(const String& name, const ActionBinding& binding)
 {
+    ZoneScoped;
+
     if(m_actionDataMap.contains(name)) {
         EX_LOG(Warning, LogCategory::WSI, "Trying to add an already existing action to ActionMap! Action name: {}", name);
         return;
@@ -55,6 +65,8 @@ void ActionMap::AddAction(const String& name, const ActionBinding& binding)
 
 void ActionMap::Bind(const String& name, const ActionBinding& binding)
 {
+    ZoneScoped;
+
     auto it = m_actionDataMap.find(name);
         
     if(it == m_actionDataMap.end()) {
@@ -66,6 +78,8 @@ void ActionMap::Bind(const String& name, const ActionBinding& binding)
 
 bool ActionMap::IsPressed(const String& name) const
 {
+    ZoneScoped;
+
     if(!m_actionDataMap.contains(name)) {
         EX_LOG(Warning, LogCategory::WSI, "Trying to check state of unexisting action in ActionMap! Action name: {}", name);
         return false;
@@ -77,6 +91,8 @@ bool ActionMap::IsPressed(const String& name) const
 
 bool ActionMap::IsReleased(const String& name) const
 {
+    ZoneScoped;
+
     if(!m_actionDataMap.contains(name)) {
         EX_LOG(Warning, LogCategory::WSI, "Trying to check state of unexisting action in ActionMap! Action name: {}", name);
         return false;
@@ -88,6 +104,8 @@ bool ActionMap::IsReleased(const String& name) const
 
 bool ActionMap::IsHeld(const String& name) const
 {
+    ZoneScoped;
+
     if(!m_actionDataMap.contains(name)) {
         EX_LOG(Warning, LogCategory::WSI, "Trying to check state of unexisting action in ActionMap! Action name: {}", name);
         return false;
@@ -100,6 +118,8 @@ bool ActionMap::IsHeld(const String& name) const
 
 ActionMap ActionMap::LoadFromFile(const std::filesystem::path filepath)
 {
+    ZoneScoped;
+
     std::ifstream f(filepath);
     json data = json::parse(f);
 
@@ -119,11 +139,15 @@ ActionMap ActionMap::LoadFromFile(const std::filesystem::path filepath)
 
 void ActionMap::SaveToFile(const std::filesystem::path filepath)
 {
+    ZoneScoped;
+
     //...
 }
 
 void ActionContext::AddAction(const String& name)
 {
+    ZoneScoped;
+
     if(m_actionSet.contains(name))
         EX_LOG(Warning, LogCategory::WSI, "Trying to add an already existing action to ActionContext! Action name: {}", name);
         
@@ -132,6 +156,8 @@ void ActionContext::AddAction(const String& name)
 
 bool ActionContext::HasAction(const String& name) const
 {
+    ZoneScoped;
+
     return m_actionSet.contains(name);
 }
 
@@ -143,11 +169,15 @@ ActionSystem& ActionSystem::Instance()
 
 void ActionSystem::PushContext(const ActionContext& context)
 {
+    ZoneScoped;
+
     m_contextStack.push(context);
 }
 
 void ActionSystem::PopContext()
 {
+    ZoneScoped;
+
     if(m_contextStack.empty()) {
         EX_LOG(Warning, LogCategory::WSI, "Trying to call PopContext in ActionSystem when m_contextStack is empty!");
         return;
@@ -157,11 +187,15 @@ void ActionSystem::PopContext()
 
 void ActionSystem::SetActionMap(const ActionMap& map)
 {
+    ZoneScoped;
+
     m_actionMap = map;
 }
 
 bool ActionSystem::IsPressed(const String& name) const
 {
+    ZoneScoped;
+
     if (m_contextStack.empty() || !m_contextStack.top().HasAction(name))
         return false;
 
@@ -170,6 +204,8 @@ bool ActionSystem::IsPressed(const String& name) const
 
 bool ActionSystem::IsReleased(const String& name) const
 {
+    ZoneScoped;
+
     if (m_contextStack.empty() || !m_contextStack.top().HasAction(name))
         return false;
 
@@ -178,6 +214,8 @@ bool ActionSystem::IsReleased(const String& name) const
 
 bool ActionSystem::IsHeld(const String& name) const
 {
+    ZoneScoped;
+    
     if (m_contextStack.empty() || !m_contextStack.top().HasAction(name))
         return false;
 

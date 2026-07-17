@@ -5,6 +5,8 @@
 #include "Math/MatrixTransform.h"
 #include "Math/Quat.h"
 
+#include <tracy/Tracy.hpp>
+
 TransformComponent::TransformComponent(Entity parentEntity)
     : parent((entt::entity)parentEntity)
 {
@@ -12,6 +14,8 @@ TransformComponent::TransformComponent(Entity parentEntity)
 
 void TransformComponent::UpdateLocalMatrix()
 {
+    ZoneScoped;
+
     Float4x4 rot = Math::ToFloat4x4(Quat(rotation));
     
     m_localMatrix = Math::Translate(Float4x4(1.0f), position)
@@ -20,6 +24,8 @@ void TransformComponent::UpdateLocalMatrix()
 
 void TransformComponent::UpdateWorldMatrix(const Float4x4& parentWorld)
 {
+    ZoneScoped;
+
     m_worldMatrix = parentWorld * GetLocalMatrix();
 }
 
@@ -56,6 +62,8 @@ Float3 TransformComponent::GetWorldScale() const noexcept {
 
 void CameraComponent::Update(const TransformComponent& transform, float aspect)
 {
+    ZoneScopedN("CameraComponent Update Method");
+    
     float m_yaw = yaw + transform.GetWorldRotation().x;
     float m_pitch = pitch + transform.GetWorldRotation().y;
 
