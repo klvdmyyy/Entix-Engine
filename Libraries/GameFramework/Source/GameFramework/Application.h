@@ -49,16 +49,16 @@ class Application : EventListener
 
     template<std::derived_from<Layer> T, typename... Args>
     FORCE_INLINE
-    inline constexpr Layer* PushLayer(Args&&... args)
+    inline constexpr T* PushLayer(Args&&... args)
     {
-        return m_layerStack.PushLayer(Ref<Layer>(new T(std::forward<Args>(args)...)));
+        return dynamic_cast<T*>(m_layerStack.PushLayer(Ref<Layer>(new T(std::forward<Args>(args)...))));
     }
 
     template<std::derived_from<Layer> T, typename... Args>
     FORCE_INLINE
-    inline constexpr Layer* PushOverlay(Args&&... args)
+    inline constexpr T* PushOverlay(Args&&... args)
     {
-        return m_layerStack.PushOverlay(Ref<Layer>(new T(std::forward<Args>(args)...)));
+        return dynamic_cast<T*>(m_layerStack.PushOverlay(Ref<Layer>(new T(std::forward<Args>(args)...))));
     }
 
     FORCE_INLINE

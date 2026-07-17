@@ -12,7 +12,7 @@ add_library(Vendor::GLAD ALIAS glad)
 # ---------------------------------------------------------------------
 # ImGUI (Docking Branch)
 # ---------------------------------------------------------------------
-add_library(imgui)
+add_library(imgui SHARED)
 
 set_target_properties(imgui PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
