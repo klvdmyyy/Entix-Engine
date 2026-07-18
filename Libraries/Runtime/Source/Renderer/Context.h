@@ -9,6 +9,7 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
+#include "Renderer/Texture.h"
 
 namespace Renderer
 {
@@ -31,6 +32,9 @@ namespace Renderer
 
         [[nodiscard]]
         virtual IndexBuffer* CreateIndexBuffer(uint32_t* indices, uint32_t count) = 0;
+
+        [[nodiscard]]
+        virtual Texture* CreateTexture(const ResourceId& id, const TextureSpecification& spec) = 0;
 
         virtual void BeginScene() = 0;
         virtual void EndScene() = 0;
