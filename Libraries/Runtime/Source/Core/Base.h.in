@@ -39,3 +39,4 @@
 
 #define EX_GET_SHADER(shaderdir) "@ENTIX_SHADERS_DIRECTORY@/" shaderdir
 #define EX_GET_MODEL(modelfile) "@ENTIX_SHADERS_DIRECTORY@/../Models/" modelfile
+#define EX_GET_TEXTURE(texturefile) "@ENTIX_SHADERS_DIRECTORY@/../Textures/" texturefile

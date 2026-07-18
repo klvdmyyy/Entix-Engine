@@ -5,6 +5,7 @@
 #include "Drivers/OpenGL/OpenGLBuffer.h"
 #include "Drivers/OpenGL/OpenGLShader.h"
 #include "Drivers/OpenGL/OpenGLVertexArray.h"
+#include "Drivers/OpenGL/OpenGLTexture.h"
 
 #include <tracy/TracyOpenGL.hpp>
 
@@ -104,4 +105,10 @@ VertexBuffer* OpenGLContext::CreateVertexBuffer(float* data, uint32_t size)
 IndexBuffer* OpenGLContext::CreateIndexBuffer(uint32_t* indices, uint32_t count)
 {
     return new OpenGLIndexBuffer(indices, count);
+}
+
+[[nodiscard]]
+Texture* OpenGLContext::CreateTexture(const ResourceId& id, const TextureSpecification& spec)
+{
+    return new OpenGLTexture(id, spec);
 }

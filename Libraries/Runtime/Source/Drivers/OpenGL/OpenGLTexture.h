@@ -27,12 +27,15 @@ public:
 
     bool operator==(const Texture& other) const noexcept
     {
-        return m_rendererID == dynamic_cast<const OpenGLTexture*>(&other)->m_rendererID;
+        return m_rendererId == dynamic_cast<const OpenGLTexture*>(&other)->m_rendererId;
     }
 
 private:
-    GLuint m_rendererID;
+    GLuint m_rendererId;
     TextureSpecification m_specification;
     Uint32 m_width;
     Uint32 m_height;
+
+    GLenum m_dataFormat;
+    GLenum m_internalFormat;
 };

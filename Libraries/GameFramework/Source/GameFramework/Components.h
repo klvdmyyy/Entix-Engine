@@ -13,6 +13,7 @@
 
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
+#include "Renderer/Texture.h"
 
 #include <entt/entt.hpp>
 
@@ -91,6 +92,7 @@ struct StaticMeshComponent {
     ResourceHandle<Renderer::VertexArray> vertexArray;
 
     struct Material {
+        ResourceHandle<Renderer::Texture> texture{};
         ResourceHandle<Renderer::Shader> shader{};
     } material{};
 };

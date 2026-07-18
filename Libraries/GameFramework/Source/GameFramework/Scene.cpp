@@ -185,12 +185,19 @@ void Scene::OnRender()
                 auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
 
                 auto& shader = mesh.material.shader;
+                auto& texture = mesh.material.texture;
                 EX_DEBUG_ASSERT(shader.IsValid(), "Usage of invalid shader in material!");
                 
                 shader->Bind();
+                
                 shader->SetFloat4x4("model", transform.GetWorldMatrix());
                 shader->SetFloat4x4("view", camera.GetView());
                 shader->SetFloat4x4("projection", camera.GetProjection());
+
+                if(texture) {
+                    texture->Bind();
+                    shader->SetInt("texture", 0);
+                }
                 
                 m_rendererContext->Submit(shader.Get(), mesh.vertexArray.Get());
                 FrameMarkEnd(STATIC_MESH_FRAME);

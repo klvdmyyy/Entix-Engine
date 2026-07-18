@@ -34,8 +34,12 @@ public:
             m_ptr->Release();
     }
 
-    bool IsValid() const { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Ready; }
-    bool IsLoading() const { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Loading; }
+    bool IsValid() const noexcept { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Ready; }
+    bool IsLoading() const noexcept { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Loading; }
+
+    operator bool() const noexcept {
+        return IsValid();
+    }
 
     T* operator->() const {
         EX_ASSERT(IsValid(), "Trying to use invalid resource handle!");

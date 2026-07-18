@@ -32,6 +32,9 @@ class ERUNTIME_API OpenGLContext : public Context
     [[nodiscard]]
     IndexBuffer* CreateIndexBuffer(uint32_t* indices, uint32_t count) final;
 
+    [[nodiscard]]
+    Texture* CreateTexture(const ResourceId& id, const TextureSpecification& spec) final;
+
     void BeginScene() final {}
     void EndScene() final {}
 

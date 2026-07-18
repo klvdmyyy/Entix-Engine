@@ -62,3 +62,12 @@ add_library(tinyobjloader INTERFACE)
 target_include_directories(tinyobjloader INTERFACE tinyobjloader/)
 
 add_library(Vendor::TinyObjLoader ALIAS tinyobjloader)
+
+# ---------------------------------------------------------------------
+# STB Image
+# ---------------------------------------------------------------------
+add_library(stb_image INTERFACE)
+
+target_include_directories(stb_image INTERFACE stb_image/)
+
+add_library(Vendor::STBImage ALIAS stb_image)

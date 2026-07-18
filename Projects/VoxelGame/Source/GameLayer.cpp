@@ -4,6 +4,7 @@
 
 #include <GameFramework/ShaderLoader.h>
 #include <GameFramework/ObjMeshLoader.h>
+#include <GameFramework/TextureLoader.h>
 
 #include <Resources/ResourceManager.h>
 
@@ -20,6 +21,7 @@ void GameLayer::OnAttach()
 
     rm.RegisterLoader<ShaderLoader>(Application::Get().GetRendererContext());
     rm.RegisterLoader<ObjMeshLoader>(Application::Get().GetRendererContext());
+    rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
 
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
     ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Menu"});
@@ -38,7 +40,8 @@ void GameLayer::OnAttach()
     StaticMeshComponent& mesh = cube.AddComponent<StaticMeshComponent>();
 
     mesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>(EX_GET_MODEL("Cube.obj"));
-    mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>(EX_GET_SHADER("SimpleShader.glsl"));
+    mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>(EX_GET_SHADER("Textures.glsl"));
+    mesh.material.texture = rm.Load<Renderer::Texture, TextureLoader>(EX_GET_TEXTURE("Wall.jpg"));
 
     rm.LoadAsync<Renderer::Shader, ShaderLoader>("SOME_SORT_OF_SHADER!");
 }

@@ -5,7 +5,8 @@ target_include_directories(EntixGameFramework PUBLIC Source/)
 target_link_libraries(EntixGameFramework PRIVATE
   Tracy::TracyClient
   Vendor::ImGui
-  Vendor::TinyObjLoader)
+  Vendor::TinyObjLoader
+  Vendor::STBImage)
 
 target_link_libraries(EntixGameFramework PUBLIC
   Entix::Runtime
