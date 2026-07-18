@@ -21,7 +21,7 @@ namespace Renderer
         static Context* Create(const Ref<Window>& window);
 
         [[nodiscard]]
-        virtual VertexArray* CreateVertexArray() = 0;
+        virtual VertexArray* CreateVertexArray(const ResourceId& id) = 0;
 
         [[nodiscard]]
         virtual Shader* CreateShader(const ResourceId& id) = 0;
@@ -38,7 +38,7 @@ namespace Renderer
         virtual void SetClearColor(float r = 1.0f, float g = 1.0f, float b = 1.0f) = 0;
         virtual void Clear() = 0;
 
-        virtual void Submit(Shader* shader, const Ref<VertexArray>& vertex_array) = 0;
+        virtual void Submit(Shader* shader, VertexArray* vertex_array) = 0;
 
         virtual void Swap() = 0;
 

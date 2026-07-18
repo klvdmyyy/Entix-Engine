@@ -1,10 +1,9 @@
 #include "GameLayer.h"
 
-#include "SquareMesh.h"
-
 #include "Scripts/Player.h"
 
 #include <GameFramework/ShaderLoader.h>
+#include <GameFramework/ObjMeshLoader.h>
 
 #include <Resources/ResourceManager.h>
 
@@ -20,6 +19,7 @@ void GameLayer::OnAttach()
     auto& rm = ResourceManager::Instance();
 
     rm.RegisterLoader<ShaderLoader>(Application::Get().GetRendererContext());
+    rm.RegisterLoader<ObjMeshLoader>(Application::Get().GetRendererContext());
 
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
     ActionSystem::Instance().PushContext(ActionContext{"MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Menu"});
@@ -34,10 +34,12 @@ void GameLayer::OnAttach()
     playerCamera.AddOrReplaceComponent<TransformComponent>(player);
     playerCamera.AddComponent<CameraComponent>();
     
-    Entity square = scene.CreateEntity("Square");
-    StaticMeshComponent& mesh = square.AddComponent<StaticMeshComponent>(CreateSquareMesh(Application::Get().GetRendererContext()));
+    Entity cube = scene.CreateEntity("Cube");
+    StaticMeshComponent& mesh = cube.AddComponent<StaticMeshComponent>();
 
+    mesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>(EX_GET_MODEL("Cube.obj"));
     mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>(EX_GET_SHADER("SimpleShader.glsl"));
+
     rm.LoadAsync<Renderer::Shader, ShaderLoader>("SOME_SORT_OF_SHADER!");
 }
 

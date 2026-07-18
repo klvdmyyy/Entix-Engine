@@ -35,7 +35,7 @@ static GLenum ShaderDataTypeToGLenum(ShaderDataType type)
     return 0;
 }
 
-OpenGLVertexArray::OpenGLVertexArray()
+OpenGLVertexArray::OpenGLVertexArray(const ResourceId& id) : VertexArray(id)
 {
     glCreateVertexArrays(1, &m_vao);
 }

@@ -24,6 +24,8 @@ OpenGLContext::OpenGLContext(const Ref<Window>& window)
     SDL_GL_MakeCurrent(static_cast<SDL_Window*>(m_window->GetWindowHandle()), m_context);
 
     EX_ASSERT(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress), "failed to load opengl loader!");
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 OpenGLContext::~OpenGLContext()
@@ -38,7 +40,7 @@ void OpenGLContext::SetClearColor(float r, float g, float b)
 
 void OpenGLContext::Clear()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void OpenGLContext::Swap()
@@ -46,7 +48,7 @@ void OpenGLContext::Swap()
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(m_window->GetWindowHandle()));
 }
 
-void OpenGLContext::Submit(Shader* shader, const Ref<VertexArray>& vertexArray)
+void OpenGLContext::Submit(Shader* shader, VertexArray* vertexArray)
 {
     shader->Bind();
     vertexArray->Bind();
@@ -81,9 +83,9 @@ void OpenGLContext::RenderGUI()
 }
 
 [[nodiscard]]
-VertexArray* OpenGLContext::CreateVertexArray()
+VertexArray* OpenGLContext::CreateVertexArray(const ResourceId& id)
 {
-    return new OpenGLVertexArray();
+    return new OpenGLVertexArray(id);
 }
     
 [[nodiscard]]

@@ -53,3 +53,12 @@ target_sources(imgui PRIVATE
   ${IMGUI_OPENGL_SOURCES})
 
 add_library(Vendor::ImGui ALIAS imgui)
+
+# ---------------------------------------------------------------------
+# Tiny Obj Loader
+# ---------------------------------------------------------------------
+add_library(tinyobjloader INTERFACE)
+
+target_include_directories(tinyobjloader INTERFACE tinyobjloader/)
+
+add_library(Vendor::TinyObjLoader ALIAS tinyobjloader)

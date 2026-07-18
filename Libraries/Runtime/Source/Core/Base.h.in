@@ -36,4 +36,6 @@
 #define EX_PROJECT_ROOT "@CMAKE_SOURCE_DIR@"
 
 #define EX_SHADERS_DIRECTORY "@ENTIX_SHADERS_DIRECTORY@"
+
 #define EX_GET_SHADER(shaderdir) "@ENTIX_SHADERS_DIRECTORY@/" shaderdir
+#define EX_GET_MODEL(modelfile) "@ENTIX_SHADERS_DIRECTORY@/../Models/" modelfile

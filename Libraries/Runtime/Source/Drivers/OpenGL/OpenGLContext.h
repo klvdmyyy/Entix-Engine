@@ -21,7 +21,7 @@ class ERUNTIME_API OpenGLContext : public Context
     ~OpenGLContext();
 
     [[nodiscard]]
-    VertexArray* CreateVertexArray() final;
+    VertexArray* CreateVertexArray(const ResourceId& id) final;
         
     [[nodiscard]]
     Shader* CreateShader(const ResourceId& id) final;
@@ -38,7 +38,7 @@ class ERUNTIME_API OpenGLContext : public Context
     void SetClearColor(float r, float g, float b) final;
     void Clear() final;
 
-    void Submit(Shader* shader, const Ref<VertexArray>& vertex_array) final;
+    void Submit(Shader* shader, VertexArray* vertex_array) final;
 
     void Swap() final;
 

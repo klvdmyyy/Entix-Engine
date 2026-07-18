@@ -84,16 +84,11 @@ private:
 
 struct StaticMeshComponent {
     StaticMeshComponent()
-        : vertexArray(nullptr)
+        : vertexArray()
     {
     }
 
-    StaticMeshComponent(const Ref<Renderer::VertexArray> vertexArray)
-        : vertexArray(vertexArray)
-    {
-    }
-
-    Ref<Renderer::VertexArray> vertexArray;
+    ResourceHandle<Renderer::VertexArray> vertexArray;
 
     struct Material {
         ResourceHandle<Renderer::Shader> shader{};

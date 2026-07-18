@@ -5,13 +5,16 @@
 
 #include "Renderer/Buffer.h"
 
+#include "Resources/Resource.h"
+
 #include <vector>
 
 namespace Renderer
 {
-    class ERUNTIME_API VertexArray
+    class ERUNTIME_API VertexArray : public Resource
     {
     public:
+        VertexArray(const ResourceId& id) : Resource(id) {}
         virtual ~VertexArray() = default;
 
         virtual void Bind() const = 0;

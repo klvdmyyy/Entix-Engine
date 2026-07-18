@@ -18,7 +18,7 @@ using namespace Renderer;
 class ERUNTIME_API OpenGLVertexArray : public VertexArray
 {
  public:
-    OpenGLVertexArray();
+    OpenGLVertexArray(const ResourceId& id);
     ~OpenGLVertexArray();
 
     void Bind() const final;

@@ -192,7 +192,7 @@ void Scene::OnRender()
                 shader->SetFloat4x4("view", camera.GetView());
                 shader->SetFloat4x4("projection", camera.GetProjection());
                 
-                m_rendererContext->Submit(shader.Get(), mesh.vertexArray);
+                m_rendererContext->Submit(shader.Get(), mesh.vertexArray.Get());
                 FrameMarkEnd(STATIC_MESH_FRAME);
             }
         }
