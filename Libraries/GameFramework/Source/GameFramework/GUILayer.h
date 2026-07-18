@@ -7,8 +7,12 @@
 
 #include "GameFramework/Layer.h"
 
+#include "Core/Debug/LogEntry.h"
+
 class GUILayer : public Layer {
 public:
+    static const LogCategory sk_logCategory;
+
     GUILayer();
 
     void OnAttach() final;

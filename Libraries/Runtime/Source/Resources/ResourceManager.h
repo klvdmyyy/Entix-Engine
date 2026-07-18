@@ -18,6 +18,12 @@ class ResourceManager {
 public:
     static ResourceManager& Instance();
 
+    FORCE_INLINE
+    inline void SetAssetsDirectory(const std::filesystem::path& path) noexcept
+    {
+        m_assetDir = path;
+    }
+
     enum class LoadMode {
         Sync,
         Async,
@@ -40,7 +46,7 @@ public:
     [[nodiscard]]
     ResourceHandle<T> Load(const std::filesystem::path& path)
     {
-        ResourceId id(path);
+        ResourceId id(m_assetDir / path);
         return LoadInternal<T, Loader>(id, LoadMode::Sync);
     }
 
@@ -48,7 +54,7 @@ public:
     [[nodiscard]]
     ResourceHandle<T> LoadAsync(const std::filesystem::path& path)
     {
-        ResourceId id(path);
+        ResourceId id(m_assetDir / path);
         return LoadInternal<T, Loader>(id, LoadMode::Async);
     }
 
@@ -127,4 +133,7 @@ private:
     std::queue<LoadRequest> m_loadQueue;
     std::thread m_loaderThread;
     std::mutex m_sync;
+
+    // Asset dir
+    std::filesystem::path m_assetDir;
 };

@@ -19,6 +19,8 @@ void GameLayer::OnAttach()
 {
     auto& rm = ResourceManager::Instance();
 
+    rm.SetAssetsDirectory(PROJECT_ASSETS_DIR);
+
     rm.RegisterLoader<ShaderLoader>(Application::Get().GetRendererContext());
     rm.RegisterLoader<ObjMeshLoader>(Application::Get().GetRendererContext());
     rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
@@ -39,11 +41,9 @@ void GameLayer::OnAttach()
     Entity cube = scene.CreateEntity("Cube");
     StaticMeshComponent& mesh = cube.AddComponent<StaticMeshComponent>();
 
-    mesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>(EX_GET_MODEL("Cube.obj"));
-    mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>(EX_GET_SHADER("Textures.glsl"));
-    mesh.material.texture = rm.Load<Renderer::Texture, TextureLoader>(EX_GET_TEXTURE("Wall.jpg"));
-
-    rm.LoadAsync<Renderer::Shader, ShaderLoader>("SOME_SORT_OF_SHADER!");
+    mesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>("Models/Cube.obj");
+    mesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>("Shaders/Textures.glsl");
+    mesh.material.texture = rm.Load<Renderer::Texture, TextureLoader>("Textures/Wall.jpg");
 }
 
 void GameLayer::OnTick(Timestep deltaTime)

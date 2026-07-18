@@ -9,6 +9,8 @@
 
 class ERUNTIME_API DefaultFormatter : public LogFormatter {
 public:
+    static DefaultFormatter* Instance();
+
     String Format(LogEntry entry) const noexcept final
     {
         auto filepath = std::filesystem::path(entry.location.file_name());
@@ -26,6 +28,8 @@ public:
 
 class ERUNTIME_API ConsoleFormatter : public LogFormatter {
 public:
+    static ConsoleFormatter* Instance();
+
     String Format(LogEntry entry) const noexcept final
     {
         return std::format("[{}:{}] {}",

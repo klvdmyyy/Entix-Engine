@@ -2,7 +2,14 @@
 
 #include "GameFramework/Application.h"
 
+#include "Core/Debug/Log.h"
+#include "Core/Debug/LogFormatters.h"
+
 #include <imgui.h>
+
+#include <tracy/Tracy.hpp>
+
+const LogCategory GUILayer::sk_logCategory{"GUI", DefaultFormatter::Instance()};
 
 GUILayer::GUILayer()
     : Layer("GUILayer")
@@ -11,6 +18,10 @@ GUILayer::GUILayer()
 
 void GUILayer::OnAttach()
 {
+    ZoneScopedN("Initializing GUI Layer");
+
+    EX_LOG(Trace, sk_logCategory, "Initializing GUI layer");
+
     m_rendererContext = Application::Get().GetRendererContext();
 
     IMGUI_CHECKVERSION();
@@ -38,6 +49,9 @@ void GUILayer::OnAttach()
 
 void GUILayer::OnDetach()
 {
+    ZoneScopedN("Destroying GUI Layer");
+
+    EX_LOG(Trace, sk_logCategory, "Destroying GUI layer");
     m_rendererContext->ShutdownGUI();
     ImGui::DestroyContext();
 }

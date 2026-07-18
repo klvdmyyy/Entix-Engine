@@ -8,6 +8,8 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Source/Scripts/*.cpp
 )
 
+target_compile_definitions(VoxelGame PRIVATE PROJECT_ASSETS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/Assets")
+
 target_sources(VoxelGame PRIVATE ${VOXEL_GAME_SCRIPTS})
 
 target_link_libraries(VoxelGame PRIVATE
