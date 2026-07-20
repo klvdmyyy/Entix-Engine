@@ -21,7 +21,6 @@ using Int16 = int16_t;
 using Int32 = int32_t;
 using Int64 = int64_t;
 
-
 class Bytes {
 public:
     constexpr Bytes(size_t count) : m_count(count) {}
