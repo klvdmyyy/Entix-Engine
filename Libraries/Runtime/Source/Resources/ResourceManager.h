@@ -72,6 +72,8 @@ public:
         return LoadInternal<T, Loader>(id, LoadMode::Async);
     }
 
+    void Reload(const ResourceId& id);
+
     void Unload(const ResourceId& id);
 
     template<std::derived_from<ResourceLoader> T>
@@ -143,8 +145,6 @@ private:
         // Return the resource handle object
         return ResourceHandle<T>(res->GetId(), res);
     }
-
-    void Reload(const ResourceId& id);
 
     std::unordered_map<ResourceId, Scope<Resource>, ResourceId::Hasher> m_resources;
     std::unordered_map<size_t, Scope<ResourceLoader>> m_loaders;
