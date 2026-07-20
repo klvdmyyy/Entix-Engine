@@ -3,6 +3,8 @@
 
 #include "EditorLayer.h"
 
+#include <tracy/Tracy.hpp>
+
 static const ApplicationSpecification g_spec = {
     .name = "Entix Editor",
     .description = "Editor for Entix-Engine",

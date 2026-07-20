@@ -7,6 +7,7 @@
 #include "Drivers/OpenGL/OpenGLVertexArray.h"
 #include "Drivers/OpenGL/OpenGLTexture.h"
 
+#include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>
 
 #include <imgui.h>
@@ -18,6 +19,8 @@ static constexpr const char* GUI_GLSL_VERSION = "#version 130";
 OpenGLContext::OpenGLContext(const Ref<Window>& window)
     : m_window(window)
 {
+    ZoneScoped;
+    
     m_context = SDL_GL_CreateContext(static_cast<SDL_Window*>(m_window->GetWindowHandle()));
 
     EX_ASSERT(m_context, "failed to create opengl context. sdl error: {}", SDL_GetError());
@@ -25,6 +28,8 @@ OpenGLContext::OpenGLContext(const Ref<Window>& window)
     SDL_GL_MakeCurrent(static_cast<SDL_Window*>(m_window->GetWindowHandle()), m_context);
 
     EX_ASSERT(gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress), "failed to load opengl loader!");
+
+    TracyGpuContext;
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -46,11 +51,14 @@ void OpenGLContext::Clear()
 
 void OpenGLContext::Swap()
 {
+    TracyGpuCollect;
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(m_window->GetWindowHandle()));
 }
 
 void OpenGLContext::Submit(Shader* shader, VertexArray* vertexArray)
 {
+    TracyGpuZone("Sumbitting mesh");
+
     shader->Bind();
     vertexArray->Bind();
     glDrawElements(GL_TRIANGLES,

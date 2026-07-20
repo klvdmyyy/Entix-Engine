@@ -7,4 +7,5 @@ target_compile_definitions(EntixEditor PRIVATE PROJECT_ASSETS_DIR="${CMAKE_CURRE
 target_link_libraries(EntixEditor PRIVATE
   Entix::Runtime
   Entix::GameFramework
-  Vendor::ImGui)
+  Vendor::ImGui
+  Tracy::TracyClient)

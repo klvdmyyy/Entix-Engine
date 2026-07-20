@@ -4,6 +4,9 @@
 
 #include <memory>
 
+void* operator new(std::size_t count);
+void operator delete(void* ptr) noexcept;
+
 template<typename T>
 using Scope = std::unique_ptr<T>;
 

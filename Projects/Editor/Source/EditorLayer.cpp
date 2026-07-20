@@ -13,6 +13,8 @@
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
 
+#include <tracy/Tracy.hpp>
+
 EditorLayer::EditorLayer()
     : Layer("EditorLayer"), m_consoleWriter(BufferLogSink::Instance())
 {
@@ -20,6 +22,8 @@ EditorLayer::EditorLayer()
 
 void EditorLayer::OnAttach()
 {
+    ZoneScoped;
+
     auto& rm = ResourceManager::Instance();
 
     // Setting editor Assets directory
@@ -69,6 +73,8 @@ void EditorLayer::OnRender()
     Application::Get().GetCurrentScene().OnRender();
 
     {
+        ZoneScopedN("ImGui - Docking Setup")
+
         // Docking setup
         ImGuiID dockspace_id = ImGui::GetID("Entix Editor Dockspace");
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -103,10 +109,14 @@ void EditorLayer::OnRender()
     // Developer console
     if(m_consoleOpen)
     {
+        ZoneScopedN("ImGui - Console");
+
         ImGui::Begin("Console", &m_consoleOpen);
 
         // Console Output
         {
+            ZoneScopedN("ImGui - Console Output");
+
             ImGuiWindowFlags flags = ImGuiWindowFlags_HorizontalScrollbar;
             ImGui::BeginChild("ConsoleOutput", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() - 10), ImGuiChildFlags_None, flags);
 
@@ -171,6 +181,8 @@ void EditorLayer::OnRender()
 
         // Console Input
         {
+            ZoneScopedN("ImGui - Console Input");
+
             ImGui::Separator();
 
             if(ImGui::InputText("##ConsoleInput", &m_consoleInputBuffer,
@@ -206,6 +218,8 @@ Int32 EditorLayer::InputCallback(void* data_)
 
     if(data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
     {
+        ZoneScopedN("ImGui - Console Completion Callback");
+
         auto suggestions = StringCommandRunner::Instance().GetSuggestions(data->Buf);
 
         if(suggestions.size() == 1) {
@@ -225,6 +239,8 @@ Int32 EditorLayer::InputCallback(void* data_)
 
     if(data->EventFlag == ImGuiInputTextFlags_CallbackHistory)
     {
+        ZoneScopedN("ImGui - Console History Callback");
+
         if(data->EventKey == ImGuiKey_UpArrow) {
             m_consoleHistoryIndex = std::max(m_consoleHistoryIndex - 1, 0);
         } else if(data->EventKey == ImGuiKey_DownArrow) {
