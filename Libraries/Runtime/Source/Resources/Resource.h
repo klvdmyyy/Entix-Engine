@@ -51,7 +51,7 @@ protected:
 
     virtual void HotReload([[maybe_unused]] Scope<Resource> other)
     {
-        EX_LOG(Warning, LogCategory::Resource, "Resource doesn't support hot-reload: '{}'", (String)m_id);
+        EX_LOG(Warning, LogCategory::Resource, "Resource doesn't support hot-reload: '{}'", ((std::filesystem::path)(m_id)).filename().string());
     }
 
 private:

@@ -25,9 +25,11 @@ ResourceManager::ResourceManager()
 
   StringCommandRunner::Instance().AddCommand({ .name = "res_stat", .description = "List resources statistics" },
   [&](const CommandArgs& args, IO::Writer& rawWriter) {
-    auto writer = IO::TextWriter::CreateNonOwned(rawWriter);
+    auto bufWriter = IO::BufferedWriter::CreateNonOwned(rawWriter);
+    auto writer = IO::TextWriter::CreateNonOwned(bufWriter);
     writer.WriteFmt("Total Memory Usage: {}", GetTotalMemoryUsage());
     for(const auto& pair : m_resources) {
+      writer.WriteLine("");
       writer.WriteFmt("{} - {}", std::filesystem::relative((std::filesystem::path)(pair.first), m_assetDir).string(), pair.second->GetMemorySize());
     }
   });
@@ -56,18 +58,18 @@ void ResourceManager::Reload(const ResourceId& id)
 {
   ZoneScoped;
 
-  EX_LOG(Trace, LogCategory::Resource, "Hot-reloading resource: '{}'", (String)id);
+  EX_LOG(Trace, LogCategory::Resource, "Hot-reloading resource: '{}'", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string());
 
   Resource* oldResource = nullptr;
   {
     auto it = m_resources.find(id);
     if(it == m_resources.end()) {
-      EX_LOG(Error, LogCategory::Resource, "Failed to hot-reload resource '{}'. Resource isn't loaded!", (String)id);
+      EX_LOG(Error, LogCategory::Resource, "Failed to hot-reload resource '{}'. Resource isn't loaded!", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string());
       return;
     }
     oldResource = it->second.get();
     if(oldResource->GetState() != Resource::State::Ready) {
-      EX_LOG(Error, LogCategory::Resource, "Failed to hot-reload resource '{}'. Resource isn't ready-to-use!", (String)id);
+      EX_LOG(Error, LogCategory::Resource, "Failed to hot-reload resource '{}'. Resource isn't ready-to-use!", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string());
       return;
     }
   }
@@ -75,7 +77,7 @@ void ResourceManager::Reload(const ResourceId& id)
   std::type_index loaderType = oldResource->GetLoaderType();
 
   if(!m_loaders.contains(loaderType.hash_code())) {
-    EX_LOG(Error, LogCategory::Resource, "Failed to hot-realod resource '{}'. Target resource loader '{}' wasn't found!", (String)id, loaderType.name());
+    EX_LOG(Error, LogCategory::Resource, "Failed to hot-realod resource '{}'. Target resource loader '{}' wasn't found!", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string(), loaderType.name());
     return;
   }
 
@@ -85,7 +87,7 @@ void ResourceManager::Reload(const ResourceId& id)
 
   auto newResource = loader->LoadInternal(*fileReader, id);
   if(!newResource) {
-    EX_LOG(Error, LogCategory::Resource, "Failed to hot-reload resource '{}'. Can't create new resource!", (String)id);
+    EX_LOG(Error, LogCategory::Resource, "Failed to hot-reload resource '{}'. Can't create new resource!", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string());
     return;
   }
 

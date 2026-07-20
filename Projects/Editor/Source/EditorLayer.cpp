@@ -21,15 +21,22 @@ void EditorLayer::OnAttach()
 {
     auto& rm = ResourceManager::Instance();
 
+    // Setting editor Assets directory
     rm.SetAssetsDirectory(PROJECT_ASSETS_DIR);
+
+    // Register resource loaders
+    rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
 
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
     ActionSystem::Instance().PushContext({"Console"});
 
-    rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
+    // Loading thumbnails
+    m_traceIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/TraceLog96x96.png");
+    m_infoIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/InfoLog96x96.png");
+    m_warnIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/WarningLog96x96.png");
+    m_errorIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/ErrorLog96x96.png");
 
-    rm.Load<Renderer::Texture, TextureLoader>("Test.jpg");
-
+    // Editor commands
     StringCommandRunner::Instance().AddCommand({ .name = "e_show_console", .description = "0 - Hide, 1 - Show" },
     [&](const CommandArgs& args, IO::Writer& rawWriter) {
         auto writer = IO::TextWriter::CreateNonOwned(rawWriter);
@@ -70,8 +77,50 @@ void EditorLayer::OnRender()
             ImGuiWindowFlags flags = ImGuiWindowFlags_HorizontalScrollbar;
             ImGui::BeginChild("ConsoleOutput", ImVec2(0, -ImGui::GetFrameHeightWithSpacing() - 10), ImGuiChildFlags_None, flags);
 
-            for(const auto& entry : BufferLogSink::Instance().GetEntries()) {
-                ImGui::TextUnformatted(entry.c_str());
+            const float windowWidth = ImGui::GetContentRegionAvail().x;
+            const float iconSize = 20.0f;
+            const float padding = 4.0f;
+
+            Uint32 index = 0;
+            for(const BufferLogSink::Entry& entry : BufferLogSink::Instance().GetEntries()) {
+                float textWidth = windowWidth - iconSize - padding * 3.0f;
+                if(textWidth < 50.0f) textWidth = 50.0f;
+
+                ImVec2 textSize = ImGui::CalcTextSize(entry.message.c_str(), nullptr, false, textWidth);
+                float cellHeight = textSize.y + padding * 2;
+
+                ImVec2 cursor = ImGui::GetCursorScreenPos();
+                ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+                ImU32 bgColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
+
+                drawList->AddRectFilled(cursor, ImVec2(cursor.x + windowWidth, cursor.y + cellHeight), bgColor);
+
+                drawList->AddRect(cursor, ImVec2(cursor.x + windowWidth, cursor.y + cellHeight), ImGui::GetColorU32(ImGuiCol_Border));
+
+                if(entry.level.has_value()) {
+                    ImVec2 iconPos(cursor.x + padding, cursor.y + (cellHeight - iconSize) * 0.5f);
+                    ImTextureID icon;
+
+                    switch(entry.level.value()) {
+                        case LogLevel::Trace: icon = m_traceIcon->GetRendererId(); break;
+                        case LogLevel::Info: icon = m_infoIcon->GetRendererId(); break;
+                        case LogLevel::Warning: icon = m_warnIcon->GetRendererId(); break;
+                        case LogLevel::Error: icon = m_errorIcon->GetRendererId(); break;
+                        case LogLevel::Critical: icon = m_errorIcon->GetRendererId(); break;
+                    }
+                    drawList->AddImage(static_cast<intptr_t>(icon), iconPos, ImVec2(iconPos.x + iconSize, iconPos.y + iconSize), ImVec2(0, 1), ImVec2(1, 0));
+                }
+
+                ImVec2 textPos(cursor.x + padding + iconSize + padding, cursor.y + padding);
+                ImGui::SetCursorScreenPos(textPos);
+                ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + textWidth);
+                ImGui::TextUnformatted(entry.message.c_str());
+                ImGui::PopTextWrapPos();
+
+                ImGui::SetCursorScreenPos(ImVec2(cursor.x, cursor.y + cellHeight + 2.0f));
+
+                ImGui::Dummy(ImVec2(1.0f, 1.0f));
             }
 
             // Проверяем, прокрутил ли пользователь вверх
@@ -105,7 +154,7 @@ void EditorLayer::OnRender()
 
                     auto writer = IO::TextWriter::CreateNonOwned(m_consoleWriter);
 
-                    writer.WriteFmt("> {}", m_consoleInputBuffer);
+                    // writer.WriteFmt("> {}", m_consoleInputBuffer);
                     StringCommandRunner::Instance().Run(m_consoleInputBuffer, writer);
 
                     m_consoleInputBuffer = "";
@@ -130,10 +179,11 @@ Int32 EditorLayer::InputCallback(void* data_)
             data->DeleteChars(0, data->BufTextLen);
             data->InsertChars(0, (suggestions[0] + " ").c_str());
         } else if(suggestions.size() > 1) {
-            auto writer = IO::TextWriter::CreateNonOwned(m_consoleWriter);
+            auto bufWriter = IO::BufferedWriter::CreateNonOwned(m_consoleWriter);
+            auto writer = IO::TextWriter::CreateNonOwned(bufWriter);
             writer.Write("Options: ");
             for(const auto& s : suggestions) {
-                writer.WriteFmt("\t{}", s);
+                writer.WriteFmt("\n\t{}", s);
             }
         }
 

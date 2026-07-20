@@ -12,6 +12,11 @@
 class ERUNTIME_API BufferLogSink : public LogSink, public IO::Writer
 {
 public:
+    struct Entry {
+        std::optional<LogLevel> level = std::nullopt;
+        String message;
+    };
+
     static constexpr Uint64 MAX_ENTRY_COUNT = 100;
 
     static BufferLogSink& Instance();
@@ -25,7 +30,7 @@ public:
         str.resize(size);
         str = static_cast<const char*>(buffer);
 
-        m_entries.push_back(String(str));
+        m_entries.push_back(Entry{.message = str});
 
         return size;
     }
@@ -35,10 +40,10 @@ public:
         if(m_entries.size() > MAX_ENTRY_COUNT)
             m_entries.pop_front();
             
-        m_entries.push_back(entry.category.GetFormatter()->Format(entry));
+        m_entries.push_back(Entry{ .level = entry.level, .message = String(entry.message) });
     }
 
-    const std::deque<String>& GetEntries() const noexcept
+    const std::deque<Entry>& GetEntries() const noexcept
     {
         return m_entries;
     }
@@ -46,7 +51,7 @@ public:
 private:
     BufferLogSink() = default;
         
-    std::deque<String> m_entries{};
+    std::deque<Entry> m_entries{};
 };
 
 class ERUNTIME_API StdoutLogSink : public LogSink

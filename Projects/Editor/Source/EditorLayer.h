@@ -4,6 +4,10 @@
 
 #include <Core/IO/Base.h>
 
+#include <Renderer/Texture.h>
+
+#include <Resources/ResourceHandle.h>
+
 class EditorLayer : public Layer {
 public:
     EditorLayer();
@@ -23,4 +27,10 @@ private:
     String m_consoleInputBuffer;
     std::vector<String> m_consoleHistory;
     Int32 m_consoleHistoryIndex;
+
+    // Logging thumbnails (for console)
+    ResourceHandle<Renderer::Texture> m_traceIcon;
+    ResourceHandle<Renderer::Texture> m_infoIcon;
+    ResourceHandle<Renderer::Texture> m_warnIcon;
+    ResourceHandle<Renderer::Texture> m_errorIcon;
 };

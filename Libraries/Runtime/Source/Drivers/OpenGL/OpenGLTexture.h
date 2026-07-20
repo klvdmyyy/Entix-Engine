@@ -25,6 +25,8 @@ public:
 
     void Bind(Uint32 slot) const final;
 
+    Uint32 GetRendererId() const noexcept { return m_rendererId; }
+
     bool operator==(const Texture& other) const noexcept
     {
         return m_rendererId == dynamic_cast<const OpenGLTexture*>(&other)->m_rendererId;

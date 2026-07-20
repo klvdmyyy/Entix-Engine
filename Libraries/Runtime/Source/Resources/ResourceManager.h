@@ -113,7 +113,7 @@ private:
 
         // Check if required resource already exists
         if(!m_resources.contains(id)) {
-            EX_LOG(Trace, LogCategory::Resource, "Loading '{}' using {}", (String)id, TypeName<Loader>());
+            EX_LOG(Trace, LogCategory::Resource, "Loading '{}' using {}", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string(), TypeName<Loader>());
             if(mode == LoadMode::Async) {
                 EX_LOG(Error, LogCategory::Resource, "Async resource loading is unimplemented for now. Resource loading are skipped. Handle object of resource can throw the assertion!");
                 this->LoadEnd();
@@ -126,7 +126,7 @@ private:
                 m_resources[id] = loader->LoadInternal(*fileReader, id);
             }
         } else {
-            EX_LOG(Trace, LogCategory::Resource, "'{}' is already loaded. Just returning it!", (String)id);
+            EX_LOG(Trace, LogCategory::Resource, "'{}' is already loaded. Just returning it!", std::filesystem::relative((std::filesystem::path)(id), m_assetDir).string());
         }
 
         // Check for resource type mismatches

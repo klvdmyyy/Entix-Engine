@@ -2,8 +2,10 @@
 #pragma once
 
 #include "Core/IO/Base.h"
-
+#include "Core/Types.h"
 #include "Core/Memory.h"
+
+#include <vector>
 
 #define DEFINE_READER_DECORATOR(TYPE)           \
     public:                                     \
@@ -12,9 +14,9 @@
     {                                           \
     }                                           \
                                                 \
-    static TYPE CreateNonOwned(Reader& inner)   \
+    FORCE_INLINE inline static TYPE CreateNonOwned(Reader& inner)   \
     {                                           \
-        return std::move(TYPE(&inner, false));  \
+        return TYPE(&inner, false);             \
     }                                           \
                                                 \
 private:                                        \
@@ -30,9 +32,9 @@ private:                                        \
     {                                           \
     }                                           \
                                                 \
-    static TYPE CreateNonOwned(Writer& inner)   \
+    FORCE_INLINE inline static TYPE CreateNonOwned(Writer& inner)   \
     {                                           \
-        return std::move(TYPE(&inner, false));  \
+        return TYPE(&inner, false);             \
     }                                           \
                                                 \
 private:                                        \
@@ -48,7 +50,7 @@ namespace IO {
     public:
         void Write(const String& str)
         {
-            const auto writtenSize = m_inner->Write(&str[0], str.size());
+            const auto writtenSize = m_inner->Write(str.data(), str.size());
             EX_ASSERT(writtenSize == str.size(), "Failed to write text data.");
         }
 
@@ -103,5 +105,61 @@ namespace IO {
             EX_ASSERT(readedSize == size, "Failed to read text data!");
             return result;
         }
+    };
+
+    class BufferedWriter : public WriterDecorator {
+        DEFINE_WRITER_DECORATOR(BufferedWriter);
+
+    public:
+        virtual ~BufferedWriter() override
+        {
+            this->Flush();
+        }
+
+        size_t Write(const void* data, size_t size) override
+        {
+            const char* bytes = static_cast<const char*>(data);
+            size_t totalWritten = 0;
+
+            m_buffer.resize(m_buffer.size() + size);
+
+            std::memcpy(m_buffer.data() + m_cursor, bytes + totalWritten, size);
+            m_cursor += size;
+            totalWritten += size;
+
+            return totalWritten;
+        }
+
+        void Flush() override
+        {
+            if(m_cursor > 0) {
+                FlushBuffer();
+                m_inner->Flush();
+            }
+        }
+
+    private:
+        void FlushBuffer()
+        {
+            NullTerminate();
+            
+            size_t written = m_inner->Write(m_buffer.data(), m_buffer.size());
+            if(written < m_cursor) {
+                size_t remaining = m_cursor - written;
+                std::memmove(m_buffer.data(), m_buffer.data() + written, remaining);
+                m_cursor = remaining;
+            } else {
+                m_cursor = 0;
+            }
+        }
+
+        void NullTerminate()
+        {
+            m_buffer.push_back('\0');
+            m_cursor += 1;
+        }
+
+        std::vector<char> m_buffer;
+        size_t m_cursor = 0;
     };
 }

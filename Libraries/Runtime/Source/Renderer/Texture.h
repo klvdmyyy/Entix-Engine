@@ -34,6 +34,8 @@ namespace Renderer {
 
         virtual void Bind(Uint32 slot = 0) const = 0;
 
+        virtual Uint32 GetRendererId() const noexcept = 0;
+
         virtual bool operator==(const Texture& other) const noexcept = 0;
     };
 }
