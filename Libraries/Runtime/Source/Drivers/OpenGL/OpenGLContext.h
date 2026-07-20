@@ -50,6 +50,8 @@ class ERUNTIME_API OpenGLContext : public Context
     void NewGUIFrame() final;
     void RenderGUI() final;
 
+    void Restore() final;
+
  private:
     Ref<Window> m_window;
     SDL_GLContext m_context;

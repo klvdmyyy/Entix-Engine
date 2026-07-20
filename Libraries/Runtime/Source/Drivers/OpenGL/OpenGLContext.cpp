@@ -83,6 +83,11 @@ void OpenGLContext::RenderGUI()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void OpenGLContext::Restore()
+{
+    SDL_GL_MakeCurrent(static_cast<SDL_Window*>(m_window->GetWindowHandle()), m_context);
+}
+
 [[nodiscard]]
 VertexArray* OpenGLContext::CreateVertexArray(const ResourceId& id)
 {

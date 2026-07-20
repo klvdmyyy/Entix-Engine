@@ -55,6 +55,8 @@ namespace Renderer
         virtual void NewGUIFrame() = 0;
         virtual void RenderGUI() = 0;
 
+        virtual void Restore() = 0;
+
     protected:
         Context() = default;
     };

@@ -10,6 +10,7 @@
 #include <GameFramework/TextureLoader.h>
 
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <imgui_stdlib.h>
 
 EditorLayer::EditorLayer()
@@ -66,6 +67,38 @@ void EditorLayer::OnRender()
 {
     // Render the scene
     Application::Get().GetCurrentScene().OnRender();
+
+    {
+        // Docking setup
+        ImGuiID dockspace_id = ImGui::GetID("Entix Editor Dockspace");
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+        if (ImGui::DockBuilderGetNode(dockspace_id) == nullptr) {
+            ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
+            ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+            ImGuiID dock_id_left = 0;
+            ImGuiID dock_id_right = 0;
+            ImGuiID dock_id_bottom = 0;
+            ImGuiID dock_id_main = dockspace_id;
+
+            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Left, 0.30f, &dock_id_left, &dock_id_main);
+            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Down, 0.40f, &dock_id_bottom, &dock_id_main);
+            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Right, 0.40f, &dock_id_right, &dock_id_main);
+
+            ImGui::DockBuilderDockWindow("Viewport", dock_id_main);
+
+            ImGui::DockBuilderDockWindow("Inspector", dock_id_left);
+            ImGui::DockBuilderDockWindow("Properties", dock_id_right);
+
+            ImGui::DockBuilderDockWindow("Content Browser", dock_id_bottom);
+            ImGui::DockBuilderDockWindow("Console", dock_id_bottom);
+
+            ImGui::DockBuilderFinish(dockspace_id);
+        }
+
+        ImGui::DockSpaceOverViewport(dockspace_id, viewport, ImGuiDockNodeFlags_PassthruCentralNode);
+    }
 
     // Developer console
     if(m_consoleOpen)
