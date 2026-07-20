@@ -45,8 +45,11 @@ Scope<Resource> ObjMeshLoader::Load(const ResourceId& id, IO::Reader& reader)
 
     String objText = IO::TextReader::CreateNonOwned(reader).ReadAll();
 
-    if(!objReader.ParseFromString(objText, "")) {
-        EX_ASSERT(objReader.Error().empty(), "Failed to read OBJ model. Error message: {}", objReader.Error());
+    {
+        ZoneScopedN("tinyobjloader ParseFromString method - ObjMeshLoader");
+        if(!objReader.ParseFromString(objText, "")) {
+            EX_ASSERT(objReader.Error().empty(), "Failed to read OBJ model. Error message: {}", objReader.Error());
+        }
     }
 
     if(!objReader.Warning().empty()) {
@@ -61,59 +64,62 @@ Scope<Resource> ObjMeshLoader::Load(const ResourceId& id, IO::Reader& reader)
     std::vector<Uint32> indices;
 
     std::unordered_map<Vertex, Uint32> uniqueVertices;
+    {
+        ZoneScopedN("Processing tinyobjloader shapes");
 
-    for(const auto& shape : shapes) {
-        for(const auto& index : shape.mesh.indices) {
-            Vertex vertex{};
+        for(const auto& shape : shapes) {
+            for(const auto& index : shape.mesh.indices) {
+                Vertex vertex{};
 
-            if(index.vertex_index >= 0) {
-                // Position
-                vertex.position =  {
-                    attrib.vertices[3 * index.vertex_index + 0],
-                    attrib.vertices[3 * index.vertex_index + 1],
-                    attrib.vertices[3 * index.vertex_index + 2]
-                };
+                if(index.vertex_index >= 0) {
+                    // Position
+                    vertex.position =  {
+                        attrib.vertices[3 * index.vertex_index + 0],
+                        attrib.vertices[3 * index.vertex_index + 1],
+                        attrib.vertices[3 * index.vertex_index + 2]
+                    };
 
-                // Color
-                vertex.color = {
-                    attrib.colors[3 * index.vertex_index + 0],
-                    attrib.colors[3 * index.vertex_index + 1],
-                    attrib.colors[3 * index.vertex_index + 2]
-                };
+                    // Color
+                    vertex.color = {
+                        attrib.colors[3 * index.vertex_index + 0],
+                        attrib.colors[3 * index.vertex_index + 1],
+                        attrib.colors[3 * index.vertex_index + 2]
+                    };
+                }
+
+                if(index.normal_index >= 0) {
+                    // Normals
+                    vertex.normal = {
+                        attrib.normals[3 * index.normal_index + 0],
+                        attrib.normals[3 * index.normal_index + 1],
+                        attrib.normals[3 * index.normal_index + 2]
+                    };
+                }
+
+                if(index.texcoord_index >= 0) {
+                    // Texture Coordinates
+                    vertex.uv = {
+                        attrib.texcoords[2 * index.texcoord_index + 0],
+                        attrib.texcoords[2 * index.texcoord_index + 1]
+                    };
+                }
+
+                if(uniqueVertices.count(vertex) == 0) {
+                    uniqueVertices[vertex] = static_cast<Uint32>(data.size() / (3 + 3 + 3 + 2));
+                    data.push_back(vertex.position.x);
+                    data.push_back(vertex.position.y);
+                    data.push_back(vertex.position.z);
+                    data.push_back(vertex.color.r);
+                    data.push_back(vertex.color.g);
+                    data.push_back(vertex.color.b);
+                    data.push_back(vertex.normal.x);
+                    data.push_back(vertex.normal.y);
+                    data.push_back(vertex.normal.z);
+                    data.push_back(vertex.uv.x);
+                    data.push_back(vertex.uv.y);
+                }
+                indices.push_back(uniqueVertices[vertex]);
             }
-
-            if(index.normal_index >= 0) {
-                // Normals
-                vertex.normal = {
-                    attrib.normals[3 * index.normal_index + 0],
-                    attrib.normals[3 * index.normal_index + 1],
-                    attrib.normals[3 * index.normal_index + 2]
-                };
-            }
-
-            if(index.texcoord_index >= 0) {
-                // Texture Coordinates
-                vertex.uv = {
-                    attrib.texcoords[2 * index.texcoord_index + 0],
-                    attrib.texcoords[2 * index.texcoord_index + 1]
-                };
-            }
-
-            if(uniqueVertices.count(vertex) == 0) {
-                uniqueVertices[vertex] = static_cast<Uint32>(data.size() / (3 + 3 + 3 + 2));
-                data.push_back(vertex.position.x);
-                data.push_back(vertex.position.y);
-                data.push_back(vertex.position.z);
-                data.push_back(vertex.color.r);
-                data.push_back(vertex.color.g);
-                data.push_back(vertex.color.b);
-                data.push_back(vertex.normal.x);
-                data.push_back(vertex.normal.y);
-                data.push_back(vertex.normal.z);
-                data.push_back(vertex.uv.x);
-                data.push_back(vertex.uv.y);
-            }
-            indices.push_back(uniqueVertices[vertex]);
         }
     }
 
