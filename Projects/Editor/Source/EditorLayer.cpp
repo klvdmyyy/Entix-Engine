@@ -3,7 +3,11 @@
 #include <Core/Debug/LogSinks.h>
 #include <Core/IO/Decorators.h>
 
+#include <Resources/ResourceManager.h>
+
 #include <Input/Actions.h>
+
+#include <GameFramework/TextureLoader.h>
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -15,8 +19,16 @@ EditorLayer::EditorLayer()
 
 void EditorLayer::OnAttach()
 {
+    auto& rm = ResourceManager::Instance();
+
+    rm.SetAssetsDirectory(PROJECT_ASSETS_DIR);
+
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
     ActionSystem::Instance().PushContext({"Console"});
+
+    rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
+
+    rm.Load<Renderer::Texture, TextureLoader>("Test.jpg");
 
     StringCommandRunner::Instance().AddCommand({ .name = "e_show_console", .description = "0 - Hide, 1 - Show" },
     [&](const CommandArgs& args, IO::Writer& rawWriter) {

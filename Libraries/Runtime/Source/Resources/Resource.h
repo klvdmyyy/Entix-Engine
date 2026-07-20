@@ -5,6 +5,8 @@
 
 #include "Resources/ResourceId.h"
 
+#include <typeindex>
+
 class Resource {
 public:
     virtual ~Resource() = default;
@@ -33,32 +35,29 @@ public:
     }
     Uint64 GetRefCount() const { return m_refCount; }
 
+    std::type_index GetLoaderType() const noexcept { return m_loaderType; }
+    std::type_index GetResourceType() const noexcept { return m_resourceType; }
+
 protected:
     friend class ResourceManager;
     friend class ResourceLoader;
 
-    void SetState(State state) { m_state = state; }
+    void SetLoaderType(std::type_index loaderType) noexcept { m_loaderType = loaderType; }
+    void SetResourceType(std::type_index resourceType) noexcept { m_resourceType = resourceType; }
 
-//     virtual bool LoadFromStream(IO::Reader& reader) = 0;
-//     virtual bool Unload() = 0;
+    void SetState(State state) noexcept { m_state = state; }
 
-//     bool UnloadInternal() {
-//       if (m_refCount != 0) {
-//         EX_LOG(Warning,
-//                R"(Unloading resource which is currently in usage!
-// ResourceId: {}
-// Reference Count: {}
-// Memory Size: {})",
-//                m_id, m_refCount, m_memorySize);
-//       }
-//       EX_LOG(Trace, "Unloading resource: {}", m_id);
-//         m_state = State::Unloaded;
-//       return Unload();
-//     }
+    virtual void HotReload([[maybe_unused]] Scope<Resource> other)
+    {
+        EX_LOG(Warning, LogCategory::Resource, "Resource doesn't support hot-reload: '{}'", (String)m_id);
+    }
 
 private:
     ResourceId m_id;
     State m_state;
     Uint64 m_refCount;
     size_t m_memorySize;
+
+    std::type_index m_loaderType = typeid(std::nullptr_t);
+    std::type_index m_resourceType = typeid(std::nullptr_t);
 };

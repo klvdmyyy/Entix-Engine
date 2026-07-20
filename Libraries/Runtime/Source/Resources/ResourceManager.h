@@ -16,12 +16,26 @@
 
 class ResourceManager {
 public:
+    ResourceManager();
+
     static ResourceManager& Instance();
 
     FORCE_INLINE
     inline void SetAssetsDirectory(const std::filesystem::path& path) noexcept
     {
         m_assetDir = path;
+    }
+
+    // Use same method for getting full asset filepath in ResourceManager!
+    //
+    // Different filepath produce different hashes in ResourceId. Just using '/' instead of '\' is
+    // already can cause a lot of errors.
+    //
+    // TODO: We need to always replace all '\' with '/' symbol
+    FORCE_INLINE
+    inline std::filesystem::path GetAsset(const std::filesystem::path& path) noexcept
+    {
+        return m_assetDir / path;
     }
 
     enum class LoadMode {
@@ -46,7 +60,7 @@ public:
     [[nodiscard]]
     ResourceHandle<T> Load(const std::filesystem::path& path)
     {
-        ResourceId id(m_assetDir / path);
+        ResourceId id(GetAsset(path));
         return LoadInternal<T, Loader>(id, LoadMode::Sync);
     }
 
@@ -54,7 +68,7 @@ public:
     [[nodiscard]]
     ResourceHandle<T> LoadAsync(const std::filesystem::path& path)
     {
-        ResourceId id(m_assetDir / path);
+        ResourceId id(GetAsset(path));
         return LoadInternal<T, Loader>(id, LoadMode::Async);
     }
 
@@ -114,8 +128,11 @@ private:
         }
 
         // Check for resource type mismatches
-        auto res = dynamic_cast<T*>(m_resources[id].get());
+        T* res = dynamic_cast<T*>(m_resources[id].get());
         EX_ASSERT(res, "Failed to cast resource provided by loader to '{}' type!", TypeName<T>());
+
+        res->SetLoaderType(typeid(Loader));
+        res->SetResourceType(typeid(T));
 
         // Set resource as Ready To Use
         res->SetState(Resource::State::Ready);
@@ -126,6 +143,8 @@ private:
         // Return the resource handle object
         return ResourceHandle<T>(res->GetId(), res);
     }
+
+    void Reload(const ResourceId& id);
 
     std::unordered_map<ResourceId, Scope<Resource>, ResourceId::Hasher> m_resources;
     std::unordered_map<size_t, Scope<ResourceLoader>> m_loaders;
