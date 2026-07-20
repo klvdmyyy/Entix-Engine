@@ -13,6 +13,7 @@ I would keep support for only Windows and Linux for now.
     - Built-in loaders for Shaders, Textures and OBJ mesh
 - Two different modules (Runtime and GameFramework)
 - C++ scripting
+- Good profiling powered by [Tracy](https://github.com/wolfpld/tracy)
 
 ## Structure of the project
 
