@@ -8,7 +8,7 @@ I would keep support for only Windows and Linux for now.
 
 - Supports both Windows and Linux
 - 3D rendering powered by OpenGL only
-- ECS-based architecture
+- ECS-based architecture powered by [EnTT](https://github.com/skypjack/entt)
 - Good Resource Management (i think it's good)
     - Built-in loaders for Shaders, Textures and OBJ mesh
 - Two different modules (Runtime and GameFramework)
