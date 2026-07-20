@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Core/Base.h"
-
+#include "Core/Assert.h"
 #include "Core/String.h"
 
 #include <cstddef>
@@ -36,6 +36,16 @@ public:
 
     constexpr void operator+=(const Bytes& other) {
         m_count += other.m_count;
+    }
+
+    constexpr Bytes operator-(const Bytes& other) {
+        EX_DEBUG_ASSERT(m_count >= other.m_count, "Calcalation trying to result as negative unsigned type!");
+        return Bytes(m_count - other.m_count);
+    }
+
+    constexpr void operator-=(const Bytes& other) {
+        EX_DEBUG_ASSERT(m_count >= other.m_count, "Calcalation trying to result as negative unsigned type!");
+        m_count -= other.m_count;
     }
 
     String ToString() const noexcept {
