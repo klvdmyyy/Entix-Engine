@@ -88,7 +88,7 @@ public:
     }
 
     [[nodiscard]]
-    size_t GetTotalMemoryUsage() const;
+    Bytes GetTotalMemoryUsage() const;
 
     [[nodiscard]]
     size_t GetResourceCount() const;

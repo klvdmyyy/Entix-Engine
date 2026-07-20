@@ -22,9 +22,9 @@ public:
     {
     }
 
-    ResourceId GetId() const { return m_id; }
-    State GetState() const { return m_state; }
-    size_t GetMemorySize() const { return m_memorySize; }
+    ResourceId GetId() const noexcept { return m_id; }
+    State GetState() const noexcept { return m_state; }
+    Bytes GetMemorySize() const noexcept { return m_memorySize; }
 
     void AddRef() { m_refCount++; }
     void Release() {
@@ -45,6 +45,8 @@ protected:
     void SetLoaderType(std::type_index loaderType) noexcept { m_loaderType = loaderType; }
     void SetResourceType(std::type_index resourceType) noexcept { m_resourceType = resourceType; }
 
+    void SetMemorySize(Bytes memorySize) noexcept { m_memorySize = memorySize; }
+
     void SetState(State state) noexcept { m_state = state; }
 
     virtual void HotReload([[maybe_unused]] Scope<Resource> other)
@@ -56,7 +58,7 @@ private:
     ResourceId m_id;
     State m_state;
     Uint64 m_refCount;
-    size_t m_memorySize;
+    Bytes m_memorySize;
 
     std::type_index m_loaderType = typeid(std::nullptr_t);
     std::type_index m_resourceType = typeid(std::nullptr_t);

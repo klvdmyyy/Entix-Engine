@@ -23,11 +23,12 @@ ResourceManager::ResourceManager()
     Reload(ResourceId(GetAsset(filepath)));
   });
 
-  StringCommandRunner::Instance().AddCommand({ .name = "res_list", .description = "List resources" },
+  StringCommandRunner::Instance().AddCommand({ .name = "res_stat", .description = "List resources statistics" },
   [&](const CommandArgs& args, IO::Writer& rawWriter) {
     auto writer = IO::TextWriter::CreateNonOwned(rawWriter);
+    writer.WriteFmt("Total Memory Usage: {}", GetTotalMemoryUsage());
     for(const auto& pair : m_resources) {
-      writer.WriteFmt("{} - {}", (String)pair.first, pair.first.Hash());
+      writer.WriteFmt("{} - {}", std::filesystem::relative((std::filesystem::path)(pair.first), m_assetDir).string(), pair.second->GetMemorySize());
     }
   });
 }
@@ -39,7 +40,15 @@ ResourceManager &ResourceManager::Instance() {
 
 void ResourceManager::Unload(const ResourceId &id) {}
 
-size_t ResourceManager::GetTotalMemoryUsage() const { return size_t(); }
+Bytes ResourceManager::GetTotalMemoryUsage() const {
+  Bytes usage = 0;
+
+  for(const auto& pair : m_resources) {
+    usage += pair.second->GetMemorySize();
+  }
+
+  return usage;
+}
 
 size_t ResourceManager::GetResourceCount() const { return size_t(); }
 

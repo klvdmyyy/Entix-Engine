@@ -57,6 +57,8 @@ void OpenGLTexture::SetData(void* data, Uint32 size)
 {
     ZoneScoped;
 
+    SetMemorySize(Bytes(size));
+
     Uint32 bpp = m_dataFormat == GL_RGBA ? 4 : 3;
     EX_ASSERT(size == m_width * m_height * bpp, "Data must be entire texture!");
     glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, m_dataFormat, GL_UNSIGNED_BYTE, data);
