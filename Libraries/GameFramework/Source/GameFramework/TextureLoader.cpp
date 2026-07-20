@@ -9,6 +9,8 @@
 
 Scope<Resource> TextureLoader::Load(const ResourceId& id, IO::Reader& reader)
 {
+    ZoneScoped;
+
     int width, height, channels;
     stbi_set_flip_vertically_on_load(1);
     stbi_uc* data = nullptr;
