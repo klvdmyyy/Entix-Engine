@@ -17,11 +17,14 @@ using namespace Renderer;
 class ERUNTIME_API OpenGLVertexBuffer : public VertexBuffer
 {
  public:
+    OpenGLVertexBuffer(uint32_t size);
     OpenGLVertexBuffer(float* data, uint32_t size);
     ~OpenGLVertexBuffer();
 
     void Bind() const final;
     void Unbind() const final;
+
+    void SetData(const void* data, uint32_t size) final;
 
     const BufferLayout &GetLayout() const noexcept final {
         return m_layout;
