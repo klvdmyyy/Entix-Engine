@@ -9,6 +9,8 @@
 #include "GameFramework/Scene.h"
 #include "GameFramework/Components.h"
 
+#include <unordered_map>
+
 #include <entt/entt.hpp>
 
 class Entity {
@@ -55,9 +57,19 @@ public:
         return m_scene->m_registry.remove<T>(m_entityHandle);
     }
 
+    bool operator==(const Entity& other) const noexcept
+    {
+        return (Uint32)(*this) == (Uint32)other;
+    }
+
+    bool operator<(const Entity& other) const noexcept
+    {
+        return (Uint32)(*this) < (Uint32)other;
+    }
+
     operator bool() const { return m_entityHandle != entt::null; }
     operator entt::entity() const { return m_entityHandle; }
-    operator Uint32() const { return (Uint32)m_entityHandle; }
+    explicit operator Uint32() const { return (Uint32)m_entityHandle; }
 
     Uuid GetUuid() { return GetComponent<IdComponent>().id; }
     const String& GetName() { return GetComponent<TagComponent>().tag; }
@@ -65,4 +77,13 @@ public:
 private:       
     entt::entity m_entityHandle{entt::null};
     Scene* m_scene{nullptr};
+};
+
+template<>
+struct std::hash<Entity>
+{
+    size_t operator()(const Entity& entity) const
+    {
+        return std::hash<Uint32>{}((Uint32)entity);
+    }
 };

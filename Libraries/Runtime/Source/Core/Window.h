@@ -42,6 +42,7 @@ struct WindowSpecification
     String title;
     bool resizable = false;
     bool fullscreen = false;
+    bool maximized = false;
 };
 
 class Window {

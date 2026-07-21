@@ -90,16 +90,23 @@ void EditorLayer::OnAttach()
     cubeMesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>("Models/Cube.obj");
     cubeMesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>("Shaders/Textures.glsl");
     cubeMesh.material.texture = rm.Load<Renderer::Texture, TextureLoader>("Test.jpg");
+
+    Entity child1 = scene.CreateEntity("Child 1");
+    child1.AddOrReplaceComponent<TransformComponent>(cube);
 }
 
 void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
 {
     Application::Get().GetCurrentScene().OnTick(deltaTime);
 
+    ////////////////////////////////////////
+    ///////////// Framebuffer //////////////
     m_viewportFramebuffer->Resize(m_viewportSize.x, m_viewportSize.y);
 
     m_viewportFramebuffer->ClearAttachment(1, -1);
 
+    //////////////////////////////
+    ////////// Camera ////////////
     m_editorCameraTransform.UpdateLocalMatrix();
     m_editorCameraTransform.UpdateWorldMatrix(Float4x4(1.0f));
 
@@ -110,8 +117,13 @@ void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
 
     m_editorCamera.viewport.UpdateAbsolute(fbRect);
     m_editorCamera.Update(m_editorCameraTransform);
-    EX_LOG(Trace, LogCategory::Core, "Pos: {} Size: {}", m_editorCamera.viewport.GetAbsolutePosition(), m_editorCamera.viewport.GetAbsoluteSize());
 
+    /////////////////////////
+    //////// Panels /////////
+    m_inspectorPanel.Update();
+
+    /////////////////////////
+    //////// Other //////////
     if(Input::IsActionPressed("Console"))
         m_consoleOpen = !m_consoleOpen;
 }
@@ -137,9 +149,9 @@ void EditorLayer::OnRender()
             ImGuiID dock_id_bottom = 0;
             ImGuiID dock_id_main = dockspace_id;
 
-            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Left, 0.30f, &dock_id_left, &dock_id_main);
-            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Down, 0.40f, &dock_id_bottom, &dock_id_main);
-            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Right, 0.40f, &dock_id_right, &dock_id_main);
+            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Down, 0.25f, &dock_id_bottom, &dock_id_main);
+            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Right, 0.20f, &dock_id_right, &dock_id_main);
+            ImGui::DockBuilderSplitNode(dock_id_main, ImGuiDir_Left, 0.20f, &dock_id_left, &dock_id_main);
 
             ImGui::DockBuilderDockWindow("Viewport", dock_id_main);
 
@@ -155,6 +167,32 @@ void EditorLayer::OnRender()
         ImGui::DockSpaceOverViewport(dockspace_id, viewport, ImGuiDockNodeFlags_PassthruCentralNode);
     }
 
+    // Menu
+    {
+        ZoneScopedN("ImGui - Main Menu Bar");
+
+        if(ImGui::BeginMainMenuBar()) {
+            if(ImGui::BeginMenu("File")) {
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("Edit")) {
+                ImGui::EndMenu();
+            }
+            if(ImGui::BeginMenu("View")) {
+                if(ImGui::BeginMenu("Windows")) {
+                    ImGui::MenuItem("Inspector", nullptr, &m_inspectorPanel.open);
+                    ImGui::MenuItem("Properties", nullptr, &m_propertiesOpen);
+                    ImGui::MenuItem("Viewport", nullptr, &m_viewportOpen);
+                    ImGui::MenuItem("Content Browser", nullptr, &m_contentBrowserOpen);
+                    ImGui::MenuItem("Console", "`", &m_consoleOpen);
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+    }
+
     if(m_viewportOpen)
     {
         ZoneScopedN("ImGui - Viewport");
@@ -165,6 +203,22 @@ void EditorLayer::OnRender()
 
         ImGui::Image(reinterpret_cast<void*>(m_viewportFramebuffer->GetColorAttachmentRendererId()), m_viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 
+        ImGui::End();
+    }
+
+    m_inspectorPanel.Render();
+
+    if(m_propertiesOpen)
+    {
+        ZoneScopedN("ImGui - Properties");
+        ImGui::Begin("Properties", &m_propertiesOpen);
+        ImGui::End();
+    }
+
+    if(m_contentBrowserOpen)
+    {
+        ZoneScopedN("ImGui - Content Browser");
+        ImGui::Begin("Content Browser", &m_contentBrowserOpen);
         ImGui::End();
     }
 

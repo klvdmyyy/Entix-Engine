@@ -33,6 +33,15 @@ public:
     void OnTick(Timestep deltaTime);
     void OnRender(CameraComponent* forcedCamera = nullptr);
 
+    void EachEntity(std::function<void(Entity)> callback) noexcept;
+
+    template<typename... Components>
+    FORCE_INLINE
+    inline auto GetAllEntitiesWith()
+    {
+        return m_registry.view<Components...>();
+    }
+
 private:
     friend class Entity;
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Panels/InspectorPanel.h"
+
 #include <GameFramework.h>
 
 #include <Core/IO/Base.h>
@@ -44,4 +46,13 @@ private:
     bool m_viewportOpen = true;
     ImVec2 m_viewportSize;
     Ref<Renderer::Framebuffer> m_viewportFramebuffer;
+
+    // Inspector
+    InspectorPanel m_inspectorPanel;
+
+    // Properties
+    bool m_propertiesOpen = true;
+
+    // Content Browser
+    bool m_contentBrowserOpen = true;
 };

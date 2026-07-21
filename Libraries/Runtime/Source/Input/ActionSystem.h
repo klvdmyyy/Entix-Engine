@@ -126,6 +126,8 @@ private:
 // ---------------------------------------------------------------------
 class ActionSystem {
 public:
+    ActionSystem();
+
     static ActionSystem& Instance();
 
     FORCE_INLINE
@@ -171,8 +173,6 @@ public:
     bool IsHeld(const String& name) const;
 
 private:
-    ActionSystem();
-
     ActionMap m_actionMap{};
     std::stack<ActionContext> m_contextStack{};
 };

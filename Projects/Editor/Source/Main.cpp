@@ -9,10 +9,11 @@ static const ApplicationSpecification g_spec = {
     .name = "Entix Editor",
     .description = "Editor for Entix-Engine",
     .windowSpec = {
-        .width = 800,
-        .height = 600,
+        .width = 1280,
+        .height = 720,
         .title = "Entix Engine 1.0",
         .resizable = true,
+        .maximized = true,
     },
 };
 

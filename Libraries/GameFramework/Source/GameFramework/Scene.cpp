@@ -72,6 +72,14 @@ Entity Scene::GetEntityByUuid(Uuid uuid) {
     return Entity{};
 }
 
+void Scene::EachEntity(std::function<void(Entity)> callback) noexcept
+{
+    for(auto entityId : m_registry.view<entt::entity>())
+    {
+        callback(Entity{entityId, this});
+    }
+}
+
 static constexpr const char* TICK_FRAME = "Scene OnTick";
 
 void Scene::OnTick(Timestep deltaTime)

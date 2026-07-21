@@ -36,10 +36,15 @@ WindowSDL::WindowSDL(const WindowSpecification& spec)
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    Uint32 flags = SDL_WINDOW_OPENGL;
-        
+    Uint32 flags = 0;
+    
+    flags |= SDL_WINDOW_OPENGL;
+
     if(spec.resizable)
         flags |= SDL_WINDOW_RESIZABLE;
+    
+    if(spec.maximized)
+        flags |= SDL_WINDOW_MAXIMIZED;
 
     m_window = SDL_CreateWindow(spec.title.c_str(), spec.width, spec.height, flags);
 
