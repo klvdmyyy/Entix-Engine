@@ -39,13 +39,3 @@
 #else
     #error "Platform doesn't support debugbreak yet!"
 #endif
-
-#define ERUNTIME_NAMESPACE Entix
-
-#define EX_PROJECT_ROOT "@CMAKE_SOURCE_DIR@"
-
-#define EX_SHADERS_DIRECTORY "@ENTIX_SHADERS_DIRECTORY@"
-
-#define EX_GET_SHADER(shaderdir) "@ENTIX_SHADERS_DIRECTORY@/" shaderdir
-#define EX_GET_MODEL(modelfile) "@ENTIX_SHADERS_DIRECTORY@/../Models/" modelfile
-#define EX_GET_TEXTURE(texturefile) "@ENTIX_SHADERS_DIRECTORY@/../Textures/" texturefile
