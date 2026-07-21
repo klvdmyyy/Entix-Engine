@@ -8,6 +8,8 @@
 #include <Input/Actions.h>
 
 #include <GameFramework/TextureLoader.h>
+#include <GameFramework/ObjMeshLoader.h>
+#include <GameFramework/ShaderLoader.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -30,6 +32,8 @@ void EditorLayer::OnAttach()
     rm.SetAssetsDirectory(PROJECT_ASSETS_DIR);
 
     // Register resource loaders
+    rm.RegisterLoader<ObjMeshLoader>(Application::Get().GetRendererContext());
+    rm.RegisterLoader<ShaderLoader>(Application::Get().GetRendererContext());
     rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
 
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
@@ -40,6 +44,20 @@ void EditorLayer::OnAttach()
     m_infoIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/InfoLog96x96.png");
     m_warnIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/WarningLog96x96.png");
     m_errorIcon = rm.Load<Renderer::Texture, TextureLoader>("Thumbnails/ErrorLog96x96.png");
+
+    // Viewport framebuffer
+    Renderer::FramebufferSpecification viewportFramebufferSpec;
+    viewportFramebufferSpec.attachmentSpec = {
+        Renderer::FramebufferTextureFormat::RGBA8,
+        Renderer::FramebufferTextureFormat::RED_INTEGER,
+        Renderer::FramebufferTextureFormat::Depth
+    };
+    viewportFramebufferSpec.width = 800;
+    viewportFramebufferSpec.height = 600;
+    m_viewportFramebuffer = Ref<Renderer::Framebuffer>(Application::Get().GetRendererContext()->CreateFramebuffer(viewportFramebufferSpec));
+
+    // Editor camera for viewport
+    m_editorCamera.framebuffer = m_viewportFramebuffer;
 
     // Editor commands
     StringCommandRunner::Instance().AddCommand({ .name = "e_show_console", .description = "0 - Hide, 1 - Show" },
@@ -57,11 +75,38 @@ void EditorLayer::OnAttach()
             m_consoleOpen = true;
         }
     });
+
+    // Move camera
+    m_editorCameraTransform.position.z = 5.0f;
+
+    /////////////////////////////////////////////////////////////
+    // Initialize testing scene
+
+    auto& scene = Application::Get().GetCurrentScene();
+
+    Entity cube = scene.CreateEntity("Cube");
+    auto& cubeMesh = cube.AddComponent<StaticMeshComponent>();
+
+    cubeMesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>("Models/Cube.obj");
+    cubeMesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>("Shaders/SimpleShader.glsl");
 }
 
 void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
 {
     Application::Get().GetCurrentScene().OnTick(deltaTime);
+
+    m_viewportFramebuffer->ClearAttachment(1, -1);
+
+    m_editorCameraTransform.UpdateLocalMatrix();
+    m_editorCameraTransform.UpdateWorldMatrix(Float4x4(1.0f));
+
+    Renderer::Rect fbRect = {
+        m_viewportFramebuffer->GetSpecification().width,
+        m_viewportFramebuffer->GetSpecification().height,
+    };
+
+    m_editorCamera.viewport.UpdateAbsolute(fbRect);
+    m_editorCamera.Update(m_editorCameraTransform);
 
     if(Input::IsActionPressed("Console"))
         m_consoleOpen = !m_consoleOpen;
@@ -70,7 +115,7 @@ void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
 void EditorLayer::OnRender()
 {
     // Render the scene
-    Application::Get().GetCurrentScene().OnRender();
+    Application::Get().GetCurrentScene().OnRender(&m_editorCamera);
 
     {
         ZoneScopedN("ImGui - Docking Setup")
@@ -104,6 +149,30 @@ void EditorLayer::OnRender()
         }
 
         ImGui::DockSpaceOverViewport(dockspace_id, viewport, ImGuiDockNodeFlags_PassthruCentralNode);
+    }
+
+    if(m_viewportOpen)
+    {
+        ZoneScopedN("ImGui - Viewport");
+
+        ImGui::Begin("Viewport", &m_viewportOpen);
+
+        const ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+        const auto spec = m_viewportFramebuffer->GetSpecification();
+        const float aspectRatio = static_cast<float>(spec.width) / static_cast<float>(spec.height);
+        ImVec2 imageSize = ImVec2(spec.width, spec.height);
+
+        if (imageSize.x / aspectRatio > imageSize.y) {
+            imageSize.x = imageSize.y * aspectRatio;
+        } else {
+            imageSize.y = imageSize.x / aspectRatio;
+        }
+
+        ImGui::Image(reinterpret_cast<void*>(m_viewportFramebuffer->GetColorAttachmentRendererId()), imageSize, ImVec2(0, 1), ImVec2(1, 0));
+
+        m_viewportFramebuffer->Resize(contentRegionAvailable.x, contentRegionAvailable.y);
+
+        ImGui::End();
     }
 
     // Developer console

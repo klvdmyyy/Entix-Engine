@@ -124,7 +124,7 @@ void OpenGLFramebuffer::Invalidate()
     bool multisample = m_specification.samples > 1;
 
     // Attachments
-    if(m_colorAttachments.size())
+    if(m_colorAttachmentSpecifications.size())
     {
         m_colorAttachments.resize(m_colorAttachmentSpecifications.size());
         Utils::CreateTextures(multisample, m_colorAttachments.data(), m_colorAttachments.size());

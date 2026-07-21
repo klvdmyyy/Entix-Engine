@@ -10,6 +10,8 @@
 
 #include "GameFramework/Application.h"
 
+#include "GameFramework/Systems/MeshRender.h"
+
 #include <unordered_map>
 #include <functional>
 #include <vector>
@@ -177,16 +179,14 @@ void Scene::OnTick(Timestep deltaTime)
 
 static constexpr const char* RENDERING_FRAME = "Scene OnRender";
 
-void Scene::OnRender()
+void Scene::OnRender(CameraComponent* forcedCamera)
 {
     FrameMarkStart(RENDERING_FRAME);
 
     m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
     m_rendererContext->Clear();
 
-    constexpr const char* STATIC_MESH_FRAME = "StaticMesh rendering";
-
-    {
+    if(!forcedCamera) {
         auto camerasView = m_registry.view<TransformComponent, CameraComponent>();
         auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
             
@@ -204,32 +204,37 @@ void Scene::OnRender()
 
             // Render Static Mesh
             for(auto entity : group) {
-                FrameMarkStart(STATIC_MESH_FRAME);
                 auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
-
-                auto& shader = mesh.material.shader;
-                auto& texture = mesh.material.texture;
-                EX_DEBUG_ASSERT(shader.IsValid(), "Usage of invalid shader in material!");
-                
-                shader->Bind();
-                
-                shader->SetFloat4x4("model", transform.GetWorldMatrix());
-                shader->SetFloat4x4("view", camera.GetView());
-                shader->SetFloat4x4("projection", camera.GetProjection());
-
-                if(texture) {
-                    texture->Bind();
-                    shader->SetInt("texture", 0);
-                }
-                
-                m_rendererContext->Submit(shader.Get(), mesh.vertexArray.Get());
-                FrameMarkEnd(STATIC_MESH_FRAME);
+                Systems::StaticMeshRender(m_rendererContext.get(), transform, mesh, camera);
             }
 
             if(fb) fb->Unbind();
 
             m_rendererContext->EndScene();
         }
+    }
+    else
+    {
+        auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
+        
+        Renderer::Framebuffer* fb = forcedCamera->framebuffer ? forcedCamera->framebuffer.get() : nullptr;
+
+        m_rendererContext->BeginScene(forcedCamera->viewport);
+
+        if(fb) fb->Bind();
+
+        m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
+        m_rendererContext->Clear();
+
+        // Render Static Mesh
+        for(auto entity : group) {
+            auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
+            Systems::StaticMeshRender(m_rendererContext.get(), transform, mesh, *forcedCamera);
+        }
+
+        if(fb) fb->Unbind();
+
+        m_rendererContext->EndScene();
     }
 
     FrameMarkEnd(RENDERING_FRAME);

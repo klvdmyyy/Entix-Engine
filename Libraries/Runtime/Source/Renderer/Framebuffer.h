@@ -32,9 +32,9 @@ namespace Renderer {
     };
 
     struct FramebufferSpecification {
-        Uint32 width, height;
+        Uint32 width = 0, height = 0;
         FramebufferAttachmentSpecification attachmentSpec;
-        Uint32 samples;
+        Uint32 samples = 1;
 
         bool swapChainTarget = false;
     };
@@ -52,6 +52,7 @@ namespace Renderer {
         virtual void ClearAttachment(Uint32 attachmentIndex, Int32 value) = 0;
 
         virtual Uint32 GetRendererId() const noexcept = 0;
+        virtual Uint32 GetColorAttachmentRendererId(Uint32 index = 0) const = 0;
 
         virtual const FramebufferSpecification& GetSpecification() const noexcept = 0;
     };

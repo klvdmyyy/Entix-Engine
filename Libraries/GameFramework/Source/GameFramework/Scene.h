@@ -10,6 +10,8 @@
 
 #include "Renderer/Context.h"
 
+#include "GameFramework/Components.h"
+
 #include <unordered_map>
 
 #include <entt/entt.hpp>
@@ -29,7 +31,7 @@ public:
     Entity GetEntityByUuid(Uuid uuid);
 
     void OnTick(Timestep deltaTime);
-    void OnRender();
+    void OnRender(CameraComponent* forcedCamera = nullptr);
 
 private:
     friend class Entity;

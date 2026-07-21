@@ -12,7 +12,7 @@ static const ApplicationSpecification g_spec = {
         .width = 800,
         .height = 600,
         .title = "Entix Engine 1.0",
-        .resizable = false,
+        .resizable = true,
     },
 };
 

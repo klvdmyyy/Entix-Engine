@@ -27,6 +27,10 @@ public:
     void ClearAttachment(Uint32 attachmentIndex, Int32 value) final;
 
     Uint32 GetRendererId() const noexcept final { return m_rendererId; }
+    Uint32 GetColorAttachmentRendererId(Uint32 index = 0) const final {
+        EX_DEBUG_ASSERT_EXPR(index < m_colorAttachments.size());
+        return m_colorAttachments.at(index);
+    };
 
     const FramebufferSpecification& GetSpecification() const noexcept final { return m_specification; }
 
