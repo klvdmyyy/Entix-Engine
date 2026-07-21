@@ -2,6 +2,8 @@
 
 #include "Renderer/Framebuffer.h"
 
+#include <optional>
+
 #include <glad/glad.h>
 
 #ifndef ERUNTIME_BUILD_DLL
@@ -40,7 +42,7 @@ private:
     FramebufferSpecification m_specification;
 
     std::vector<FramebufferTextureSpecification> m_colorAttachmentSpecifications;
-    FramebufferTextureSpecification m_depthAttachmentSpecification;
+    std::optional<FramebufferTextureSpecification> m_depthAttachmentSpecification = std::nullopt;
 
     std::vector<GLuint> m_colorAttachments;
     GLuint m_depthAttachment = 0;

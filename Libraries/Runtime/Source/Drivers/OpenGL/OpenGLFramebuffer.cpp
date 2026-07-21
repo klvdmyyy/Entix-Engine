@@ -145,10 +145,10 @@ void OpenGLFramebuffer::Invalidate()
         }
     }
 
-    if(true) {
+    if(m_depthAttachmentSpecification.has_value()) {
         Utils::CreateTextures(multisample, &m_depthAttachment, 1);
         Utils::BindTexture(multisample, m_depthAttachment);
-        switch(m_depthAttachmentSpecification.textureFormat)
+        switch(m_depthAttachmentSpecification.value().textureFormat)
         {
             case FramebufferTextureFormat::DEPTH24STENCIL8:
                 Utils::AttachDepthTexture(m_depthAttachment, m_specification.samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_specification.width, m_specification.height);
