@@ -28,5 +28,8 @@ class ERUNTIME_API WindowSDL : public Window {
     SDL_Window* m_window;
 
     bool m_guiEnabled = false;
+
     bool m_isCursorGrabbed = false;
+    float m_lastCursorX = 0.0f;
+    float m_lastCursorY = 0.0f;
 };

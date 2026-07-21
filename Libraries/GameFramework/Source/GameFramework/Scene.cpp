@@ -181,6 +181,9 @@ void Scene::OnRender()
 {
     FrameMarkStart(RENDERING_FRAME);
 
+    m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
+    m_rendererContext->Clear();
+
     constexpr const char* STATIC_MESH_FRAME = "StaticMesh rendering";
 
     {

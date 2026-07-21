@@ -3,6 +3,7 @@
 #include "Core/Assert.h"
 #include "Core/EventSystem.h"
 
+#include "Input/Base.h"
 #include "Input/Events.h"
 
 #include <imgui.h>
@@ -61,13 +62,7 @@ void WindowSDL::Update()
             ImGui_ImplSDL3_ProcessEvent(&event);
 
         if(m_isCursorGrabbed) {
-            int x, y;
-            SDL_GetWindowSize(m_window, &x, &y);
-
-            x /= 2;
-            y /= 2;
-            
-            SDL_WarpMouseInWindow(m_window, x, y);
+            SDL_WarpMouseInWindow(m_window, m_lastCursorX, m_lastCursorY);
         }
         
         switch(event.type) {
@@ -78,13 +73,7 @@ void WindowSDL::Update()
         }
         case SDL_EVENT_MOUSE_MOTION: {
             if(m_isCursorGrabbed) {
-                int x, y;
-                SDL_GetWindowSize(m_window, &x, &y);
-
-                x /= 2;
-                y /= 2;
-
-                MouseMotionEvent e(event.motion.x - x, y - event.motion.y);
+                MouseMotionEvent e(event.motion.x - m_lastCursorX, m_lastCursorY - event.motion.y);
                 EventBus::Instance().PublishEvent(e);
             } else {
                 MouseMotionEvent e(event.motion.x, event.motion.y);
@@ -115,6 +104,7 @@ Uint32 WindowSDL::GetHeight() const
 
 void WindowSDL::GrabCursor(bool value)
 {
+    Input::GetCursorPosition(m_lastCursorX, m_lastCursorY);
     m_isCursorGrabbed = value;
     EX_ASSERT(SDL_SetWindowRelativeMouseMode(m_window, value), "Failed to set window relative mouse mode!");
     // SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
