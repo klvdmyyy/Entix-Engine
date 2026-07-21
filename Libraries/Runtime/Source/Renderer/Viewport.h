@@ -6,6 +6,7 @@
 #include "Renderer/Rect.h"
 
 namespace Renderer {
+    // Normalized wrapper of renderer viewport.
     class Viewport {
     public:
         float x = 0.0f;
