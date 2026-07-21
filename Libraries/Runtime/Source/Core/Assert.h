@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 #pragma once
 
+#include "Core/Base.h"
 #include "Core/Debug/Log.h"
 
 #include <print>
@@ -18,7 +19,7 @@
             EX_LOG(Critical, ::LogCategory::Core,                       \
                    "Assertion '{}' failed. Message: {}", #expr,         \
                    std::format(fmt,##__VA_ARGS__));                     \
-            std::exit(1);                                               \
+            EX_DEBUGBREAK();                                            \
         }                                                               \
     } while (0)
 

@@ -88,12 +88,15 @@ void EditorLayer::OnAttach()
     auto& cubeMesh = cube.AddComponent<StaticMeshComponent>();
 
     cubeMesh.vertexArray = rm.Load<Renderer::VertexArray, ObjMeshLoader>("Models/Cube.obj");
-    cubeMesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>("Shaders/SimpleShader.glsl");
+    cubeMesh.material.shader = rm.Load<Renderer::Shader, ShaderLoader>("Shaders/Textures.glsl");
+    cubeMesh.material.texture = rm.Load<Renderer::Texture, TextureLoader>("Test.jpg");
 }
 
 void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
 {
     Application::Get().GetCurrentScene().OnTick(deltaTime);
+
+    m_viewportFramebuffer->Resize(m_viewportSize.x, m_viewportSize.y);
 
     m_viewportFramebuffer->ClearAttachment(1, -1);
 
@@ -107,6 +110,7 @@ void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
 
     m_editorCamera.viewport.UpdateAbsolute(fbRect);
     m_editorCamera.Update(m_editorCameraTransform);
+    EX_LOG(Trace, LogCategory::Core, "Pos: {} Size: {}", m_editorCamera.viewport.GetAbsolutePosition(), m_editorCamera.viewport.GetAbsoluteSize());
 
     if(Input::IsActionPressed("Console"))
         m_consoleOpen = !m_consoleOpen;
@@ -157,20 +161,9 @@ void EditorLayer::OnRender()
 
         ImGui::Begin("Viewport", &m_viewportOpen);
 
-        const ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
-        const auto spec = m_viewportFramebuffer->GetSpecification();
-        const float aspectRatio = static_cast<float>(spec.width) / static_cast<float>(spec.height);
-        ImVec2 imageSize = ImVec2(spec.width, spec.height);
+        m_viewportSize = ImGui::GetContentRegionAvail();
 
-        if (imageSize.x / aspectRatio > imageSize.y) {
-            imageSize.x = imageSize.y * aspectRatio;
-        } else {
-            imageSize.y = imageSize.x / aspectRatio;
-        }
-
-        ImGui::Image(reinterpret_cast<void*>(m_viewportFramebuffer->GetColorAttachmentRendererId()), imageSize, ImVec2(0, 1), ImVec2(1, 0));
-
-        m_viewportFramebuffer->Resize(contentRegionAvailable.x, contentRegionAvailable.y);
+        ImGui::Image(reinterpret_cast<void*>(m_viewportFramebuffer->GetColorAttachmentRendererId()), m_viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 
         ImGui::End();
     }

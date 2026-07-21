@@ -9,6 +9,8 @@
 
 #include <Resources/ResourceHandle.h>
 
+#include <imgui.h>
+
 class EditorLayer : public Layer {
 public:
     EditorLayer();
@@ -40,5 +42,6 @@ private:
 
     // Viewport
     bool m_viewportOpen = true;
+    ImVec2 m_viewportSize;
     Ref<Renderer::Framebuffer> m_viewportFramebuffer;
 };

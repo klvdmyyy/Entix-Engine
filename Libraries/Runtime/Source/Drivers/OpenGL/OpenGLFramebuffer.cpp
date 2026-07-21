@@ -2,6 +2,9 @@
 
 #include "Core/Assert.h"
 
+#include <tracy/Tracy.hpp>
+#include <tracy/TracyOpenGL.hpp>
+
 static constexpr auto MAX_FRAMEBUFFER_SIZE = 8192U;
 
 namespace Utils {
@@ -12,6 +15,9 @@ namespace Utils {
 
     static void CreateTextures(bool multisampled, Uint32* outId, Uint32 count)
     {
+        ZoneScopedN("OpenGL - Create Framebuffer Textures");
+        TracyGpuZone("OpenGL - Create Framebuffer Textures");
+
         glCreateTextures(TextureTarget(multisampled), count, outId);
     }
 
@@ -22,6 +28,9 @@ namespace Utils {
 
     static void AttachColorTexture(Uint32 id, Int32 samples, GLenum internalFormat, GLenum format, Uint32 width, Uint32 height, Int32 index)
     {
+        ZoneScopedN("OpenGL - Attach color texture (Framebuffer)");
+        TracyGpuZone("OpenGL - Attach color texture (Framebuffer)");
+
         bool multisampled = samples > 1;
         if(multisampled)
         {
@@ -43,6 +52,9 @@ namespace Utils {
 
     static void AttachDepthTexture(Uint32 id, Int32 samples, GLenum format, GLenum attachmentType, Uint32 width, Uint32 height)
     {
+        ZoneScopedN("OpenGL - Attach depth texture (Framebuffer)");
+        TracyGpuZone("OpenGL - Attach depth texture (Framebuffer)");
+
         bool multisampled = samples > 1;
         if (multisampled)
         {
@@ -88,6 +100,9 @@ namespace Utils {
 OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
     : m_specification(spec)
 {
+    ZoneScopedN("OpenGL - Create Framebuffer Class");
+    TracyGpuZone("OpenGL - Create Framebuffer Class");
+
     for(auto spec : m_specification.attachmentSpec.attachments) {
         if(!Utils::IsDepthFormat(spec.textureFormat)) {
             m_colorAttachmentSpecifications.emplace_back(spec);
@@ -95,6 +110,17 @@ OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
             m_depthAttachmentSpecification = spec;
         }
     }
+
+    // bool multisample = m_specification.samples > 1;
+
+    // if(m_colorAttachmentSpecifications.size()) {
+    //     m_colorAttachments.resize(m_colorAttachmentSpecifications.size());
+    //     Utils::CreateTextures(multisample, m_colorAttachments.data(), m_colorAttachments.size());
+    // }
+
+    // if(m_depthAttachmentSpecification.has_value()) {
+    //     Utils::CreateTextures(multisample, &m_depthAttachment, 1);
+    // } 
 
     Invalidate();
 }
@@ -108,17 +134,22 @@ OpenGLFramebuffer::~OpenGLFramebuffer()
 
 void OpenGLFramebuffer::Invalidate()
 {
+    ZoneScopedN("OpenGL - Invalidate Framebuffer");
+    TracyGpuZone("OpenGL - Invalidate Framebuffer");
+
     if(m_rendererId)
     {
-        glDeleteFramebuffers(1, &m_rendererId);
         glDeleteTextures(m_colorAttachments.size(), m_colorAttachments.data());
         glDeleteTextures(1, &m_depthAttachment);
 
         m_colorAttachments.clear();
         m_depthAttachment = 0;
     }
+    else
+    {
+        glCreateFramebuffers(1, &m_rendererId);
+    }
 
-    glCreateFramebuffers(1, &m_rendererId);
     this->Bind();
 
     bool multisample = m_specification.samples > 1;
@@ -128,7 +159,6 @@ void OpenGLFramebuffer::Invalidate()
     {
         m_colorAttachments.resize(m_colorAttachmentSpecifications.size());
         Utils::CreateTextures(multisample, m_colorAttachments.data(), m_colorAttachments.size());
-
         for(size_t i = 0; i < m_colorAttachments.size(); i++)
         {
             Utils::BindTexture(multisample, m_colorAttachments[i]);
@@ -209,6 +239,9 @@ Int32 OpenGLFramebuffer::ReadPixel(Uint32 attachmentIndex, Int32 x, Int32 y)
 
 void OpenGLFramebuffer::ClearAttachment(Uint32 attachmentIndex, Int32 value)
 {
+    ZoneScopedN("OpenGL - Clear Framebuffer Attachment");
+    TracyGpuZone("OpenGL - Clear Framebuffer Attachment");
+
     EX_ASSERT_EXPR(attachmentIndex < m_colorAttachments.size());
     
     auto& spec = m_colorAttachmentSpecifications[attachmentIndex];

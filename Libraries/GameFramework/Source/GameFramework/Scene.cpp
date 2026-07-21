@@ -195,9 +195,9 @@ void Scene::OnRender(CameraComponent* forcedCamera)
 
             Renderer::Framebuffer* fb = camera.framebuffer ? camera.framebuffer.get() : nullptr;
 
-            m_rendererContext->BeginScene(camera.viewport);
-
             if(fb) fb->Bind();
+
+            m_rendererContext->BeginScene(camera.viewport);
             
             m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
             m_rendererContext->Clear();
@@ -208,20 +208,20 @@ void Scene::OnRender(CameraComponent* forcedCamera)
                 Systems::StaticMeshRender(m_rendererContext.get(), transform, mesh, camera);
             }
 
-            if(fb) fb->Unbind();
-
             m_rendererContext->EndScene();
+            
+            if(fb) fb->Unbind();
         }
     }
     else
     {
         auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
-        
+
         Renderer::Framebuffer* fb = forcedCamera->framebuffer ? forcedCamera->framebuffer.get() : nullptr;
 
-        m_rendererContext->BeginScene(forcedCamera->viewport);
-
         if(fb) fb->Bind();
+
+        m_rendererContext->BeginScene(forcedCamera->viewport);
 
         m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
         m_rendererContext->Clear();
@@ -232,9 +232,9 @@ void Scene::OnRender(CameraComponent* forcedCamera)
             Systems::StaticMeshRender(m_rendererContext.get(), transform, mesh, *forcedCamera);
         }
 
-        if(fb) fb->Unbind();
-
         m_rendererContext->EndScene();
+
+        if(fb) fb->Unbind();
     }
 
     FrameMarkEnd(RENDERING_FRAME);
