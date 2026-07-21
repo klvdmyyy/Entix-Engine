@@ -6,29 +6,29 @@
 
 #include <cstdint>
 
-using WindowID = std::uint32_t;
+using WindowId = std::uint32_t;
 
 class WindowCloseEvent : public Event
 {
 public:
-    WindowCloseEvent(WindowID id)
+    WindowCloseEvent(WindowId id)
         : k_id(id)
     {
     }
 
-    const WindowID k_id;
+    const WindowId k_id;
 
     DEFINE_EVENT_TYPE(WindowCloseEvent);
 };
 
 class WindowResizeEvent : public Event {
 public:
-    WindowResizeEvent(WindowID id, Uint32 w, Uint32 h)
+    WindowResizeEvent(WindowId id, Uint32 w, Uint32 h)
         : k_id(id), k_width(w), k_height(h)
     {
     }
 
-    const WindowID k_id;
+    const WindowId k_id;
     const Uint32 k_width;
     const Uint32 k_height;
 
