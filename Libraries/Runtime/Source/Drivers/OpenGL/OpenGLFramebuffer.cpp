@@ -119,7 +119,7 @@ void OpenGLFramebuffer::Invalidate()
     }
 
     glCreateFramebuffers(1, &m_rendererId);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_rendererId);
+    this->Bind();
 
     bool multisample = m_specification.samples > 1;
 
@@ -169,7 +169,7 @@ void OpenGLFramebuffer::Invalidate()
 
     EX_ASSERT_EXPR(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    this->Unbind();
 }
 
 void OpenGLFramebuffer::Bind()
