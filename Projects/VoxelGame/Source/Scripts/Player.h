@@ -19,6 +19,8 @@ protected:
     void OnEvent(const Event& event) final;
 
 private:
+    bool m_grabCursor = false;
+
     Scene* scene = nullptr;
     
     TransformComponent* transform = nullptr;

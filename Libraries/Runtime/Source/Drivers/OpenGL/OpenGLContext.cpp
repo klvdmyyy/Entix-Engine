@@ -6,6 +6,7 @@
 #include "Drivers/OpenGL/OpenGLShader.h"
 #include "Drivers/OpenGL/OpenGLVertexArray.h"
 #include "Drivers/OpenGL/OpenGLTexture.h"
+#include "Drivers/OpenGL/OpenGLFramebuffer.h"
 
 #include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>
@@ -39,6 +40,30 @@ OpenGLContext::~OpenGLContext()
     SDL_GL_DestroyContext(m_context);
 }
 
+void OpenGLContext::BeginScene(const Viewport& viewport)
+{
+    TracyGpuZone("Begin Scene");
+    glViewport(
+        static_cast<Int32>(viewport.GetAbsolutePosition().x),
+        static_cast<Int32>(viewport.GetAbsolutePosition().y),
+        static_cast<Int32>(viewport.GetAbsoluteSize().x),
+        static_cast<Int32>(viewport.GetAbsoluteSize().y)
+    );
+    glScissor(
+        static_cast<Int32>(viewport.GetAbsolutePosition().x),
+        static_cast<Int32>(viewport.GetAbsolutePosition().y),
+        static_cast<Int32>(viewport.GetAbsoluteSize().x),
+        static_cast<Int32>(viewport.GetAbsoluteSize().y)
+    );
+    glEnable(GL_SCISSOR_TEST);
+}
+
+void OpenGLContext::EndScene()
+{
+    TracyGpuZone("End Scene");
+    glDisable(GL_SCISSOR_TEST);
+}
+
 void OpenGLContext::SetClearColor(float r, float g, float b)
 {
     glClearColor(r, g, b, 1.0f);
@@ -57,7 +82,7 @@ void OpenGLContext::Swap()
 
 void OpenGLContext::Submit(Shader* shader, VertexArray* vertexArray)
 {
-    TracyGpuZone("Sumbitting mesh");
+    TracyGpuZone("Sumbit mesh");
 
     shader->Bind();
     vertexArray->Bind();
@@ -124,4 +149,10 @@ IndexBuffer* OpenGLContext::CreateIndexBuffer(uint32_t* indices, uint32_t count)
 Texture* OpenGLContext::CreateTexture(const ResourceId& id, const TextureSpecification& spec)
 {
     return new OpenGLTexture(id, spec);
+}
+
+[[nodiscard]]
+Framebuffer* OpenGLContext::CreateFramebuffer(const FramebufferSpecification& spec)
+{
+    return new OpenGLFramebuffer(spec);
 }

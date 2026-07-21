@@ -34,9 +34,12 @@ class ERUNTIME_API OpenGLContext : public Context
 
     [[nodiscard]]
     Texture* CreateTexture(const ResourceId& id, const TextureSpecification& spec) final;
+   
+    [[nodiscard]]
+    Framebuffer* CreateFramebuffer(const FramebufferSpecification& spec) final;
 
-    void BeginScene() final {}
-    void EndScene() final {}
+    void BeginScene(const Viewport& viewport) final;
+    void EndScene() final;
 
     void SetClearColor(float r, float g, float b) final;
     void Clear() final;

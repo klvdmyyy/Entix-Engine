@@ -10,7 +10,7 @@ static const ApplicationSpecification g_spec = {
         .width = 800,
         .height = 600,
         .title = "VoxelGame",
-        .resizable = false,
+        .resizable = true,
     },
 };
 

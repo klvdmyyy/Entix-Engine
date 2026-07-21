@@ -164,7 +164,7 @@ void OpenGLFramebuffer::Invalidate()
     }
     else if(m_colorAttachments.empty())
     {
-        glDrawBuffers(GL_NONE);
+        glDrawBuffer(GL_NONE);
     }
 
     EX_ASSERT_EXPR(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);

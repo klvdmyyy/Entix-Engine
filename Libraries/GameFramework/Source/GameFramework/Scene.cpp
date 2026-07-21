@@ -8,7 +8,7 @@
 
 #include "Resources/ResourceManager.h"
 
-#include "GameFramework/ShaderLoader.h"
+#include "GameFramework/Application.h"
 
 #include <unordered_map>
 #include <functional>
@@ -131,7 +131,23 @@ void Scene::OnTick(Timestep deltaTime)
         for(auto entity : view) {
             auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
-            camera.Update(transform, 800.0f / 600.0f);
+            Renderer::Framebuffer* fb = camera.framebuffer ? camera.framebuffer.get() : nullptr;
+            Renderer::Rect targetRect;
+
+            if(fb)
+            {
+                auto& spec = fb->GetSpecification();
+                targetRect = Renderer::Rect(spec.width, spec.height);
+            }
+            else
+            {
+                auto window = Application::Get().GetWindow();
+                targetRect = Renderer::Rect(window->GetWidth(), window->GetHeight());
+            }
+
+            camera.viewport.UpdateAbsolute(targetRect);
+
+            camera.Update(transform);
         }
         FrameMarkEnd(CAMERA_FRAME);
     }
@@ -165,21 +181,25 @@ void Scene::OnRender()
 {
     FrameMarkStart(RENDERING_FRAME);
 
-    m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
-    m_rendererContext->Clear();
-
-    m_rendererContext->BeginScene();
-
     constexpr const char* STATIC_MESH_FRAME = "StaticMesh rendering";
 
-    // Render Static Mesh
     {
         auto camerasView = m_registry.view<TransformComponent, CameraComponent>();
         auto group = m_registry.group<TransformComponent>(entt::get<StaticMeshComponent>);
             
         for(auto cameraEntity : camerasView) {
-            auto camera = camerasView.get<CameraComponent>(cameraEntity);
-                
+            auto& camera = camerasView.get<CameraComponent>(cameraEntity);
+
+            Renderer::Framebuffer* fb = camera.framebuffer ? camera.framebuffer.get() : nullptr;
+
+            m_rendererContext->BeginScene(camera.viewport);
+
+            if(fb) fb->Bind();
+            
+            m_rendererContext->SetClearColor(0.2f, 0.2f, 0.2f);
+            m_rendererContext->Clear();
+
+            // Render Static Mesh
             for(auto entity : group) {
                 FrameMarkStart(STATIC_MESH_FRAME);
                 auto [transform, mesh] = group.get<TransformComponent, StaticMeshComponent>(entity);
@@ -202,10 +222,12 @@ void Scene::OnRender()
                 m_rendererContext->Submit(shader.Get(), mesh.vertexArray.Get());
                 FrameMarkEnd(STATIC_MESH_FRAME);
             }
+
+            if(fb) fb->Unbind();
+
+            m_rendererContext->EndScene();
         }
     }
-
-    m_rendererContext->EndScene();
 
     FrameMarkEnd(RENDERING_FRAME);
 }

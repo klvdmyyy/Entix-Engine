@@ -5,6 +5,7 @@
 #include <Core/IO/Base.h>
 
 #include <Renderer/Texture.h>
+#include <Renderer/Framebuffer.h>
 
 #include <Resources/ResourceHandle.h>
 
@@ -20,6 +21,8 @@ public:
     Int32 InputCallback(void* data_);
 
 private:
+    CameraComponent m_editorCamera;
+
     // Developer Console
     bool m_consoleOpen = false;
     IO::Writer& m_consoleWriter;
@@ -33,4 +36,7 @@ private:
     ResourceHandle<Renderer::Texture> m_infoIcon;
     ResourceHandle<Renderer::Texture> m_warnIcon;
     ResourceHandle<Renderer::Texture> m_errorIcon;
+
+    // Viewport
+    Ref<Renderer::Framebuffer> m_viewportFramebuffer;
 };

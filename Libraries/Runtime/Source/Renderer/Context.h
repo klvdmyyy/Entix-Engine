@@ -10,6 +10,9 @@
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Framebuffer.h"
+
+#include "Renderer/Viewport.h"
 
 namespace Renderer
 {
@@ -36,7 +39,10 @@ namespace Renderer
         [[nodiscard]]
         virtual Texture* CreateTexture(const ResourceId& id, const TextureSpecification& spec) = 0;
 
-        virtual void BeginScene() = 0;
+        [[nodiscard]]
+        virtual Framebuffer* CreateFramebuffer(const FramebufferSpecification& spec) = 0;
+
+        virtual void BeginScene(const Viewport& viewport) = 0;
         virtual void EndScene() = 0;
 
         virtual void SetClearColor(float r = 1.0f, float g = 1.0f, float b = 1.0f) = 0;

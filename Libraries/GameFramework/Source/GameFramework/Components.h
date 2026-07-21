@@ -14,6 +14,8 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Viewport.h"
+#include "Renderer/Framebuffer.h"
 
 #include <entt/entt.hpp>
 
@@ -99,18 +101,19 @@ struct StaticMeshComponent {
 
 struct CameraComponent {
 public:
+    Renderer::Viewport viewport{};
+    Ref<Renderer::Framebuffer> framebuffer = nullptr;
+
     float fov = 45.0f;
     
     float yaw = DEFAULT_YAW;
     float pitch = DEFAULT_PITCH;
 
-    bool primary = true;
-    bool fixedAspectRatio = false;
-
     CameraComponent() = default;
     CameraComponent(const CameraComponent&) = default;
 
-    void Update(const TransformComponent& transform, float aspect);
+    void SetViewport(const Renderer::Viewport& vp) noexcept { viewport = vp; }
+    void Update(const TransformComponent& transform);
 
     [[nodiscard]]
     inline const Float4x4& GetView() const noexcept

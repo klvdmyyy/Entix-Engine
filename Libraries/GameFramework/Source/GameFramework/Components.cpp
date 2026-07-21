@@ -5,6 +5,8 @@
 #include "Math/MatrixTransform.h"
 #include "Math/Quat.h"
 
+#include <limits>
+
 #include <tracy/Tracy.hpp>
 
 TransformComponent::TransformComponent(Entity parentEntity)
@@ -60,12 +62,17 @@ Float3 TransformComponent::GetWorldScale() const noexcept {
     return worldScale;
 }
 
-void CameraComponent::Update(const TransformComponent& transform, float aspect)
+void CameraComponent::Update(const TransformComponent& transform)
 {
     ZoneScopedN("CameraComponent Update Method");
     
-    float m_yaw = yaw + transform.GetWorldRotation().x;
-    float m_pitch = pitch + transform.GetWorldRotation().y;
+    float aspect = viewport.GetAspectRatio();
+
+    // FIXME: This assertion can be caused in GLM. Fix it and remove this line of code.
+    // aspect = abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f ? aspect : 0.0f;
+
+    const float m_yaw = yaw + transform.GetWorldRotation().x;
+    const float m_pitch = pitch + transform.GetWorldRotation().y;
 
     Float3 front;
     front.x = Math::Cos(Math::Radians(m_yaw)) * Math::Cos(Math::Radians(m_pitch));

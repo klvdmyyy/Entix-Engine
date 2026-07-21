@@ -98,6 +98,21 @@ void WindowSDL::Update()
     }
 }
 
+Uint32 WindowSDL::GetWidth() const
+{
+    int x, y;
+    SDL_GetWindowSize(m_window, &x, &y);
+    return static_cast<Uint32>(x);
+}
+
+Uint32 WindowSDL::GetHeight() const
+{
+    int x, y;
+    SDL_GetWindowSize(m_window, &x, &y);
+    return static_cast<Uint32>(y);
+}
+
+
 void WindowSDL::GrabCursor(bool value)
 {
     m_isCursorGrabbed = value;

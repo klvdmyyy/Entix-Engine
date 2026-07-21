@@ -11,6 +11,9 @@ class ERUNTIME_API WindowSDL : public Window {
     ~WindowSDL();
 
     void Update() final;
+
+    Uint32 GetWidth() const final;
+    Uint32 GetHeight() const final;
         
     void* GetWindowHandle() const noexcept final
     {

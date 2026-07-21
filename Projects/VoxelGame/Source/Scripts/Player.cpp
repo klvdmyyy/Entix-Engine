@@ -19,15 +19,15 @@ void Player::OnEvent(const Event& event)
 
     dispatcher.Dispatch<MouseMotionEvent>([&](const MouseMotionEvent& event)
     {
-        camera->yaw += event.k_xPosition * sensitivity;
-        camera->pitch += event.k_yPosition * sensitivity;
+        if(m_grabCursor) {
+            camera->yaw += event.k_xPosition * sensitivity;
+            camera->pitch += event.k_yPosition * sensitivity;
+        }
     });
 }
 
 void Player::OnCreate()
 {
-    Application::Get().GetWindow()->GrabCursor(true);
-
     scene = &Application::Get().GetCurrentScene();
     
     transform = &GetComponent<TransformComponent>();
@@ -49,8 +49,10 @@ void Player::OnTick(Timestep deltaTime)
     Float3 movementF = dirF * movementSpeed;
     Float3 movementR = dirR * movementSpeed;
 
-    if(Input::IsActionPressed("Menu"))
-        Application::Get().Quit();
+    if(Input::IsActionPressed("Menu")) {
+        m_grabCursor = !m_grabCursor;
+        Application::Get().GetWindow()->GrabCursor(m_grabCursor);
+    }
 
     if(Input::IsActionHeld("MoveForward"))
         transform->position -= movementF * (float)deltaTime;
