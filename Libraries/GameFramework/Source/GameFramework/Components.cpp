@@ -66,23 +66,20 @@ void CameraComponent::Update(const TransformComponent& transform)
 {
     ZoneScopedN("CameraComponent Update Method");
     
-    float aspect = viewport.GetAspectRatio();
+    const float k_aspect = viewport.GetAspectRatio();
 
-    // FIXME: This assertion can be caused in GLM. Fix it and remove this line of code.
-    // aspect = abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f ? aspect : 0.0f;
-
-    const float m_yaw = yaw + transform.GetWorldRotation().x;
-    const float m_pitch = pitch + transform.GetWorldRotation().y;
+    const float k_yaw = yaw + transform.GetWorldRotation().x;
+    const float k_pitch = pitch + transform.GetWorldRotation().y;
 
     Float3 front;
-    front.x = Math::Cos(Math::Radians(m_yaw)) * Math::Cos(Math::Radians(m_pitch));
-    front.y = Math::Sin(Math::Radians(m_pitch));
-    front.z = Math::Sin(Math::Radians(m_yaw)) * Math::Cos(Math::Radians(m_pitch));
+    front.x = Math::Cos(Math::Radians(k_yaw)) * Math::Cos(Math::Radians(k_pitch));
+    front.y = Math::Sin(Math::Radians(k_pitch));
+    front.z = Math::Sin(Math::Radians(k_yaw)) * Math::Cos(Math::Radians(k_pitch));
 
     m_front = Math::Normalize(front);
     m_right = Math::Normalize(Math::Cross(front, m_worldUp));
     m_up = Math::Normalize(Math::Cross(m_right, m_front));
 
     m_view = Math::LookAt(transform.GetWorldPosition(), transform.GetWorldPosition() + m_front, m_up);
-    m_projection = Math::Perspective(fov, aspect, 0.1f, 100.0f);
+    m_projection = Math::Perspective(fov, k_aspect, 0.1f, 100.0f);
 }
