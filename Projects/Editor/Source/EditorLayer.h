@@ -31,7 +31,8 @@ private:
     TransformComponent m_editorCameraTransform;
     CameraComponent m_editorCamera;
 
-    bool m_isViewportFocused = false;
+    // bool m_isViewportFocused = false;
+    bool m_isViewportHovered = false;
 
     float m_editorCameraSensitivity = 0.05f;
     float m_editorCameraSpeed = 5.0f;

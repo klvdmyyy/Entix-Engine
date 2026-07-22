@@ -48,7 +48,7 @@ void EditorLayer::OnEvent(const Event& event)
     });
 
     dispatcher.Dispatch<MouseWheelEvent>([&](const MouseWheelEvent& event) {
-        if(m_isViewportFocused)
+        if(m_isViewportHovered)
         {
             m_editorCameraTransform.position += m_editorCamera.GetFront() * event.k_scrollY;
         }
@@ -148,7 +148,7 @@ void EditorLayer::OnTick(Timestep deltaTime)
     m_consolePanel.Update();
     m_propertiesPanel.Update();
 
-    if(m_isViewportFocused)
+    if(m_isViewportHovered)
     {
         ZoneScopedN("Viewport Controller");
 
@@ -249,11 +249,12 @@ void EditorLayer::OnRender()
 
         ImGui::Begin("Viewport", &m_viewportOpen);
 
-        m_isViewportFocused = ImGui::IsWindowFocused();
+        // m_isViewportFocused = ImGui::IsWindowFocused();
 
         m_viewportSize = ImGui::GetContentRegionAvail();
 
         ImGui::Image(reinterpret_cast<void*>(m_viewportFramebuffer->GetColorAttachmentRendererId()), m_viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+        m_isViewportHovered = ImGui::IsItemHovered();
 
         ImGui::End();
     }
