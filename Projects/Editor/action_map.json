@@ -6,7 +6,7 @@
                 {
                     "device": "Mouse",
                     "button": 1,
-                    "modifiers": [ 0 ]
+                    "modifiers": [ "Alt" ]
                 }
             ]  
         },
@@ -15,7 +15,7 @@
             "bindings": [
                 {
                     "device": "Mouse",
-                    "button": 2,
+                    "button": 3,
                     "modifiers": []
                 }
             ]

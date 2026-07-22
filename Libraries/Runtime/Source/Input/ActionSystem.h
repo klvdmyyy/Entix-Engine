@@ -30,6 +30,7 @@ enum class ActionState {
 struct ActionBinding {
     InputDevice device;
     Uint8 scancode;
+    std::vector<ModifierKey> modifiers;
 };
 
 // ---------------------------------------------------------------------

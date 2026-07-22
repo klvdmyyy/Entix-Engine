@@ -62,14 +62,11 @@ WindowSDL::~WindowSDL()
 void WindowSDL::Update()
 {
     SDL_Event event;
+    
     while(SDL_PollEvent(&event)) {
         if(m_guiEnabled)
             ImGui_ImplSDL3_ProcessEvent(&event);
 
-        if(m_isCursorGrabbed) {
-            SDL_WarpMouseInWindow(m_window, m_lastCursorX, m_lastCursorY);
-        }
-        
         switch(event.type) {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED: {
             WindowCloseEvent e(event.window.windowID);
@@ -77,14 +74,19 @@ void WindowSDL::Update()
             break;
         }
         case SDL_EVENT_MOUSE_MOTION: {
-            if(m_isCursorGrabbed) {
-                MouseMotionEvent e(event.motion.x - m_lastCursorX, m_lastCursorY - event.motion.y);
+            if(SDL_GetWindowRelativeMouseMode(m_window)) {
+                SDL_WarpMouseInWindow(m_window, m_lastCursorX, m_lastCursorY);
+                MouseMotionEvent e(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel * -1.0f);
                 EventBus::Instance().PublishEvent(e);
             } else {
-                MouseMotionEvent e(event.motion.x, event.motion.y);
+                MouseMotionEvent e(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel * -1.0f);
                 EventBus::Instance().PublishEvent(e);
             }
             break;
+        }
+        case SDL_EVENT_MOUSE_WHEEL: {
+            MouseWheelEvent e(event.wheel.x, event.wheel.y, false);
+            EventBus::Instance().PublishEvent(e);
         }
         default:
             break;
@@ -109,10 +111,15 @@ Uint32 WindowSDL::GetHeight() const
 
 void WindowSDL::GrabCursor(bool value)
 {
-    Input::GetCursorPosition(m_lastCursorX, m_lastCursorY);
-    m_isCursorGrabbed = value;
+    if(SDL_GetWindowRelativeMouseMode(m_window) == value) return;
     EX_ASSERT(SDL_SetWindowRelativeMouseMode(m_window, value), "Failed to set window relative mouse mode!");
-    // SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "1" : "0");
+
+    if(value) {
+        Input::GetCursorPosition(m_lastCursorX, m_lastCursorY);
+    } else {
+        SDL_WarpMouseInWindow(m_window, m_lastCursorX, m_lastCursorY);
+    }
+    SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_WARP_MOTION, value ? "0" : "1");
 }
 
 void WindowSDL::EnableGUIUpdate()

@@ -40,10 +40,17 @@ void EditorLayer::OnEvent(const Event& event)
         }
         else if(m_Editor_ViewportGrabMouse)
         {
-            m_editorCamera.yaw += event.k_xPosition * m_editorCameraSensitivity;
-            m_editorCamera.pitch += event.k_yPosition * m_editorCameraSensitivity;
+            m_editorCamera.yaw += event.k_xOffset * m_editorCameraSensitivity;
+            m_editorCamera.pitch += event.k_yOffset * m_editorCameraSensitivity;
             
             m_editorCamera.pitch = std::clamp(m_editorCamera.pitch, -89.0f, 89.0f);
+        }
+    });
+
+    dispatcher.Dispatch<MouseWheelEvent>([&](const MouseWheelEvent& event) {
+        if(m_isViewportFocused)
+        {
+            m_editorCameraTransform.position += m_editorCamera.GetFront() * event.k_scrollY;
         }
     });
 }
@@ -66,6 +73,7 @@ void EditorLayer::OnAttach()
     ActionSystem::Instance().PushContext({
         "Editor_ViewportCameraRotation",
         "Editor_ViewportGrabMouse",
+        
         "Editor_ControllerMoveForward",
         "Editor_ControllerMoveBackward",
         "Editor_ControllerMoveLeft",
@@ -156,24 +164,16 @@ void EditorLayer::OnTick(Timestep deltaTime)
         else if(m_Editor_ViewportGrabMouse)
         {
             if(Input::IsActionHeld("Editor_ControllerMoveForward"))
-                m_editorCameraTransform.position -= (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
-            
-            if(Input::IsActionHeld("Editor_ControllerMoveBackward"))
                 m_editorCameraTransform.position += (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
             
+            if(Input::IsActionHeld("Editor_ControllerMoveBackward"))
+                m_editorCameraTransform.position -= (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
+            
             if(Input::IsActionHeld("Editor_ControllerMoveLeft"))
-                m_editorCameraTransform.position += (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
+                m_editorCameraTransform.position -= (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
             
             if(Input::IsActionHeld("Editor_ControllerMoveRight"))
-                m_editorCameraTransform.position -= (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
-        }
-        else
-        {
-            if(Int32 scroll = Input::GetMouseWheelScrollY(); scroll != 0)
-            {
-                m_editorCamera.fov -= static_cast<float>(scroll);
-                m_editorCamera.fov = std::clamp(m_editorCamera.fov, 1.0f, 45.0f);
-            }
+                m_editorCameraTransform.position += (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
         }
     }
 }

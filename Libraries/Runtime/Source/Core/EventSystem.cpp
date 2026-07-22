@@ -1,5 +1,7 @@
 #include "Core/EventSystem.h"
 
+#include "Core/Debug/Log.h"
+
 #include <algorithm>
 
 #include <tracy/Tracy.hpp>

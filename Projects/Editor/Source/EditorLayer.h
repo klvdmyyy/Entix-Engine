@@ -33,8 +33,8 @@ private:
 
     bool m_isViewportFocused = false;
 
-    float m_editorCameraSensitivity = 0.1f;
-    float m_editorCameraSpeed = 1.0f;
+    float m_editorCameraSensitivity = 0.05f;
+    float m_editorCameraSpeed = 5.0f;
 
     bool m_Editor_ViewportCameraRotation = false;
     bool m_Editor_ViewportGrabMouse = false;
