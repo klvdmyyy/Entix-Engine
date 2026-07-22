@@ -2,6 +2,7 @@
 
 #include "Panels/InspectorPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/PropertiesPanel.h"
 
 #include <GameFramework.h>
 
@@ -35,9 +36,7 @@ private:
     // Panels
     InspectorPanel m_inspectorPanel;
     ConsolePanel m_consolePanel;
-
-    // Properties
-    bool m_propertiesOpen = true;
+    PropertiesPanel m_propertiesPanel;
 
     // Content Browser
     bool m_contentBrowserOpen = true;

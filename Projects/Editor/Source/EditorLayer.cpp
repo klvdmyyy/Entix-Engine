@@ -75,6 +75,7 @@ void EditorLayer::OnAttach()
     // Panels setup
     m_inspectorPanel.Setup();
     m_consolePanel.Setup();
+    m_propertiesPanel.Setup();
 }
 
 void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
@@ -104,6 +105,7 @@ void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
     //////// Panels /////////
     m_inspectorPanel.Update();
     m_consolePanel.Update();
+    m_propertiesPanel.Update();
 }
 
 void EditorLayer::OnRender()
@@ -159,7 +161,7 @@ void EditorLayer::OnRender()
             if(ImGui::BeginMenu("View")) {
                 if(ImGui::BeginMenu("Windows")) {
                     ImGui::MenuItem("Inspector", nullptr, &m_inspectorPanel.open);
-                    ImGui::MenuItem("Properties", nullptr, &m_propertiesOpen);
+                    ImGui::MenuItem("Properties", nullptr, &m_propertiesPanel.open);
                     ImGui::MenuItem("Viewport", nullptr, &m_viewportOpen);
                     ImGui::MenuItem("Content Browser", nullptr, &m_contentBrowserOpen);
                     ImGui::MenuItem("Console", nullptr, &m_consolePanel.open);
@@ -186,12 +188,7 @@ void EditorLayer::OnRender()
 
     m_inspectorPanel.Render();
 
-    if(m_propertiesOpen)
-    {
-        ZoneScopedN("ImGui - Properties");
-        ImGui::Begin("Properties", &m_propertiesOpen);
-        ImGui::End();
-    }
+    m_propertiesPanel.Render(m_inspectorPanel.GetSelectedEntity());
 
     if(m_contentBrowserOpen)
     {
