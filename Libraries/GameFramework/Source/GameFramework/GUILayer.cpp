@@ -11,11 +11,18 @@
 
 #include <tracy/Tracy.hpp>
 
+static ImGuiContext* g_context = nullptr;
+
 const LogCategory GUILayer::sk_logCategory{"GUI", DefaultFormatter::Instance()};
 
 GUILayer::GUILayer()
     : Layer("GUILayer")
 {
+}
+
+void* GUILayer::GetImGuiContext() const noexcept
+{
+    return static_cast<void*>(g_context);
 }
 
 void GUILayer::OnAttach()
@@ -27,7 +34,7 @@ void GUILayer::OnAttach()
     m_rendererContext = Application::Get().GetRendererContext();
 
     IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
+    g_context = ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -46,7 +53,7 @@ void GUILayer::OnAttach()
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
-    m_rendererContext->InitGUI();
+    m_rendererContext->InitGUI(g_context);
 }
 
 void GUILayer::OnDetach()

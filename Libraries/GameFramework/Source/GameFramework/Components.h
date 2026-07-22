@@ -65,11 +65,22 @@ struct TransformComponent {
     void UpdateLocalMatrix();
     void UpdateWorldMatrix(const Float4x4& parentWorld);
 
+    void SetLocalMatrix(const Float4x4 &) noexcept;
+
     [[nodiscard]]
     const Float4x4& GetLocalMatrix() const noexcept;
 
     [[nodiscard]]
     const Float4x4& GetWorldMatrix() const noexcept;
+
+    [[nodiscard]]
+    Float3 GetLocalPosition() const noexcept;
+
+    [[nodiscard]]
+    Float3 GetLocalRotation() const noexcept;
+
+    [[nodiscard]]
+    Float3 GetLocalScale() const noexcept;
 
     [[nodiscard]]
     Float3 GetWorldPosition() const noexcept;
@@ -81,6 +92,8 @@ struct TransformComponent {
     Float3 GetWorldScale() const noexcept;
 
 private:
+    bool m_localMatrixDirty = false;
+    
     Float4x4 m_localMatrix = Float4x4(1.0f);
     Float4x4 m_worldMatrix = Float4x4(1.0f);
 };

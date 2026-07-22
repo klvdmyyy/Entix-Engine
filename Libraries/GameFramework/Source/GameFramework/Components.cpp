@@ -18,6 +18,15 @@ void TransformComponent::UpdateLocalMatrix()
 {
     ZoneScoped;
 
+    if(m_localMatrixDirty)
+    {
+        position = GetLocalPosition();
+        rotation = GetLocalRotation();
+        scale = GetLocalScale();
+        
+        m_localMatrixDirty = false;
+    }
+
     Float4x4 rot = Math::ToFloat4x4(Quat(rotation));
     
     m_localMatrix = Math::Translate(Float4x4(1.0f), position)
@@ -31,6 +40,12 @@ void TransformComponent::UpdateWorldMatrix(const Float4x4& parentWorld)
     m_worldMatrix = parentWorld * GetLocalMatrix();
 }
 
+void TransformComponent::SetLocalMatrix(const Float4x4 &mat) noexcept
+{
+    m_localMatrixDirty = true;
+    m_localMatrix = mat;
+}
+
 const Float4x4& TransformComponent::GetLocalMatrix() const noexcept
 {
     return m_localMatrix;
@@ -39,6 +54,27 @@ const Float4x4& TransformComponent::GetLocalMatrix() const noexcept
 const Float4x4& TransformComponent::GetWorldMatrix() const noexcept
 {
     return m_worldMatrix;
+}
+
+Float3 TransformComponent::GetLocalPosition() const noexcept {
+    return Float3(m_localMatrix[3]);
+}
+
+Float3 TransformComponent::GetLocalRotation() const noexcept {
+    Float3 localPos;
+    Float3 localRot;
+    Float3 localScale;
+    Math::Decompose(m_localMatrix, localPos, localRot, localScale);
+    return localRot;
+}
+
+Float3 TransformComponent::GetLocalScale() const noexcept {
+    Float3 localScale;
+    // Можно извлечь как длину колонок
+    localScale.x = Math::Length(Float3(m_localMatrix[0]));
+    localScale.y = Math::Length(Float3(m_localMatrix[1]));
+    localScale.z = Math::Length(Float3(m_localMatrix[2]));
+    return localScale;
 }
 
 Float3 TransformComponent::GetWorldPosition() const noexcept {

@@ -14,6 +14,7 @@
 #include <Resources/ResourceHandle.h>
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 class EditorLayer : public Layer, EventListener {
 public:
@@ -31,9 +32,6 @@ private:
     TransformComponent m_editorCameraTransform;
     CameraComponent m_editorCamera;
 
-    // bool m_isViewportFocused = false;
-    bool m_isViewportHovered = false;
-
     float m_editorCameraSensitivity = 0.05f;
     float m_editorCameraSpeed = 5.0f;
 
@@ -42,8 +40,14 @@ private:
 
     // Viewport
     bool m_viewportOpen = true;
+    // bool m_isViewportFocused = false;
+    bool m_isViewportHovered = false;
+    bool m_setFocusOnViewport = false;
     ImVec2 m_viewportSize;
     Ref<Renderer::Framebuffer> m_viewportFramebuffer;
+    std::array<ImRect, 4> m_guizmoToolsRect;
+    Uint8 m_guizmoSelectedToolIndex = 0;
+    Int8 m_guizmoHoveredToolIndex = -1;
 
     // Panels
     InspectorPanel m_inspectorPanel;

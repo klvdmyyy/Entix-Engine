@@ -3,6 +3,8 @@
 
 #include "EditorLayer.h"
 
+#include <imgui.h>
+
 #include <tracy/Tracy.hpp>
 
 static const ApplicationSpecification g_spec = {
@@ -22,7 +24,7 @@ class EntixEditor : public Application
 public:
     EntixEditor() : Application(g_spec)
     {
-        PushOverlay<GUILayer>();
+        ImGui::SetCurrentContext(static_cast<ImGuiContext*>(PushOverlay<GUILayer>()->GetImGuiContext()));
         PushLayer<EditorLayer>();
     }
 };

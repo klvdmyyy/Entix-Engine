@@ -12,4 +12,5 @@ target_link_libraries(EntixEditor PRIVATE
   Entix::Runtime
   Entix::GameFramework
   Vendor::ImGui
+  Vendor::ImGuizmo
   Tracy::TracyClient)

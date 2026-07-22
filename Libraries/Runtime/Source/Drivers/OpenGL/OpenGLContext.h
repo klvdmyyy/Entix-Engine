@@ -48,7 +48,7 @@ class ERUNTIME_API OpenGLContext : public Context
 
     void Swap() final;
 
-    void InitGUI() final;
+    void InitGUI(ImGuiContext* ctx) final;
     void ShutdownGUI() final;
     void NewGUIFrame() final;
     void RenderGUI() final;

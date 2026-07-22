@@ -91,8 +91,10 @@ void OpenGLContext::Submit(Shader* shader, VertexArray* vertexArray)
                    GL_UNSIGNED_INT, 0);
 }
 
-void OpenGLContext::InitGUI()
+void OpenGLContext::InitGUI(ImGuiContext* ctx)
 {
+    ImGui::SetCurrentContext(ctx);
+
     ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(m_window->GetWindowHandle()), m_context);
     ImGui_ImplOpenGL3_Init(GUI_GLSL_VERSION);
 

@@ -21,6 +21,8 @@ public:
     void OnPreRender() final;
     void OnPostRender() final;
 
+    void* GetImGuiContext() const noexcept;
+
 private:
     Renderer::Context* m_rendererContext{nullptr};
 };

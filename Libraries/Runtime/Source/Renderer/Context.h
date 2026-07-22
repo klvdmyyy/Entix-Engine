@@ -14,6 +14,8 @@
 
 #include "Renderer/Viewport.h"
 
+struct ImGuiContext;
+
 namespace Renderer
 {
     class ERUNTIME_API Context
@@ -55,7 +57,7 @@ namespace Renderer
         // ---------------------------------------------------------------------
         // Инициализация интерфейса при помощи контекста рендеринга
         // ---------------------------------------------------------------------
-        virtual void InitGUI() = 0;
+        virtual void InitGUI(ImGuiContext* ctx) = 0;
 
         virtual void ShutdownGUI() = 0;
         virtual void NewGUIFrame() = 0;

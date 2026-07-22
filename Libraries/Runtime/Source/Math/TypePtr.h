@@ -13,4 +13,11 @@ namespace Math {
     {
         return glm::value_ptr(v);
     }
+
+    template<typename GenType>
+    FORCE_INLINE
+    inline typename GenType::value_type* ValuePtr(GenType& v)
+    {
+        return glm::value_ptr(v);
+    }
 }

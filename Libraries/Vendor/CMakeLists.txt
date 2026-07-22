@@ -10,16 +10,20 @@ target_include_directories(glad PUBLIC glad/include)
 add_library(Vendor::GLAD ALIAS glad)
 
 # ---------------------------------------------------------------------
-# ImGUI (Docking Branch)
+# ImGui (Docking Branch)
 # ---------------------------------------------------------------------
-add_library(imgui SHARED)
+add_library(imgui-headers INTERFACE)
 
-set_target_properties(imgui PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-target_include_directories(imgui PUBLIC
+target_include_directories(imgui-headers INTERFACE
   imgui-docking
   imgui-docking/misc/cpp
   imgui-docking/backends)
+
+add_library(imgui)
+
+set_target_properties(imgui PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+target_link_libraries(imgui PUBLIC imgui-headers)
 
 file(
   GLOB
@@ -52,7 +56,30 @@ target_sources(imgui PRIVATE
   ${IMGUI_SDL_SOURCES}
   ${IMGUI_OPENGL_SOURCES})
 
+add_library(Vendor::ImGui-Headers ALIAS imgui-headers)
 add_library(Vendor::ImGui ALIAS imgui)
+
+# ---------------------------------------------------------------------
+# ImGuizmo (Docking Branch)
+# ---------------------------------------------------------------------
+# add_subdirectory(ImGuizmo-master)
+add_library(imguizmo)
+
+target_include_directories(imguizmo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ImGuizmo-master/src)
+
+target_link_libraries(imguizmo PRIVATE
+  Vendor::ImGui)
+
+file(
+  GLOB_RECURSE
+  IMGUIZMO_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/ImGuizmo-master/src/*.cpp
+)
+
+target_sources(imguizmo PRIVATE
+  ${IMGUIZMO_SOURCES})
+
+add_library(Vendor::ImGuizmo ALIAS imguizmo)
 
 # ---------------------------------------------------------------------
 # Tiny Obj Loader
