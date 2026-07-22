@@ -6,6 +6,7 @@
 #include <Resources/ResourceManager.h>
 
 #include <Input/Actions.h>
+#include <Input/Events.h>
 
 #include <GameFramework/TextureLoader.h>
 #include <GameFramework/ObjMeshLoader.h>
@@ -20,6 +21,31 @@
 EditorLayer::EditorLayer()
     : Layer("EditorLayer")
 {
+    EventBus::Instance().AddListener(this);
+}
+
+EditorLayer::~EditorLayer()
+{
+    EventBus::Instance().RemoveListener(this);
+}
+
+void EditorLayer::OnEvent(const Event& event)
+{
+    EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<MouseMotionEvent>([&](const MouseMotionEvent& event) {
+        if(m_Editor_ViewportCameraRotation)
+        {
+            // TODO...
+        }
+        else if(m_Editor_ViewportGrabMouse)
+        {
+            m_editorCamera.yaw += event.k_xPosition * m_editorCameraSensitivity;
+            m_editorCamera.pitch += event.k_yPosition * m_editorCameraSensitivity;
+            
+            m_editorCamera.pitch = std::clamp(m_editorCamera.pitch, -89.0f, 89.0f);
+        }
+    });
 }
 
 void EditorLayer::OnAttach()
@@ -37,7 +63,14 @@ void EditorLayer::OnAttach()
     rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
 
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
-    ActionSystem::Instance().PushContext({"Console"});
+    ActionSystem::Instance().PushContext({
+        "Editor_ViewportCameraRotation",
+        "Editor_ViewportGrabMouse",
+        "Editor_ControllerMoveForward",
+        "Editor_ControllerMoveBackward",
+        "Editor_ControllerMoveLeft",
+        "Editor_ControllerMoveRight",
+    });
 
     // Viewport framebuffer
     Renderer::FramebufferSpecification viewportFramebufferSpec;

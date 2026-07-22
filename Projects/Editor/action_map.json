@@ -1,65 +1,62 @@
 {
     "actions": [
         {
-            "name": "Console",
+            "name": "Editor_ViewportCameraRotation",
             "bindings": [
                 {
-                    "device": "Keyboard",
-                    "scancode": 53
+                    "device": "Mouse",
+                    "button": 1,
+                    "modifiers": [ 0 ]
+                }
+            ]  
+        },
+        {
+            "name": "Editor_ViewportGrabMouse",
+            "bindings": [
+                {
+                    "device": "Mouse",
+                    "button": 2,
+                    "modifiers": []
                 }
             ]
         },
         {
-            "name": "Menu",
+            "name": "Editor_ControllerMoveForward",
             "bindings": [
                 {
                     "device": "Keyboard",
-                    "scancode": 41
+                    "scancode": 26,
+                    "modifiers": []
                 }
             ]
         },
         {
-            "name": "Jump",
+            "name": "Editor_ControllerMoveBackward",
             "bindings": [
                 {
                     "device": "Keyboard",
-                    "scancode": 44
+                    "scancode": 22,
+                    "modifiers": []
                 }
             ]
         },
         {
-            "name": "MoveForward",
+            "name": "Editor_ControllerMoveRight",
             "bindings": [
                 {
                     "device": "Keyboard",
-                    "scancode": 26
+                    "scancode": 7,
+                    "modifiers": []
                 }
             ]
         },
         {
-            "name": "MoveBackward",
+            "name": "Editor_ControllerMoveLeft",
             "bindings": [
                 {
                     "device": "Keyboard",
-                    "scancode": 22
-                }
-            ]
-        },
-        {
-            "name": "MoveRight",
-            "bindings": [
-                {
-                    "device": "Keyboard",
-                    "scancode": 7
-                }
-            ]
-        },
-        {
-            "name": "MoveLeft",
-            "bindings": [
-                {
-                    "device": "Keyboard",
-                    "scancode": 4
+                    "scancode": 4,
+                    "modifiers": []
                 }
             ]
         }

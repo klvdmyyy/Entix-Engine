@@ -15,9 +15,12 @@
 
 #include <imgui.h>
 
-class EditorLayer : public Layer {
+class EditorLayer : public Layer, EventListener {
 public:
     EditorLayer();
+    ~EditorLayer();
+
+    void OnEvent(const Event& event) final;
 
     void OnAttach() final;
 
