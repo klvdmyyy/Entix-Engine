@@ -28,6 +28,14 @@ private:
     TransformComponent m_editorCameraTransform;
     CameraComponent m_editorCamera;
 
+    bool m_isViewportFocused = false;
+
+    float m_editorCameraSensitivity = 0.1f;
+    float m_editorCameraSpeed = 1.0f;
+
+    bool m_Editor_ViewportCameraRotation = false;
+    bool m_Editor_ViewportGrabMouse = false;
+
     // Viewport
     bool m_viewportOpen = true;
     ImVec2 m_viewportSize;

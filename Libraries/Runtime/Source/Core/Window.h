@@ -56,6 +56,8 @@ public:
     
     virtual void* GetWindowHandle() const noexcept = 0;
 
+    virtual bool IsCursorGrabbed() const noexcept = 0;
+    virtual void GrabCursorToggle() = 0;
     virtual void GrabCursor(bool value = true) = 0;
 
     virtual void EnableGUIUpdate() = 0;

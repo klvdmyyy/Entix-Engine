@@ -78,7 +78,7 @@ void EditorLayer::OnAttach()
     m_propertiesPanel.Setup();
 }
 
-void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
+void EditorLayer::OnTick(Timestep deltaTime)
 {
     Application::Get().GetCurrentScene().OnTick(deltaTime);
 
@@ -106,6 +106,43 @@ void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
     m_inspectorPanel.Update();
     m_consolePanel.Update();
     m_propertiesPanel.Update();
+
+    if(m_isViewportFocused)
+    {
+        ZoneScopedN("Viewport Controller");
+
+        m_Editor_ViewportCameraRotation = Input::IsActionHeld("Editor_ViewportCameraRotation");
+        m_Editor_ViewportGrabMouse = Input::IsActionHeld("Editor_ViewportGrabMouse");
+
+        Application::Get().GetWindow()->GrabCursor(m_Editor_ViewportCameraRotation || m_Editor_ViewportGrabMouse);
+
+        if(m_Editor_ViewportCameraRotation)
+        {
+            // TODO...
+        }
+        else if(m_Editor_ViewportGrabMouse)
+        {
+            if(Input::IsActionHeld("Editor_ControllerMoveForward"))
+                m_editorCameraTransform.position -= (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
+            
+            if(Input::IsActionHeld("Editor_ControllerMoveBackward"))
+                m_editorCameraTransform.position += (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
+            
+            if(Input::IsActionHeld("Editor_ControllerMoveLeft"))
+                m_editorCameraTransform.position += (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
+            
+            if(Input::IsActionHeld("Editor_ControllerMoveRight"))
+                m_editorCameraTransform.position -= (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
+        }
+        else
+        {
+            if(Int32 scroll = Input::GetMouseWheelScrollY(); scroll != 0)
+            {
+                m_editorCamera.fov -= static_cast<float>(scroll);
+                m_editorCamera.fov = std::clamp(m_editorCamera.fov, 1.0f, 45.0f);
+            }
+        }
+    }
 }
 
 void EditorLayer::OnRender()
@@ -178,6 +215,8 @@ void EditorLayer::OnRender()
         ZoneScopedN("ImGui - Viewport");
 
         ImGui::Begin("Viewport", &m_viewportOpen);
+
+        m_isViewportFocused = ImGui::IsWindowFocused();
 
         m_viewportSize = ImGui::GetContentRegionAvail();
 

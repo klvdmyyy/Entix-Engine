@@ -14,6 +14,8 @@ enum class InputDevice {
 
 namespace Input {
     void GetCursorPosition(float& x, float& y);
+    Int32 GetMouseWheelScrollY();
+    bool IsButtonPressed(Uint8 button);
     
     bool IsKeyPressed(Uint8 scancode);
 }
