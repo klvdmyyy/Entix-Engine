@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PanelBase.h"
+
 #include <GameFramework.h>
 
 #include <optional>
@@ -7,7 +9,7 @@
 #include <map>
 #include <vector>
 
-class InspectorPanel
+class InspectorPanel : public EditorPanelBase
 {
 public:
     using EntitySet = std::unordered_set<Entity>;
@@ -16,6 +18,7 @@ public:
     InspectorPanel();
     ~InspectorPanel();
 
+    void Setup() {}
     void Update();
     void Render();
 
@@ -23,8 +26,6 @@ public:
     {
         return m_selectionContext;
     }
-
-    bool open = true;
 
 private:
     void DrawEntityNode(Entity entity, EntitySet& entitySet, EntityChildMap& childMap);

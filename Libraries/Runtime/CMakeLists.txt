@@ -28,10 +28,10 @@ configure_file(
   @ONLY
 )
 
-if(MSVC)
-  target_compile_options(EntixRuntime PRIVATE /W4 /WX)
-else()
-  target_compile_options(EntixRuntime PRIVATE -Wall -Wextra -Wpedantic -Werror)
-endif()
+# if(MSVC)
+#   target_compile_options(EntixRuntime PRIVATE /W4 /WX)
+# else()
+#   target_compile_options(EntixRuntime PRIVATE -Wall -Wextra -Wpedantic -Werror)
+# endif()
 
 add_library(Entix::Runtime ALIAS EntixRuntime)

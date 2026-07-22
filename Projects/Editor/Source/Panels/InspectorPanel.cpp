@@ -5,6 +5,7 @@
 #include <tracy/Tracy.hpp>
 
 InspectorPanel::InspectorPanel()
+    : EditorPanelBase("Inspector")
 {
 }
 
