@@ -27,7 +27,16 @@ void ActionMap::Update()
     FrameMarkStart(UPDATE_FRAME);
 
     for(auto& [name, action] : m_actionDataMap) {
-        bool rawPressed = Input::IsKeyPressed(action.binding.scancode);
+        bool rawPressed = action.binding.device == InputDevice::Mouse ? Input::IsButtonPressed(action.binding.scancode) : Input::IsKeyPressed(action.binding.scancode);
+        if(rawPressed) {
+            for(auto mod : action.binding.modifiers) {
+                if(!Input::IsKeyModifierPressed(mod))
+                {
+                    rawPressed = false;
+                    break;
+                }
+            }
+        }
 
         switch(action.state) {
         case ActionState::Idle:
@@ -126,10 +135,21 @@ ActionMap ActionMap::LoadFromFile(const std::filesystem::path filepath)
     ActionMap actionMap;
 
     for(auto action : data["actions"].get<std::vector<json>>()) {
+        auto binding = action["bindings"].get<std::vector<json>>()[0];
+        InputDevice device = Input::ParseInputDevice(binding["device"].get<String>());
+        Uint8 scancode = binding.contains("scancode") ? binding["scancode"].get<Uint8>() : binding["button"].get<Uint8>();
+        std::vector<ModifierKey> modifiers;
+
+        for(const auto& name : action["bindings"].get<std::vector<json>>()[0]["modifiers"].get<std::vector<String>>())
+        {
+            modifiers.push_back(Input::ParseModifierKey(name));
+        }
+
         actionMap.AddAction(action["name"].get<String>(),
                             ActionBinding {
-                                .device = InputDevice::Keyboard,
-                                .scancode = action["bindings"].get<std::vector<json>>()[0]["scancode"].get<Uint8>(),
+                                .device = device,
+                                .scancode = scancode,
+                                .modifiers = modifiers
                             });
             
     }

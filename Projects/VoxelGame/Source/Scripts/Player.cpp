@@ -20,8 +20,8 @@ void Player::OnEvent(const Event& event)
     dispatcher.Dispatch<MouseMotionEvent>([&](const MouseMotionEvent& event)
     {
         if(m_grabCursor) {
-            camera->yaw += event.k_xPosition * sensitivity;
-            camera->pitch += event.k_yPosition * sensitivity;
+            camera->yaw += event.k_xOffset * sensitivity;
+            camera->pitch += event.k_yOffset * sensitivity;
         }
     });
 }

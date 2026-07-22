@@ -15,9 +15,12 @@
 
 #include <imgui.h>
 
-class EditorLayer : public Layer {
+class EditorLayer : public Layer, EventListener {
 public:
     EditorLayer();
+    ~EditorLayer();
+
+    void OnEvent(const Event& event) final;
 
     void OnAttach() final;
 
@@ -27,6 +30,15 @@ public:
 private:
     TransformComponent m_editorCameraTransform;
     CameraComponent m_editorCamera;
+
+    // bool m_isViewportFocused = false;
+    bool m_isViewportHovered = false;
+
+    float m_editorCameraSensitivity = 0.05f;
+    float m_editorCameraSpeed = 5.0f;
+
+    bool m_Editor_ViewportCameraRotation = false;
+    bool m_Editor_ViewportGrabMouse = false;
 
     // Viewport
     bool m_viewportOpen = true;

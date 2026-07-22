@@ -6,6 +6,7 @@
 #include <Resources/ResourceManager.h>
 
 #include <Input/Actions.h>
+#include <Input/Events.h>
 
 #include <GameFramework/TextureLoader.h>
 #include <GameFramework/ObjMeshLoader.h>
@@ -20,6 +21,38 @@
 EditorLayer::EditorLayer()
     : Layer("EditorLayer")
 {
+    EventBus::Instance().AddListener(this);
+}
+
+EditorLayer::~EditorLayer()
+{
+    EventBus::Instance().RemoveListener(this);
+}
+
+void EditorLayer::OnEvent(const Event& event)
+{
+    EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<MouseMotionEvent>([&](const MouseMotionEvent& event) {
+        if(m_Editor_ViewportCameraRotation)
+        {
+            // TODO...
+        }
+        else if(m_Editor_ViewportGrabMouse)
+        {
+            m_editorCamera.yaw += event.k_xOffset * m_editorCameraSensitivity;
+            m_editorCamera.pitch += event.k_yOffset * m_editorCameraSensitivity;
+            
+            m_editorCamera.pitch = std::clamp(m_editorCamera.pitch, -89.0f, 89.0f);
+        }
+    });
+
+    dispatcher.Dispatch<MouseWheelEvent>([&](const MouseWheelEvent& event) {
+        if(m_isViewportHovered)
+        {
+            m_editorCameraTransform.position += m_editorCamera.GetFront() * event.k_scrollY;
+        }
+    });
 }
 
 void EditorLayer::OnAttach()
@@ -37,7 +70,15 @@ void EditorLayer::OnAttach()
     rm.RegisterLoader<TextureLoader>(Application::Get().GetRendererContext());
 
     ActionSystem::Instance().SetActionMap(ActionMap::LoadFromFile("C:\\Users\\User\\Desktop\\Entix-Engine\\Projects\\Editor\\action_map.json"));
-    ActionSystem::Instance().PushContext({"Console"});
+    ActionSystem::Instance().PushContext({
+        "Editor_ViewportCameraRotation",
+        "Editor_ViewportGrabMouse",
+        
+        "Editor_ControllerMoveForward",
+        "Editor_ControllerMoveBackward",
+        "Editor_ControllerMoveLeft",
+        "Editor_ControllerMoveRight",
+    });
 
     // Viewport framebuffer
     Renderer::FramebufferSpecification viewportFramebufferSpec;
@@ -78,7 +119,7 @@ void EditorLayer::OnAttach()
     m_propertiesPanel.Setup();
 }
 
-void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
+void EditorLayer::OnTick(Timestep deltaTime)
 {
     Application::Get().GetCurrentScene().OnTick(deltaTime);
 
@@ -106,6 +147,35 @@ void EditorLayer::OnTick([[maybe_unused]] Timestep deltaTime)
     m_inspectorPanel.Update();
     m_consolePanel.Update();
     m_propertiesPanel.Update();
+
+    if(m_isViewportHovered)
+    {
+        ZoneScopedN("Viewport Controller");
+
+        m_Editor_ViewportCameraRotation = Input::IsActionHeld("Editor_ViewportCameraRotation");
+        m_Editor_ViewportGrabMouse = Input::IsActionHeld("Editor_ViewportGrabMouse");
+
+        Application::Get().GetWindow()->GrabCursor(m_Editor_ViewportCameraRotation || m_Editor_ViewportGrabMouse);
+
+        if(m_Editor_ViewportCameraRotation)
+        {
+            // TODO...
+        }
+        else if(m_Editor_ViewportGrabMouse)
+        {
+            if(Input::IsActionHeld("Editor_ControllerMoveForward"))
+                m_editorCameraTransform.position += (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
+            
+            if(Input::IsActionHeld("Editor_ControllerMoveBackward"))
+                m_editorCameraTransform.position -= (m_editorCamera.GetFront() * m_editorCameraSpeed) * (float)deltaTime;
+            
+            if(Input::IsActionHeld("Editor_ControllerMoveLeft"))
+                m_editorCameraTransform.position -= (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
+            
+            if(Input::IsActionHeld("Editor_ControllerMoveRight"))
+                m_editorCameraTransform.position += (m_editorCamera.GetRight() * m_editorCameraSpeed) * (float)deltaTime;
+        }
+    }
 }
 
 void EditorLayer::OnRender()
@@ -179,9 +249,12 @@ void EditorLayer::OnRender()
 
         ImGui::Begin("Viewport", &m_viewportOpen);
 
+        // m_isViewportFocused = ImGui::IsWindowFocused();
+
         m_viewportSize = ImGui::GetContentRegionAvail();
 
         ImGui::Image(reinterpret_cast<void*>(m_viewportFramebuffer->GetColorAttachmentRendererId()), m_viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+        m_isViewportHovered = ImGui::IsItemHovered();
 
         ImGui::End();
     }
