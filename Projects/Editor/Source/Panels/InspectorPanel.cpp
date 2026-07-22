@@ -72,10 +72,13 @@ void InspectorPanel::DrawEntityNode(Entity entity, EntitySet& entitySet, EntityC
     if(children.empty())
         flags |= ImGuiTreeNodeFlags_Leaf;
 
-    if(ImGui::TreeNodeEx((void*)(Uint64)(Uint32)entity, flags, tag.c_str())) {
-        if(ImGui::IsItemClicked())
-            m_selectionContext = entity;
+    bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+    if (ImGui::IsItemClicked())
+    {
+        m_selectionContext = entity;
+    }
 
+    if(opened) {
         for(auto& child : children) {
             DrawEntityNode(child, entitySet, childMap);
         }

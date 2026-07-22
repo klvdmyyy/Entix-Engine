@@ -28,7 +28,7 @@ void PropertiesPanel::Render(std::optional<Entity> selectionContext)
             {
                 if(ImGui::TreeNode("Id Component"))
                 {
-                    ImGui::Text("Uuid: %d", (Uint32)selected.GetComponent<IdComponent>().id);
+                    ImGui::Text("Uuid: %llu", (Uint32)selected.GetComponent<IdComponent>().id);
                     ImGui::TreePop();
                 }
             }
