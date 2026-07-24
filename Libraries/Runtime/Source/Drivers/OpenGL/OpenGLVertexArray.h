@@ -28,15 +28,22 @@ class ERUNTIME_API OpenGLVertexArray : public VertexArray
     void SetIndexBuffer(const Ref<IndexBuffer>& index_buffer) final;
 
     [[nodiscard]]
+    Uint32 GetVertexCount() const noexcept final;
+
+    [[nodiscard]]
     const std::vector<Ref<VertexBuffer>> &GetVertexBuffers() const final {
         return m_vertexBuffers;
     }
+
+    [[nodiscard]]
     const Ref<IndexBuffer> &GetIndexBuffer() const final {
         return m_indexBuffer;
     }
 
  private:
     GLuint m_vao;
+
+    Uint32 m_vertexCount;
 
     std::vector<Ref<VertexBuffer>> m_vertexBuffers;
     Ref<IndexBuffer> m_indexBuffer;

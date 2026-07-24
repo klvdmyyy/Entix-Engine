@@ -3,6 +3,7 @@
 #include "Core/Assert.h"
 #include "Core/Base.h"
 #include "Core/String.h"
+#include "Core/Types.h"
 
 #include <vector>
 
@@ -24,7 +25,7 @@ namespace Renderer
     };
 
     [[nodiscard]]
-    static uint32_t ShaderDataTypeSize(ShaderDataType type)
+    static Uint32 ShaderDataTypeSize(ShaderDataType type)
     {
         switch (type) {
         case ShaderDataType::None:
@@ -61,7 +62,7 @@ namespace Renderer
     {
         String name;
         ShaderDataType type;
-        uint32_t size;
+        Uint32 size;
         size_t offset;
         bool normalized;
 
@@ -72,7 +73,7 @@ namespace Renderer
         }
 
         [[nodiscard]]
-        uint32_t GetComponentCount() const
+        Uint32 GetComponentCount() const
         {
             switch (type) {
             case ShaderDataType::None:
@@ -140,7 +141,7 @@ namespace Renderer
     private:
         void CalculateOffsetAndStride()
         {
-            uint32_t offset = 0;
+            Uint32 offset = 0;
             m_stride = 0;
             for(auto& element : m_elements)
             {
@@ -151,7 +152,7 @@ namespace Renderer
         }
 
         std::vector<BufferElement> m_elements;
-        uint32_t m_stride = 0;
+        Uint32 m_stride = 0;
     };
 
     class ERUNTIME_API VertexBuffer
@@ -162,7 +163,10 @@ namespace Renderer
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
-        virtual void SetData(const void* data, uint32_t size) = 0;
+        virtual void SetData(const void* data, Uint32 size) = 0;
+
+        [[nodiscard]]
+        virtual Uint32 GetCount() const noexcept = 0;
 
         [[nodiscard]]
         virtual const BufferLayout &GetLayout() const = 0;
@@ -179,6 +183,6 @@ namespace Renderer
         virtual void Unbind() const = 0;
 
         [[nodiscard]]
-        virtual uint32_t GetCount() const = 0;
+        virtual Uint32 GetCount() const = 0;
     };
 }

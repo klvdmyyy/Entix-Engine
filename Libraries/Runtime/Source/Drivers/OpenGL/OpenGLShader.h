@@ -20,7 +20,7 @@ using namespace Renderer;
 class ERUNTIME_API OpenGLShader : public Shader
 {
  public:
-    OpenGLShader(const ResourceId& id);
+    OpenGLShader(const ResourceId& id, const ShaderSpecification& spec);
     ~OpenGLShader();
 
    bool CompileFromStream(IO::Reader& reader) final;
@@ -37,13 +37,21 @@ class ERUNTIME_API OpenGLShader : public Shader
     void SetFloat4x4(const String& name, Float4x4 value) final;
 
     [[nodiscard]]
-    const String& GetName() const final;
+    const String& GetName() const noexcept final;
+
+    [[nodiscard]]
+    const ShaderSpecification& GetSpecification() const noexcept
+    {
+      return k_specification;
+    }
 
     [[nodiscard]]
     GLint GetUniformLocation(const String& name);
 
  private:
    bool m_isCompiled = false;
+
+   const ShaderSpecification k_specification;
 
     GLuint m_program;
     const String k_name = String();

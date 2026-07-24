@@ -26,6 +26,8 @@ class ERUNTIME_API OpenGLVertexBuffer : public VertexBuffer
 
     void SetData(const void* data, uint32_t size) final;
 
+    Uint32 GetCount() const noexcept final;
+
     const BufferLayout &GetLayout() const noexcept final {
         return m_layout;
     }
@@ -34,6 +36,8 @@ class ERUNTIME_API OpenGLVertexBuffer : public VertexBuffer
  private:
     GLuint m_vbo;
     BufferLayout m_layout;
+    
+    Uint32 m_size = 0;
 };
 
 class ERUNTIME_API OpenGLIndexBuffer : public IndexBuffer

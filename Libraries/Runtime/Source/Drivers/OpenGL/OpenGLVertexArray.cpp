@@ -2,6 +2,8 @@
 
 #include "Drivers/OpenGL/OpenGLContext.h"
 
+#include <algorithm>
+
 static GLenum ShaderDataTypeToGLenum(ShaderDataType type)
 {
     switch (type) {
@@ -95,4 +97,16 @@ OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> &indexBuffer)
     this->Unbind();
 
     indexBuffer->Unbind();
+}
+
+[[nodiscard]]
+Uint32 OpenGLVertexArray::GetVertexCount() const noexcept
+{
+    Uint32 vSize = 0;
+
+    std::for_each(m_vertexBuffers.begin(), m_vertexBuffers.end(), [&](const Ref<VertexBuffer>& buf) {
+        vSize += buf->GetCount();
+    });
+
+    return vSize;
 }

@@ -52,8 +52,8 @@ static GLuint CompileOpenGLShader(const std::string &src,
     return shader;
 }
 
-OpenGLShader::OpenGLShader(const ResourceId& id)
-    : Shader(id)
+OpenGLShader::OpenGLShader(const ResourceId& id, const ShaderSpecification& spec)
+    : Shader(id), k_specification(spec)
 {
 }
 
@@ -169,7 +169,7 @@ GLint OpenGLShader::GetUniformLocation(const String& name)
     return glGetUniformLocation(m_program, name.c_str());
 }
 
-const String& OpenGLShader::GetName() const
+const String& OpenGLShader::GetName() const noexcept
 {
     return k_name;
 }

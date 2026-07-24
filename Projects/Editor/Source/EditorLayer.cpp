@@ -22,6 +22,12 @@
 
 #include <tracy/Tracy.hpp>
 
+static const float identityMatrix[16] =
+{ 1.f, 0.f, 0.f, 0.f,
+    0.f, 1.f, 0.f, 0.f,
+    0.f, 0.f, 1.f, 0.f,
+    0.f, 0.f, 0.f, 1.f };
+
 EditorLayer::EditorLayer()
     : Layer("EditorLayer")
 {
@@ -264,7 +270,8 @@ void EditorLayer::OnRender()
 
         ImGui::Begin("Viewport", &m_viewportOpen);
 
-        // m_isViewportFocused = ImGui::IsWindowFocused();
+        /////////////////////////////////////////////////////////
+        // Viewport image
 
         m_viewportSize = ImGui::GetContentRegionAvail();
 
@@ -277,6 +284,76 @@ void EditorLayer::OnRender()
             ImVec2(cursor.x + m_viewportSize.x, cursor.y + m_viewportSize.y),
             ImVec2(0, 1), ImVec2(1, 0)
         );
+
+        /////////////////////////////////////////////////////////
+        // ImGuizmo Manipulations
+
+        ImGuizmo::SetDrawlist(drawList);
+        ImGuizmo::SetRect(cursor.x, cursor.y, m_viewportSize.x, m_viewportSize.y);
+        
+        if(auto selectionContext = m_inspectorPanel.GetSelectedEntity();
+            selectionContext.has_value() && m_guizmoSelectedToolIndex > 0 && m_guizmoSelectedToolIndex < 4)
+        {
+            auto selected = selectionContext.value();
+            auto& transform = selected.GetComponent<TransformComponent>();
+            ImGuizmo::OPERATION m_currentGizmoOperator;
+            switch(m_guizmoSelectedToolIndex)
+            {
+                case 1:
+                    m_currentGizmoOperator = ImGuizmo::TRANSLATE;
+                    break;
+
+                case 2:
+                    m_currentGizmoOperator = ImGuizmo::ROTATE;
+                    break;
+
+                case 3:
+                    m_currentGizmoOperator = ImGuizmo::SCALE;
+                    break;
+
+                default:
+                    EX_ASSERT_EXPR(false);
+            }
+
+            Float4x4 gizmoMatrix = transform.GetWorldMatrix();
+            Float4x4 deltaMatrix = transform.GetLocalMatrix();
+
+            ImGuizmo::Enable(true);
+
+            if(ImGuizmo::Manipulate(
+                Math::ValuePtr(m_editorCamera.GetView()),
+                Math::ValuePtr(m_editorCamera.GetProjection()),
+                m_currentGizmoOperator,
+                ImGuizmo::LOCAL,
+                Math::ValuePtr(gizmoMatrix),
+                Math::ValuePtr(deltaMatrix)
+            ))
+            {
+                float translation[3], rotation[3], scale[3];
+                ImGuizmo::DecomposeMatrixToComponents(Math::ValuePtr(deltaMatrix), translation, rotation, scale);
+
+                if(m_currentGizmoOperator == ImGuizmo::TRANSLATE) {
+                    transform.position.x += translation[0];
+                    transform.position.y += translation[1];
+                    transform.position.z += translation[2];
+                }
+
+                if(m_currentGizmoOperator == ImGuizmo::ROTATE) {
+                    transform.rotation.x += Math::Radians(rotation[0]);
+                    transform.rotation.y += Math::Radians(rotation[1]);
+                    transform.rotation.z += Math::Radians(rotation[2]);
+                }
+
+                if(m_currentGizmoOperator == ImGuizmo::SCALE) {
+                    transform.scale.x *= scale[0];
+                    transform.scale.y *= scale[1];
+                    transform.scale.z *= scale[2];
+                }
+            }
+        }
+
+        /////////////////////////////////////////////////////////
+        // Viewport UI Elements
 
         ImVec2 guizmoToolsPadding = ImVec2(10.0, 10.0);
         ImVec2 guizmoToolsMin = ImVec2(cursor.x + guizmoToolsPadding.x, cursor.y + guizmoToolsPadding.y);
@@ -333,49 +410,6 @@ void EditorLayer::OnRender()
                 
                 if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
                     m_guizmoSelectedToolIndex = i;
-            }
-        }
-
-        if(auto selectionContext = m_inspectorPanel.GetSelectedEntity();
-            selectionContext.has_value() && m_guizmoSelectedToolIndex > 0 && m_guizmoSelectedToolIndex < 4)
-        {
-            ImGuizmo::SetDrawlist(drawList);
-
-            auto selected = selectionContext.value();
-            auto& transform = selected.GetComponent<TransformComponent>();
-            ImGuizmo::OPERATION m_currentGizmoOperator;
-            switch(m_guizmoSelectedToolIndex)
-            {
-                case 1:
-                    m_currentGizmoOperator = ImGuizmo::TRANSLATE;
-                    break;
-
-                case 2:
-                    m_currentGizmoOperator = ImGuizmo::ROTATE;
-                    break;
-
-                case 3:
-                    m_currentGizmoOperator = ImGuizmo::SCALE;
-                    break;
-
-                default:
-                    EX_ASSERT_EXPR(false);
-            }
-
-            Float4x4 gizmoMatrix = transform.GetLocalMatrix();
-
-            ImGuizmo::SetRect(cursor.x, cursor.y, m_viewportSize.x, m_viewportSize.y);
-            ImGuizmo::Enable(true);
-            
-            if(ImGuizmo::Manipulate(
-                Math::ValuePtr(m_editorCamera.GetView()),
-                Math::ValuePtr(m_editorCamera.GetProjection()),
-                m_currentGizmoOperator,
-                ImGuizmo::WORLD,
-                Math::ValuePtr(gizmoMatrix)
-            ))
-            {
-                transform.SetLocalMatrix(gizmoMatrix);
             }
         }
 

@@ -5,6 +5,7 @@
 #include <tracy/Tracy.hpp>
 
 OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+    : m_size(size)
 {
     ZoneScoped;
 
@@ -14,6 +15,7 @@ OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
 }
 
 OpenGLVertexBuffer::OpenGLVertexBuffer(float* data, uint32_t size)
+    : m_size(size)
 {
     ZoneScoped;
 
@@ -39,8 +41,15 @@ void OpenGLVertexBuffer::Unbind() const
 
 void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 {
+    m_size = size;
+
     this->Bind();
     glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+}
+
+Uint32 OpenGLVertexBuffer::GetCount() const noexcept
+{
+    return m_size / m_layout.GetStride();
 }
 
 OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t size)

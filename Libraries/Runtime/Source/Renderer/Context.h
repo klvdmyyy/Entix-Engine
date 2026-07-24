@@ -30,7 +30,7 @@ namespace Renderer
         virtual VertexArray* CreateVertexArray(const ResourceId& id) = 0;
 
         [[nodiscard]]
-        virtual Shader* CreateShader(const ResourceId& id) = 0;
+        virtual Shader* CreateShader(const ResourceId& id, const ShaderSpecification& spec) = 0;
 
         [[nodiscard]]
         virtual VertexBuffer* CreateVertexBuffer(float* data, uint32_t size) = 0;

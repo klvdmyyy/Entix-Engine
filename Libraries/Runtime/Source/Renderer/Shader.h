@@ -39,6 +39,23 @@ namespace Renderer
      */
     ERUNTIME_API std::unordered_map<ShaderStage, String> GLSL_Preprocess(const String& source);
 
+    enum class PolygonMode {
+        Point,
+        Line,
+        Fill
+    };
+
+    enum class PrimitiveTopology {
+        PointList,
+        LineList,
+        TriangleList,
+    };
+
+    struct ShaderSpecification {
+        PolygonMode polygonMode = PolygonMode::Fill;
+        PrimitiveTopology primitiveTopology = PrimitiveTopology::TriangleList;
+    };
+
     class ERUNTIME_API Shader : public Resource
     {
     public:
@@ -50,6 +67,8 @@ namespace Renderer
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
+        // OpenGL Uniforms
+
         virtual void SetInt(const String& name, int value) = 0;
         virtual void SetIntArray(const String& name, int* values, Uint32 count) = 0;
         virtual void SetFloat(const String& name, float value) = 0;
@@ -59,6 +78,9 @@ namespace Renderer
         virtual void SetFloat4x4(const String& name, Float4x4 value) = 0;
 
         [[nodiscard]]
-        virtual const String& GetName() const = 0;
+        virtual const String& GetName() const noexcept = 0;
+
+        [[nodiscard]]
+        virtual const ShaderSpecification& GetSpecification() const noexcept = 0;
     };
 }

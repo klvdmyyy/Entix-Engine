@@ -15,6 +15,22 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_opengl3.h>
 
+namespace Utils
+{
+    static GLenum PolygonModeToGLDrawMode(PolygonMode mode)
+    {
+        switch(mode)
+        {
+            case PolygonMode::Point:
+                return GL_POINTS;
+            case PolygonMode::Line:
+                return GL_LINES;
+            case PolygonMode::Fill:
+                return GL_TRIANGLES;
+        }
+    }
+}
+
 static constexpr const char* GUI_GLSL_VERSION = "#version 130";
 
 OpenGLContext::OpenGLContext(const Ref<Window>& window)
@@ -86,9 +102,18 @@ void OpenGLContext::Submit(Shader* shader, VertexArray* vertexArray)
 
     shader->Bind();
     vertexArray->Bind();
-    glDrawElements(GL_TRIANGLES,
-                   vertexArray->GetIndexBuffer()->GetCount(),
-                   GL_UNSIGNED_INT, 0);
+
+    auto indexCount = vertexArray->GetIndexBuffer()->GetCount();
+    auto polygonMode = shader->GetSpecification().polygonMode;
+
+    if(indexCount > 0)
+    {
+        glDrawElements(Utils::PolygonModeToGLDrawMode(polygonMode), indexCount, GL_UNSIGNED_INT, 0);
+    }
+    else
+    {
+        glDrawArrays(Utils::PolygonModeToGLDrawMode(polygonMode), 0, static_cast<GLsizei>(vertexArray->GetVertexCount()));
+    }
 }
 
 void OpenGLContext::InitGUI(ImGuiContext* ctx)
@@ -130,9 +155,9 @@ VertexArray* OpenGLContext::CreateVertexArray(const ResourceId& id)
 }
     
 [[nodiscard]]
-Shader* OpenGLContext::CreateShader(const ResourceId& id)
+Shader* OpenGLContext::CreateShader(const ResourceId& id, const ShaderSpecification& spec)
 {
-    return new OpenGLShader(id);
+    return new OpenGLShader(id, spec);
 }
 
 [[nodiscard]]

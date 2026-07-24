@@ -18,10 +18,10 @@
 #include <tracy/Tracy.hpp>
 
 struct Vertex {
-    Float3 position;
-    Float3 color;
-    Float3 normal;
-    Float2 uv;
+    Float3 position{};
+    Float3 color{};
+    Float3 normal{};
+    Float2 uv{};
 
     bool operator==(const Vertex& other) const noexcept {
         return position == other.position && color == other.color && normal == other.normal && uv == other.uv;

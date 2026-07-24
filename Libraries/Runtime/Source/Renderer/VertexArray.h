@@ -24,6 +24,9 @@ namespace Renderer
         virtual void SetIndexBuffer(const Ref<IndexBuffer>& index_buffer) = 0;
 
         [[nodiscard]]
+        virtual Uint32 GetVertexCount() const noexcept = 0;
+
+        [[nodiscard]]
         virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
 
         [[nodiscard]]
