@@ -1,18 +1,15 @@
-# clangd cache files
-.cache/
+# Files configured (generated) by CMake
+./Entix/Source/Entix/Core/Base.h.in
 
-# Visual Studio files
-.vs
-
-# CMake build files
+# Build files
 [Bb]uild/
 [Oo]ut/
 
-# Binaries
-[Bb]in/
+# Clangd LSP cache
+.cache/
 
-# Configured file
-Libraries/Runtime/Source/Core/Base.h
+# Visual Studio files
+.vs/
 
-# TAGS files
+# TAGS file
 TAGS

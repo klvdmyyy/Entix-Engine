@@ -1,0 +1,31 @@
+#pragma once
+
+#include "Entix/Core/PlatformDetection.h"
+#include "Entix/Core/CompilerDetection.h"
+
+#ifdef ENTIX_COMPILER_CLANG
+#   define EX_FORCE_INLINE [[clang::always_inline]]
+#elif defined(ENTIX_COMPILER_GCC)
+#   define EX_FORCE_INLINE [[gnu::always_inline]]
+#elif defined(ENTIX_COMPILER_MSVC)
+#   define EX_FORCE_INLINE [[msvc::forceinline]]
+#else
+#   error "Compiler doesn't support forceinline yet!"
+#endif
+
+#if defined(ENTIX_PLATFORM_WINDOWS)
+#   ifdef ENTIX_BUILD_DLL
+#       define ENTIX_API __declspec(dllexport)
+#   else
+#       define ENTIX_API __declspec(dllimport)
+#   endif
+#   define EX_DEBUGBREAK() __debugbreak()
+#elif defined(ENTIX_PLATFORM_LINUX)
+#   define ENTIX_API
+#   include <signal.h>
+#   define EX_DEBUGBREAK() raise(SIGTRAP)
+#else
+#   define ENTIX_API
+#   error "Platform doesn't support debugbreak yet!"
+#endif
+
