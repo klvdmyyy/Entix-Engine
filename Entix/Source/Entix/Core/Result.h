@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Entix/Core/Base.h"
+#include "Entix/Core/Error.h"
 
 #include <variant>
 
 namespace Entix
 {
-    template<typename SuccessType, typename ErrorType>
+    template<typename SuccessType, typename ErrorType = Error>
     class Result
     {
         static_assert(!std::is_same_v<SuccessType, ErrorType>, "SuccessType and ErrorType can't be same in Result class.");
@@ -21,7 +22,7 @@ namespace Entix
 
         EX_FORCE_INLINE
         inline constexpr Result(const ErrorType& value)
-            requires (std::is_copy_assignable_v<SuccessType>)
+            requires (std::is_copy_assignable_v<ErrorType>)
             : m_value(value)
         {
         }
@@ -35,7 +36,7 @@ namespace Entix
 
         EX_FORCE_INLINE
         inline constexpr Result(ErrorType value)
-            requires ((!std::is_copy_assignable_v<SuccessType>) && std::is_move_assignable_v<SuccessType>)
+            requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
             : m_value(std::move(value))
         {
         }
@@ -50,6 +51,11 @@ namespace Entix
         bool IsError() const noexcept
         {
             return std::holds_alternative<ErrorType>(m_value);
+        }
+
+        operator bool() const noexcept
+        {
+            return IsSuccess();
         }
 
         [[nodiscard]]
@@ -106,5 +112,70 @@ namespace Entix
 
     private:
         mutable std::variant<SuccessType, ErrorType, std::monostate> m_value;
+    };
+
+    template<typename ErrorType>
+    class Result<void, ErrorType>
+    {
+    public:
+        EX_FORCE_INLINE
+        inline constexpr Result(const ErrorType& value)
+            requires (std::is_copy_assignable_v<ErrorType>)
+            : m_value(value)
+        {
+        }
+
+        EX_FORCE_INLINE
+        inline constexpr Result(ErrorType value)
+            requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
+            : m_value(std::move(value))
+        {
+        }
+
+        [[nodiscard]]
+        bool IsSuccess() const noexcept
+        {
+            return !std::holds_alternative<ErrorType>(m_value);
+        }
+
+        [[nodiscard]]
+        bool IsError() const noexcept
+        {
+            return std::holds_alternative<ErrorType>(m_value);
+        }
+
+        operator bool() const noexcept
+        {
+            return IsSuccess();
+        }
+
+        [[nodiscard]]
+        ErrorType GetError() const
+            requires (std::is_copy_assignable_v<ErrorType>)
+        {
+            try {
+                return std::get<ErrorType>(m_value);
+            } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
+                EX_DEBUGBREAK();
+                std::exit(1);
+            }
+        }
+
+        [[nodiscard]]
+        ErrorType GetError() const
+            requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
+        {
+            try {
+                ErrorType res = std::move(std::get<ErrorType>(m_value));
+                m_value = std::monostate{};
+                return res;
+            } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
+                EX_DEBUGBREAK();
+                std::exit(1);
+            }
+        }
+
+    private:
+        mutable std::variant<ErrorType, std::monostate> m_value;
     };
 }
