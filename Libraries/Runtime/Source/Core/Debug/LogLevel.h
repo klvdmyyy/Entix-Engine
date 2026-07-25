@@ -13,6 +13,8 @@ enum class LogLevel {
     Warning,
     Error,
     Critical,
+
+    Count,
 };
 
 [[nodiscard]]

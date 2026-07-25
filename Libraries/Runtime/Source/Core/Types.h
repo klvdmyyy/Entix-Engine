@@ -30,21 +30,31 @@ public:
     constexpr float AsMegabytes() const noexcept { return AsKilobytes() / 1024.0f; }
     constexpr float AsGigabytes() const noexcept { return AsMegabytes() / 1024.0f; }
 
+    Bytes operator=(const Bytes& other)
+    {
+        return Bytes(other.m_count);
+    }
+
+    Bytes operator=(size_t count)
+    {
+        return Bytes(count);
+    }
+
     constexpr Bytes operator+(const Bytes& other) {
         return Bytes(m_count + other.m_count);
+    }
+
+    constexpr Bytes operator-(const Bytes& other) {
+        // EX_DEBUG_ASSERT(m_count >= other.m_count, "Calcalation trying to result as negative unsigned type!");
+        return Bytes(m_count - other.m_count);
     }
 
     constexpr void operator+=(const Bytes& other) {
         m_count += other.m_count;
     }
 
-    constexpr Bytes operator-(const Bytes& other) {
-        EX_DEBUG_ASSERT(m_count >= other.m_count, "Calcalation trying to result as negative unsigned type!");
-        return Bytes(m_count - other.m_count);
-    }
-
     constexpr void operator-=(const Bytes& other) {
-        EX_DEBUG_ASSERT(m_count >= other.m_count, "Calcalation trying to result as negative unsigned type!");
+        // EX_DEBUG_ASSERT(m_count >= other.m_count, "Calcalation trying to result as negative unsigned type!");
         m_count -= other.m_count;
     }
 
@@ -88,10 +98,10 @@ struct std::formatter<Bytes, char>
 class Uuid {
 public:
     Uuid();
-    Uuid(Uint64 uuid);
-    Uuid(const Uuid& other) = default;
+    constexpr Uuid(Uint64 uuid);
+    constexpr Uuid(const Uuid& other) = default;
 
-    operator Uint64() const { return m_uuid; }
+    constexpr operator Uint64() const noexcept { return m_uuid; }
 
 private:
     Uint64 m_uuid;

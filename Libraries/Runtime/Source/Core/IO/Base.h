@@ -3,6 +3,43 @@
 
 #include "Core/Base.h"
 #include "Core/Types.h"
+#include "Core/Memory.h"
+
+#define DEFINE_READER_DECORATOR(TYPE)           \
+    public:                                     \
+    TYPE(Scope<::IO::Reader> inner)                   \
+    : ::IO::ReaderDecorator(inner.release())          \
+    {                                           \
+    }                                           \
+                                                \
+    FORCE_INLINE inline static TYPE CreateNonOwned(::IO::Reader& inner)   \
+    {                                           \
+        return TYPE(&inner, false);             \
+    }                                           \
+                                                \
+private:                                        \
+ TYPE(::IO::Reader* inner, bool owns)                \
+     : ::IO::ReaderDecorator(inner, owns)             \
+ {                                              \
+ }
+
+#define DEFINE_WRITER_DECORATOR(TYPE)           \
+    public:                                     \
+    TYPE(Scope<::IO::Writer> inner)                   \
+    : ::IO::WriterDecorator(inner.release())          \
+    {                                           \
+    }                                           \
+                                                \
+    FORCE_INLINE inline static TYPE CreateNonOwned(::IO::Writer& inner)   \
+    {                                           \
+        return TYPE(&inner, false);             \
+    }                                           \
+                                                \
+private:                                        \
+ TYPE(::IO::Writer* inner, bool owns)                \
+     : ::IO::WriterDecorator(inner, owns)             \
+ {                                              \
+ }
 
 namespace IO {
     enum class SeekOrigin {

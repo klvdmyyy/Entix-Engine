@@ -19,7 +19,6 @@ public:
     Int32 InputCallback(void* data_);
 
 private:
-    IO::Writer& m_writer;
     bool m_autoScroll = true;
     String m_inputBuffer;
     std::vector<String> m_history;

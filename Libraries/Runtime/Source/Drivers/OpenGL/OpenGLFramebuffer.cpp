@@ -1,6 +1,7 @@
 #include "Drivers/OpenGL/OpenGLFramebuffer.h"
 
 #include "Core/Assert.h"
+#include "Core/Debug/Log.h"
 
 #include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>

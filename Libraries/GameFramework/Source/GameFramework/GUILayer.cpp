@@ -5,15 +5,12 @@
 #include "Core/PlatformDetection.h"
 
 #include "Core/Debug/Log.h"
-#include "Core/Debug/LogFormatters.h"
 
 #include <imgui.h>
 
 #include <tracy/Tracy.hpp>
 
 static ImGuiContext* g_context = nullptr;
-
-const LogCategory GUILayer::sk_logCategory{"GUI", DefaultFormatter::Instance()};
 
 GUILayer::GUILayer()
     : Layer("GUILayer")

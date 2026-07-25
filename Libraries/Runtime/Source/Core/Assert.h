@@ -2,11 +2,12 @@
 #pragma once
 
 #include "Core/Base.h"
-#include "Core/Debug/Log.h"
+#include "Core/Panic.h"
 
 #include <print>
 #include <format>
 #include <cstdlib>
+#include <filesystem>
 
 #ifndef NDEBUG
 
@@ -16,9 +17,7 @@
 #define EX_ASSERT(expr, fmt, ...)                                       \
     do {                                                                \
         if (!(expr)) {                                                  \
-            EX_LOG(Critical, ::LogCategory::Core,                       \
-                   "Assertion '{}' failed. Message: {}", #expr,         \
-                   std::format(fmt,##__VA_ARGS__));                     \
+            Panic(std::format(fmt,##__VA_ARGS__));                      \
             EX_DEBUGBREAK();                                            \
         }                                                               \
     } while (0)

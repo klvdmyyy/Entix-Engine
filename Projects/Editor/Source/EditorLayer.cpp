@@ -1,6 +1,5 @@
 #include "EditorLayer.h"
 
-#include <Core/Debug/LogSinks.h>
 #include <Core/IO/Decorators.h>
 
 #include <Resources/ResourceManager.h>

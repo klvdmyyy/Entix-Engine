@@ -3,45 +3,11 @@
 
 #include "Core/IO/Base.h"
 #include "Core/Types.h"
-#include "Core/Memory.h"
 
+#include "Core/Assert.h"
+
+#include <format>
 #include <vector>
-
-#define DEFINE_READER_DECORATOR(TYPE)           \
-    public:                                     \
-    TYPE(Scope<Reader> inner)                   \
-    : ReaderDecorator(inner.release())          \
-    {                                           \
-    }                                           \
-                                                \
-    FORCE_INLINE inline static TYPE CreateNonOwned(Reader& inner)   \
-    {                                           \
-        return TYPE(&inner, false);             \
-    }                                           \
-                                                \
-private:                                        \
- TYPE(Reader* inner, bool owns)                \
-     : ReaderDecorator(inner, owns)             \
- {                                              \
- }
-
-#define DEFINE_WRITER_DECORATOR(TYPE)           \
-    public:                                     \
-    TYPE(Scope<Writer> inner)                   \
-    : WriterDecorator(inner.release())          \
-    {                                           \
-    }                                           \
-                                                \
-    FORCE_INLINE inline static TYPE CreateNonOwned(Writer& inner)   \
-    {                                           \
-        return TYPE(&inner, false);             \
-    }                                           \
-                                                \
-private:                                        \
- TYPE(Writer* inner, bool owns)                \
-     : WriterDecorator(inner, owns)             \
- {                                              \
- }
 
 namespace IO {
     class TextWriter : public WriterDecorator {
@@ -161,5 +127,32 @@ namespace IO {
 
         std::vector<char> m_buffer;
         size_t m_cursor = 0;
+    };
+
+    class BufferedReader : public ReaderDecorator {
+        DEFINE_READER_DECORATOR(BufferedReader);
+
+    public:
+        size_t Read(void* data, size_t size) override
+        {
+            auto buf = static_cast<uint8_t*>(data);
+            auto readSize = m_inner->Read(buf + m_cursor, std::clamp(size, 0Ui64, Size()));
+            m_cursor += readSize;
+            return readSize;
+        }
+
+    private:
+        size_t m_cursor = 0;
+    };
+
+    class PacketWriter : public WriterDecorator {
+        DEFINE_WRITER_DECORATOR(PacketWriter);
+
+    public:
+        void Write(const Packet& packet)
+        {
+            auto buffered = BufferedWriter::CreateNonOwned(*m_inner);
+            packet.Pack(buffered);
+        }
     };
 }

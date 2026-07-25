@@ -11,7 +11,7 @@ Uuid::Uuid()
 {
 }
 
-Uuid::Uuid(Uint64 uuid)
+constexpr Uuid::Uuid(Uint64 uuid)
     : m_uuid(uuid)
 {
 }
