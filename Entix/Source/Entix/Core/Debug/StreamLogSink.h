@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Entix/Core/Memory.h"
+
 #include "Entix/Core/Debug/LogSink.h"
 #include "Entix/Core/IO/Stream.h"
-#include "Entix/Core/IO/TextStream.h"
 
 namespace Entix
 {
@@ -14,10 +15,7 @@ namespace Entix
         {
         }
 
-        void WriteLogEntry(LogEntry entry) override
-        {
-            IO::TextStream::CreateNonOwned(*m_stream).WriteLineFmt("[{}] {}: {}", entry.level, entry.category.GetName(), entry.message);
-        }
+        ENTIX_API void WriteLogEntry(LogEntry entry) override;
         
     private:
         Scope<IO::Stream> m_stream;

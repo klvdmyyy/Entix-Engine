@@ -29,6 +29,7 @@ namespace Entix
             if(!enabledLevels[static_cast<Uint8>(level)] || !category.IsEnabled(level)) continue;
 
             LogEntry entry {
+                .time = LogEntry::Clock::now(),
                 .category = category,
                 .level = level,
                 .message = message

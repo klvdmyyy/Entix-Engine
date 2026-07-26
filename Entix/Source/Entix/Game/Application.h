@@ -20,5 +20,7 @@ namespace Entix
     private:
         ENTIX_API Result<void> Initialize();
         ENTIX_API Result<void> Shutdown();
+
+        bool m_quit;
     };
 }

@@ -15,6 +15,7 @@
 #include "Entix/Core/Panic.h"
 
 #include <variant>
+#include <source_location>
 
 /**
  * @brief Try to execute the resulting expression
@@ -63,7 +64,7 @@
 namespace Entix
 {
     template<typename SuccessType, typename ErrorType = Error>
-    class Result
+    class [[nodiscard("Result value must be handled")]] Result
     {
         static_assert(!std::is_same_v<SuccessType, ErrorType>, "SuccessType and ErrorType can't be same in Result class.");
 
@@ -114,18 +115,18 @@ namespace Entix
         }
 
         [[nodiscard]]
-        SuccessType Unwrap() const
+        SuccessType Unwrap(std::source_location location = std::source_location::current()) const
             requires (std::is_copy_assignable_v<SuccessType>)
         {
             try {
                 return std::get<SuccessType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("Unwrap on error value");
+                Panic("Unwrap on error value", location);
             }
         }
 
         [[nodiscard]]
-        SuccessType Unwrap() const
+        SuccessType Unwrap(std::source_location location = std::source_location::current()) const
             requires ((!std::is_copy_assignable_v<SuccessType>) && std::is_move_assignable_v<SuccessType>)
         {
             try {
@@ -133,23 +134,23 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("Unwrap on error value");
+                Panic("Unwrap on error value", location);
             }
         }
 
         [[nodiscard]]
-        ErrorType UnwrapErr() const
+        ErrorType UnwrapErr(std::source_location location = std::source_location::current()) const
             requires (std::is_copy_assignable_v<ErrorType>)
         {
             try {
                 return std::get<ErrorType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("UnwrapErr on success value");
+                Panic("UnwrapErr on success value", location);
             }
         }
 
         [[nodiscard]]
-        ErrorType UnwrapErr() const
+        ErrorType UnwrapErr(std::source_location location = std::source_location::current()) const
             requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
         {
             try {
@@ -157,7 +158,7 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("UnwrapErr on success value");
+                Panic("UnwrapErr on success value", location);
             }
         }
 
@@ -166,7 +167,7 @@ namespace Entix
     };
 
     template<typename ErrorType>
-    class Result<void, ErrorType>
+    class [[nodiscard("Result value must be handled")]] Result<void, ErrorType>
     {
     public:
         EX_FORCE_INLINE
@@ -206,19 +207,25 @@ namespace Entix
             return IsSuccess();
         }
 
+        void Unwrap(std::source_location location = std::source_location::current()) const
+        {
+            if(IsError())
+                Panic("Unwrap on error value", location);
+        }
+
         [[nodiscard]]
-        ErrorType UnwrapErr() const
+        ErrorType UnwrapErr(std::source_location location = std::source_location::current()) const
             requires (std::is_copy_assignable_v<ErrorType>)
         {
             try {
                 return std::get<ErrorType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("UnwrapErr on success value");
+                Panic("UnwrapErr on success value", location);
             }
         }
 
         [[nodiscard]]
-        ErrorType UnwrapErr() const
+        ErrorType UnwrapErr(std::source_location location = std::source_location::current()) const
             requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
         {
             try {
@@ -226,7 +233,7 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("UnwrapErr on success value");
+                Panic("UnwrapErr on success value", location);
             }
         }
 

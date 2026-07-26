@@ -32,7 +32,7 @@ namespace Entix
             LogLevel::Fatal
         });
 
-#ifndef ENTIX_PLATFORM_WINDOWS
+#ifndef ENTIX_PLATFORM_WINDOWS_
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>(), {
             LogLevel::Debug,
             LogLevel::Info,
@@ -62,7 +62,7 @@ namespace Entix
     }
 }
 
-#if defined(ENTIX_PLATFORM_WINDOWS)
+#if defined(ENTIX_PLATFORM_WINDOWS_)
 #include <Windows.h>
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
