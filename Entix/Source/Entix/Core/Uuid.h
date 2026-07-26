@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Entix/Core/Base.h"
 #include "Entix/Core/Types.h"
 
 namespace Entix
 {
-    class Uuid {
+    class ENTIX_API Uuid {
     public:
         Uuid();
         Uuid(Uint64 uuid);
