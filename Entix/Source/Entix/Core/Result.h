@@ -44,7 +44,7 @@
  * @code
  * extern Result<int> AnotherResultingFn();
  * 
- * int SomeFn()
+ * Result<int> SomeFn()
  * {
  *      EX_LET_TRY(code, AnotherResultingFn());
  *      return code; // It returns `AnotherResultingFn()` result if it successfuly executed
