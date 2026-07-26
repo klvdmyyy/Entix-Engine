@@ -5,7 +5,7 @@
 
 #include <memory>
 
-extern void* operator new(size_t);
+extern void* operator new(size_t); // NOLINT
 extern void operator delete(void*);
 
 namespace Entix

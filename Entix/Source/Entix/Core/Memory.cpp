@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 
+// NOLINTBEGIN
 void* operator new(size_t count)
 {
     auto ptr = malloc(count);
@@ -12,3 +13,4 @@ void operator delete(void* ptr)
 {
     free(ptr);
 }
+// NOLINTEND

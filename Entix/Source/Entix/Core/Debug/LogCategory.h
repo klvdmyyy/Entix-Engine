@@ -6,8 +6,8 @@
 
 #include "Entix/Core/Debug/LogLevel.h"
 
-#define EX_DEFINE_LOG_CATEGORY(name, level) \
-    static constexpr auto g_logCategory_##NAME = ::Entix::LogCategory(#name, ::Entix::LogLevel::level)
+#define EX_DEFINE_LOG_CATEGORY(NAME, LEVEL) \
+    static constexpr auto g_logCategory_##NAME = ::Entix::LogCategory(#NAME, ::Entix::LogLevel::LEVEL)
 
 namespace Entix
 {

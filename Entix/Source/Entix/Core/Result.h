@@ -53,7 +53,7 @@ namespace Entix
             return std::holds_alternative<ErrorType>(m_value);
         }
 
-        operator bool() const noexcept
+        explicit operator bool() const noexcept
         {
             return IsSuccess();
         }
@@ -85,7 +85,7 @@ namespace Entix
         }
 
         [[nodiscard]]
-        ErrorType GetError() const
+        ErrorType UnwrapErr() const
             requires (std::is_copy_assignable_v<ErrorType>)
         {
             try {
@@ -97,7 +97,7 @@ namespace Entix
         }
 
         [[nodiscard]]
-        ErrorType GetError() const
+        ErrorType UnwrapErr() const
             requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
         {
             try {
@@ -118,6 +118,12 @@ namespace Entix
     class Result<void, ErrorType>
     {
     public:
+        EX_FORCE_INLINE
+        inline constexpr Result(void)
+            : m_value(std::monostate{})
+        {
+        }
+
         EX_FORCE_INLINE
         inline constexpr Result(const ErrorType& value)
             requires (std::is_copy_assignable_v<ErrorType>)
@@ -150,7 +156,7 @@ namespace Entix
         }
 
         [[nodiscard]]
-        ErrorType GetError() const
+        ErrorType UnwrapErr() const
             requires (std::is_copy_assignable_v<ErrorType>)
         {
             try {
@@ -162,7 +168,7 @@ namespace Entix
         }
 
         [[nodiscard]]
-        ErrorType GetError() const
+        ErrorType UnwrapErr() const
             requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
         {
             try {

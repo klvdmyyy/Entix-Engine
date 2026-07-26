@@ -1,6 +1,19 @@
 add_subdirectory(Vendor)  # Vendor Libraries
 add_library(Entix SHARED) # Entix-Engine
 
+if(MSVC)
+    set_target_properties(Entix PROPERTIES
+        VS_GLOBAL_RunCodeAnalysis true
+
+        # Use visual studio core guidelines
+        VS_GLOBAL_EnableMicrosoftCodeAnalysis true
+
+        # Use clangtidy
+        VS_GLOBAL_EnableClangTidyCodeAnalysis true
+        VS_GLOBAL_ClangTidyChecks -checks=*,modernize-*,-modernize-use-trailing-return-type
+    )
+endif()
+
 #####################################################
 ############### Precompiled Headers #################
 
