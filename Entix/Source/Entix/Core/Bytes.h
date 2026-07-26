@@ -1,3 +1,13 @@
+/**
+ * @file
+ * @brief Bytes type for memory size counting.
+ * 
+ * @details
+ * Provides Bytes class which has a pretty formatting with MB/GB and e.t.c.
+ * 
+ * @ingroup Core
+ */
+
 #pragma once
 
 #include "Entix/Core/Base.h"
@@ -12,6 +22,11 @@
 
 namespace Entix
 {
+    /**
+     * @brief Memory size counting with pretty formatting
+     * 
+     * @ingroup Core
+     */
     class Bytes {
     public:
         constexpr Bytes(size_t count) : m_count(count) {}
@@ -44,6 +59,9 @@ namespace Entix
     };
 }
 
+/**
+ * @ingroup Core
+ */
 template<>
 struct std::formatter<::Entix::Bytes, char>
 {

@@ -12,7 +12,7 @@ namespace Entix
             ADD_LEVEL(Info);
             ADD_LEVEL(Warning);
             ADD_LEVEL(Error);
-            ADD_LEVEL(Critical);
+            ADD_LEVEL(Fatal);
 
             default:
                 return "Unknown";

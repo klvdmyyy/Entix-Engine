@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @brief Collection of platform detection macro-definitions
+ * 
+ * @ingroup Core
+ */
+
 #pragma once
 
 // Platform detection using predefined macros

@@ -15,7 +15,7 @@ namespace Entix
         Info,
         Warning,
         Error,
-        Critical,
+        Fatal,
 
         Count
     };

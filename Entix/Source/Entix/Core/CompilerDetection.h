@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @brief Collection of compiler detection macro-definitions
+ * 
+ * @ingroup Core
+ */
+
 #pragma once
 
 #if defined(__clang__)

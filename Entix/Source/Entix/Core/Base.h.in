@@ -1,3 +1,11 @@
+/**
+ * @file
+ * @brief Base header with a lot of macro things
+ * 
+ * @defgroup Core
+ * @{
+ */
+
 #pragma once
 
 #include "Entix/Core/PlatformDetection.h"
@@ -29,3 +37,6 @@
 #   error "Platform doesn't support debugbreak yet!"
 #endif
 
+/**
+ * @}
+ */

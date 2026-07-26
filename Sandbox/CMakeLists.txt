@@ -1,4 +1,8 @@
-add_executable(Sandbox)
+if(WIN32)
+    add_executable(Sandbox WIN32)
+else()
+    add_executable(Sandbox)
+endif()
 
 if(MSVC)
     set_target_properties(Sandbox PROPERTIES

@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @brief Error base class.
+ * 
+ * @ingroup Core
+ */
+
 #pragma once
 
 #include "Entix/Core/Base.h"
@@ -10,6 +17,15 @@
 
 namespace Entix
 {
+    /**
+     * @brief Error base class
+     * 
+     * @details
+     * Mainly implemented for using in Result class. You can also
+     * use it for throw/try/catch statements.
+     * 
+     * @ingroup Core
+     */
     class Error
     {
     public:
@@ -19,8 +35,18 @@ namespace Entix
         }
         virtual ~Error() = default;
 
+        /**
+         * @brief Says what's wrong =)
+         * 
+         * @return String Formatter error message
+         */
         ENTIX_API virtual String What() const noexcept;
         
+        /**
+         * @brief Just return raw error message
+         * 
+         * @return StringView
+         */
         constexpr StringView GetMessage() const noexcept
         {
             return m_message;
@@ -32,6 +58,9 @@ namespace Entix
     };
 }
 
+/**
+ * @ingroup Core
+ */
 template<>
 struct std::formatter<Entix::Error, char>
 {

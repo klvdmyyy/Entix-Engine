@@ -1,9 +1,63 @@
+/**
+ * @file
+ * @brief Result type for error-handling
+ * 
+ * @details
+ * Rust-inspired Result class for error-handling.
+ * 
+ * @ingroup Core
+ */
+
 #pragma once
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Error.h"
 
 #include <variant>
+
+/**
+ * @brief Try to execute the resulting expression
+ * 
+ * @details
+ * Usage Example:
+ * @code
+ * extern Result<void> AnotherResultingFn();
+ * 
+ * Result<void> SomeFn()
+ * {
+ *      EX_TRY(AnotherResultingFn());
+ *      return {};
+ * }
+ * @endcode
+ * 
+ * @ingroup Code
+ */
+#define EX_TRY(EXPR) \
+    if(auto res = EXPR; res.IsError()) \
+        return res.UnwrapErr()
+
+/**
+ * @brief Try to execute the resulting expression and if it success save unwrapped result to variable.
+ * 
+ * @details
+ * Usage Example:
+ * @code
+ * extern Result<int> AnotherResultingFn();
+ * 
+ * int SomeFn()
+ * {
+ *      EX_LET_TRY(code, AnotherResultingFn());
+ *      return code; // It returns `AnotherResultingFn()` result if it successfuly executed
+ * }
+ * @endcode
+ * 
+ * @ingroup Core
+ */
+#define EX_LET_TRY(VAR, EXPR) \
+    auto VAR##__entix_try_result__ = EXPR; \
+    if(VAR##__entix_try_result__.IsError()) \
+        return VAR##__entix_try_result__.UnwrapErr(); \
+    auto VAR = VAR##__entix_try_result__.Unwrap()
 
 namespace Entix
 {
