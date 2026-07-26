@@ -44,13 +44,21 @@ namespace Entix
 
         EX_LOG(LogTemp, Info, "Running game's `CreateApplication()`...");
 
-        auto app = CreateApplication();
+        try
+        {
+            auto app = CreateApplication();
 
-        auto res = app->Run();
+            auto res = app->Run();
 
-        delete app;
+            delete app;
 
-        return res.IsSuccess() ? 0 : 1;
+            return res.IsSuccess() ? 0 : 1;
+        }
+        catch(const std::exception& e)
+        {
+            EX_LOG(LogTemp, Info, "Exception is catched. What: {}", e.what());
+            return 2;
+        }
     }
 }
 

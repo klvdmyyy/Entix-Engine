@@ -16,6 +16,9 @@
 
 namespace Entix
 {
+    // Panic-only category
+    EX_DEFINE_LOG_CATEGORY(LogPanic, Fatal);
+
     EX_DEFINE_LOG_CATEGORY(LogTemp, Info);
     EX_DEFINE_LOG_CATEGORY(LogIO, Trace);
 }

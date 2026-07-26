@@ -12,6 +12,7 @@
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Error.h"
+#include "Entix/Core/Panic.h"
 
 #include <variant>
 
@@ -119,8 +120,7 @@ namespace Entix
             try {
                 return std::get<SuccessType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                EX_DEBUGBREAK();
-                std::exit(1);
+                Panic("Unwrap on error value");
             }
         }
 
@@ -133,8 +133,7 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                EX_DEBUGBREAK();
-                std::exit(1);
+                Panic("Unwrap on error value");
             }
         }
 
@@ -145,8 +144,7 @@ namespace Entix
             try {
                 return std::get<ErrorType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                EX_DEBUGBREAK();
-                std::exit(1);
+                Panic("UnwrapErr on success value");
             }
         }
 
@@ -159,8 +157,7 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                EX_DEBUGBREAK();
-                std::exit(1);
+                Panic("UnwrapErr on success value");
             }
         }
 
@@ -216,8 +213,7 @@ namespace Entix
             try {
                 return std::get<ErrorType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                EX_DEBUGBREAK();
-                std::exit(1);
+                Panic("UnwrapErr on success value");
             }
         }
 
@@ -230,8 +226,7 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                EX_DEBUGBREAK();
-                std::exit(1);
+                Panic("UnwrapErr on success value");
             }
         }
 

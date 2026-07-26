@@ -12,6 +12,7 @@ namespace Entix
 
     Result<void> Application::Initialize()
     {
+        return {};
     }
 
     Result<void> Application::Run()
@@ -19,9 +20,12 @@ namespace Entix
         EX_TRY(Initialize());
 
         EX_TRY(Shutdown());
+
+        return {};
     }
 
     Result<void> Application::Shutdown()
     {
+        return {};
     }
 }

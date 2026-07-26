@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entix/Core/Base.h"
 #include "Entix/Core/Result.h"
 
 namespace Entix
@@ -11,13 +12,13 @@ namespace Entix
     class Application
     {
     public:
-        Application();
-        ~Application();
+        ENTIX_API Application();
+        ENTIX_API ~Application();
 
-        Result<void> Run();
+        ENTIX_API Result<void> Run();
 
     private:
-        Result<void> Initialize();
-        Result<void> Shutdown();
+        ENTIX_API Result<void> Initialize();
+        ENTIX_API Result<void> Shutdown();
     };
 }
