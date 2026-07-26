@@ -6,6 +6,7 @@
 #include <vector>
 #include <typeindex>
 #include <unordered_map>
+#include <queue>
 
 namespace Entix
 {
@@ -76,10 +77,24 @@ namespace Entix
         std::unordered_map<std::type_index, std::vector<HandlerWrapper>> m_handlers;
     };
 
+    namespace
+    {
+        struct QueuedEvent
+        {
+            std::type_index Type;
+            std::function<void()> Dispatch;
+        };
+    }
+
     class EventBus
     {
     public:
         ENTIX_API static EventBus& Instance();
+
+        ENTIX_API void SetImmediateMode(bool enabled);
+        ENTIX_API bool IsImmediateMode() const noexcept;
+        ENTIX_API void ClearQueue() noexcept;
+        ENTIX_API void ProcessEvents();
 
         template<typename Category>
             requires EventCategory<Category> || std::is_same_v<Category, DefaultEventCategory>
@@ -93,7 +108,15 @@ namespace Entix
         void Send(const E& event)
         {
             using Category = EventCategoryOf<E>;
-            GetDispatcher<Category>().Send(event);
+
+            if(IsImmediateMode())
+            {
+                GetDispatcher<Category>().Send(event);
+            }
+            else
+            {
+                QueueEvent<E>(event);
+            }
         }
 
         template<typename E, typename Handler>
@@ -110,7 +133,29 @@ namespace Entix
             GetDispatcher<Category>().template Subscribe<E>(std::move(callback));
         }
 
+
     private:
         EventBus() = default;
+
+        template<typename E>
+        void QueueEvent(const E& event)
+        {
+            using Category = EventCategoryOf<E>;
+
+            auto eventPtr = CreateRef<E>(event);
+
+            auto dispatchFunc = [this, eventPtr]()
+            {
+                GetDispatcher<Category>().Send(*eventPtr);
+            };
+
+            m_eventQueue.push(QueuedEvent{
+                .Type = std::type_index(typeid(E)),
+                .Dispatch = dispatchFunc
+            });
+        }
+
+        std::queue<QueuedEvent> m_eventQueue;
+        bool m_immediateMode = false;
     };
 }

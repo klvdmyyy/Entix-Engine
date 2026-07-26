@@ -25,6 +25,8 @@ namespace Entix
             });
 
             EventBus::Instance().Send(MyEvent{.message = "Hello, World!"});
+
+            EventBus::Instance().ProcessEvents();
         }
     };
 
