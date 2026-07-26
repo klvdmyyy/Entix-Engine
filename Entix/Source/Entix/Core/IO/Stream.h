@@ -74,3 +74,35 @@ namespace Entix::IO
         const bool k_owns;
     };
 }
+
+template<>
+struct std::formatter<::Entix::IO::StreamMode, char>
+{
+    template<class ParseContext>
+    constexpr ParseContext::iterator parse(ParseContext& ctx)
+    {
+        auto it = ctx.begin();
+        return it;
+    }
+
+    template<typename FmtContext>
+    FmtContext::iterator format(::Entix::IO::StreamMode mode,
+                                FmtContext &ctx) const
+    {
+        std::ostringstream out;
+
+        switch(mode)
+        {
+#define ADD_MODE(X) case ::Entix::IO::StreamMode::X: out << #X; break
+            ADD_MODE(Read);
+            ADD_MODE(Write);
+#undef ADD_MODE
+
+            default:
+                out << "Unknown";
+                break;
+        }
+
+        return std::ranges::copy(std::move(out).str(), ctx.out()).out;
+    }
+};

@@ -1,10 +1,14 @@
 #include "Entix/Core/IO/FileStream.h"
 
+#include "Entix/Core/Debug/Logger.h"
+#include "Entix/Core/Globals.h"
+
 namespace Entix::IO
 {
     FileStream::FileStream(const std::filesystem::path& filepath, StreamMode mode)
         : k_path(filepath), k_mode(mode)
     {
+        EX_LOG(LogIO, Debug, "Creating FileStream object. Path: '{}' StreamMode: {}", filepath.string(), mode);
         auto iosmode = std::ios::binary | std::ios::ate;
 
         if(k_mode == StreamMode::Read)
@@ -14,6 +18,9 @@ namespace Entix::IO
             iosmode |= std::ios::out;
 
         m_exists = std::filesystem::exists(filepath);
+        
+        if(!m_exists)
+            EX_LOG(LogIO, Warning, "File doesn't exists: '{}'", k_path.string());
 
         m_file.open(filepath, iosmode);
 
@@ -45,6 +52,10 @@ namespace Entix::IO
         if(!m_exists)
             return Error("File doesn't exists");
         
+        if(k_mode == StreamMode::Write)
+            return Error("Can't read from file stream. Stream mode is Writing only!");
+        
+        EX_LOG(LogIO, Trace, "Reading {} bytes from '{}'", dest.size(), k_path.string());
         m_file.read(reinterpret_cast<char *>(dest.data()), dest.size());
 
         return {};

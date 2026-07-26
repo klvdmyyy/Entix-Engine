@@ -6,6 +6,7 @@
 #include <Entix/Core/Bytes.h>
 
 #include <Entix/Core/Debug/Logger.h>
+#include <Entix/Core/Debug/StreamLogSink.h>
 
 #include <Entix/Core/Globals.h>
 
@@ -28,11 +29,20 @@ namespace Entix
 
     int Main(int argc, char** argv)
     {
-        IO::FileStream file("log.txt", IO::StreamMode::Write);
-        auto res = IO::TextStream::CreateNonOwned(file).WriteLineFmt("Hello, {}!", "World");
-        if(res.IsError())
-            EX_LOG(LogTemp, Error, "File error: {}", res.UnwrapErr());
-            
+        auto file = CreateScope<IO::FileStream>("log.txt", IO::StreamMode::Write);
+        Logger::Instance().AddSink(CreateScope<StreamLogSink>(std::move(file)), {
+            LogLevel::Trace,
+            LogLevel::Debug,
+            LogLevel::Info,
+            LogLevel::Warning,
+            LogLevel::Error,
+            LogLevel::Critical
+        });
+        EX_LOG(LogTemp, Info, "Hello, {}!", "World");
+        auto file2 = CreateScope<IO::FileStream>("test.txt", IO::StreamMode::Read);
+        String msg;
+        msg.resize(file2->Size());
+        file2->Read(IO::ByteSpan(reinterpret_cast<std::byte*>(msg.data()), file2->Size()));
         return 0;
     }
 }

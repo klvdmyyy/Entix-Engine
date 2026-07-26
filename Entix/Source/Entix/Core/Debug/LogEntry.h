@@ -6,8 +6,8 @@ namespace Entix
 {
     struct LogEntry
     {
-        const LogLevel level;
         const LogCategory category;
+        const LogLevel level;
         const StringView message;
     };
 }

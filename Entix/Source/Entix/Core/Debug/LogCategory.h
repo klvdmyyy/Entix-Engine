@@ -22,6 +22,8 @@ namespace Entix
         ENTIX_API inline constexpr StringView GetName() const noexcept { return k_name; }
         ENTIX_API inline constexpr LogLevel GetMinLevel() const noexcept { return k_minLevel; }
 
+        ENTIX_API inline constexpr bool IsEnabled(LogLevel level) const noexcept { return (Uint8)level >= (Uint8)k_minLevel; }
+
     private:
         const StringView k_name;
         const LogLevel k_minLevel;

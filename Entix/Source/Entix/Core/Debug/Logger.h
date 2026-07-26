@@ -1,7 +1,12 @@
 #pragma once
 
-#include "LogEntry.h"
+#include "Entix/Core/Memory.h"
 
+#include "LogEntry.h"
+#include "LogSink.h"
+
+#include <bitset>
+#include <vector>
 #include <format>
 
 #define EX_LOG(CATEGORY, LEVEL, FMT, ...) \
@@ -9,15 +14,32 @@
 
 namespace Entix
 {
-    class ENTIX_API Logger
+    class Logger
     {
     public:
-        static Logger& Instance();
+        using LevelBitset = std::bitset<static_cast<Uint8>(LogLevel::Count)>;
 
-        void LogMessage(
+        Logger() = default;
+
+        // Unable to copy
+        Logger(const Logger&) = delete;
+        Logger& operator=(const Logger&) = delete;
+
+        // Unable to move
+        Logger(Logger&&) = delete;
+        Logger& operator=(Logger&&) = delete;
+
+        ENTIX_API static Logger& Instance();
+
+        ENTIX_API void AddSink(Scope<LogSink> sink, std::initializer_list<LogLevel> enabledLevels);
+
+        ENTIX_API void LogMessage(
             LogCategory category,
             LogLevel level,
             StringView message
         );
+
+    private:
+        std::vector<std::pair<Scope<LogSink>, LevelBitset>> m_sinks;
     };
 }

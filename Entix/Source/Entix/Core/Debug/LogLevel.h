@@ -15,7 +15,9 @@ namespace Entix
         Info,
         Warning,
         Error,
-        Critical
+        Critical,
+
+        Count
     };
 
     ENTIX_API String LogLevelToString(LogLevel level);
