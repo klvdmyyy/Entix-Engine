@@ -7,6 +7,7 @@ namespace Entix
     {
     public:
         SandboxApp()
+            : Application(ApplicationConfig())
         {
         }
     };

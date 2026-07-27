@@ -49,6 +49,16 @@ namespace Entix::IO
             return WriteLine(std::format(fmt, std::forward<Args>(args)...));
         }
 
+        Result<String> ReadAll()
+        {
+            String s;
+            s.resize(m_inner->Size());
+
+            EX_TRY(m_inner->Read(ByteSpan(reinterpret_cast<std::byte*>(s.data()), s.size())));
+
+            return s;
+        }
+
     private:
         TextStream(Stream* inner, bool owns)
             : StreamDecorator(inner, owns)

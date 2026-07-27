@@ -5,52 +5,60 @@
 #include <concepts>
 #include <type_traits>
 
-#define EX_DEFINE_EVENT_CATEGORY(NAME) struct NAME {}
+#define EX_DEFINE_EVENT_CATEGORY(NAME)                                        \
+    struct NAME                                                               \
+    {                                                                         \
+    }
 
 namespace Entix
 {
     // Concepts
 
-    template<typename T>
+    template <typename T>
     concept EventCategory = std::is_empty_v<T> && std::is_trivial_v<T>;
 
-    EX_DEFINE_EVENT_CATEGORY(DefaultEventCategory);
+    EX_DEFINE_EVENT_CATEGORY (DefaultEventCategory);
 
-    template<EventCategory... Categories>
-    struct EventCategoryGroup {};
+    template <EventCategory... Categories>
+    struct EventCategoryGroup
+    {
+    };
 
-    template<typename E, typename = void>
+    template <typename E, typename = void>
     struct EventCategoryTrait
     {
         using Type = DefaultEventCategory;
     };
 
-    template<typename E>
+    template <typename E>
     struct EventCategoryTrait<E, std::void_t<typename E::Category>>
     {
         using Type = typename E::Category;
     };
 
-    template<typename E>
+    template <typename E>
     using EventCategoryOf = typename EventCategoryTrait<E>::Type;
 
-    template<typename E, typename C>
+    template <typename E, typename C>
     concept EventInCategory = std::is_same_v<EventCategoryOf<E>, C>;
 
-    template<typename Derived>
-    class Event {
+    template <typename Derived>
+    class Event
+    {
     public:
         using Category = EventCategoryOf<Derived>;
 
-        String GetName() const noexcept
+        String
+        GetName () const noexcept
         {
-            return typeid(Derived).name();
+            return typeid (Derived).name ();
         }
 
-        template<EventCategory C>
-        constexpr bool IsCategory() const
+        template <EventCategory C>
+        constexpr bool
+        IsCategory () const
         {
             return std::is_same_v<C, EventCategoryOf<Derived>>;
         }
     };
-}
+} // namespace Entix

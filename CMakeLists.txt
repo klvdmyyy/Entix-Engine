@@ -1,8 +1,6 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 cmake_minimum_required(VERSION 3.31.6)
 
-include(.env)
-
 project(Entix-Engine VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 23)

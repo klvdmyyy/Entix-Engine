@@ -1,0 +1,40 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Left
+AlignAfterOpenBracket: true
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: false
+AlignConsecutiveMacros:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: false
+IndentPPDirectives: AfterHash
+PPIndentWidth: 4
+IndentRequiresClause: true
+InsertBraces: true
+FixNamespaceComments: true
+NamespaceIndentation: All
+AccessModifierOffset: -4
+BreakTemplateDeclarations: Yes
+BreakBeforeConceptDeclarations: Always
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterEnum: true
+    AfterStruct: true
+    AfterFunction: true
+    AfterClass: true
+    AfterNamespace: true
+    AfterControlStatement: Always
+    SplitEmptyFunction: false
+    AfterCaseLabel: false
+
+# Also check following options laterly:
+# IncludeCategories ...
+# BreakBeforeBraces: Custom

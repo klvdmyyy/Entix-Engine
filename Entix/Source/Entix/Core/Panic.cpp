@@ -17,6 +17,7 @@ namespace Entix
 {
     namespace Utils
     {
+#if defined(ENTIX_BUILD_DEBUG)
         static bool IsRunningWithDebugger();
 
 #if defined(ENTIX_PLATFORM_LINUX) 
@@ -45,6 +46,8 @@ namespace Entix
         {
             return false;
         }
+#endif
+
 #endif
     }
 

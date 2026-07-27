@@ -3,6 +3,8 @@
 #include "Entix/Core/Debug/Logger.h"
 #include "Entix/Core/Globals.h"
 
+#include "Entix/WSI/Base.h"
+
 #include <ranges>
 
 namespace Entix
@@ -90,11 +92,17 @@ namespace Entix
         std::vector<const char*> requiredLayers;
         std::vector<const char*> requiredExtensions;
 
+        EX_LET_TRY(wsiRequirements, WSI::GetRequiredVulkanInstanceExtensions());
+        requiredExtensions.assign(wsiRequirements.begin(), wsiRequirements.end());
+
         if constexpr(ENABLE_VALIDATION_LAYERS)
         {
             requiredLayers.insert(requiredLayers.end(), VALIDATION_LAYERS.begin(), VALIDATION_LAYERS.end());
             requiredExtensions.push_back(vk::EXTDebugUtilsExtensionName);
         }
+
+        EX_LOG(LogRHI, Debug, "Required vulkan instance extensions: {}", requiredExtensions);
+        EX_LOG(LogRHI, Debug, "Vulkan instance extensions required by WSI: {}", wsiRequirements);
 
         auto layerProperties = m_context.enumerateInstanceLayerProperties();
         auto unsupportedLayerIt =

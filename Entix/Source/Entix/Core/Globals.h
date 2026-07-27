@@ -24,6 +24,10 @@ namespace Entix
 
     EX_DEFINE_LOG_CATEGORY(LogRHI, Trace);
 
+    EX_DEFINE_LOG_CATEGORY(Resources, Trace);
+
+    EX_DEFINE_LOG_CATEGORY(ShaderCompilation, Debug);
+
     EX_DEFINE_LOG_CATEGORY(VulkanGeneral, Debug);
     EX_DEFINE_LOG_CATEGORY(VulkanPerformance, Warning);
     EX_DEFINE_LOG_CATEGORY(VulkanValidation, Trace);

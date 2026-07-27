@@ -6,6 +6,14 @@
 
 namespace Entix
 {
+    struct WindowConfig
+    {
+        WindowConfig() = default;
+
+        Uint32 width = 800;
+        Uint32 height = 600;
+        String title = "No Title";
+    };
 
     class Window
     {

@@ -34,7 +34,8 @@ target_precompile_headers(Entix PRIVATE
     <cstddef>
     <cstdint>
     <print>
-    <filesystem>)
+    <filesystem>
+    <any>)
 
 #####################################################
 ########### Compiler Options/Definitions ############
@@ -79,16 +80,19 @@ target_include_directories(Entix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 if(MSVC)
     target_include_directories(Entix PRIVATE
-        ${VULKAN_INCLUDE_DIRECTORY})
+        $ENV{VULKAN_SDK}/Include)
 
     target_link_directories(Entix PRIVATE
-        ${VULKAN_LINK_DIRECTORY})
+        $ENV{VULKAN_SDK}/Lib)
     
     target_link_libraries(Entix PRIVATE
-        vulkan-1.lib)
+        vulkan-1.lib
+        slang.lib
+        slang-compiler.lib)
 endif()
 
 target_link_libraries(Entix PRIVATE
+    SDL3::SDL3-shared
     Vendor::GLAD
     Vendor::TinyObjLoader
     Vendor::STBImage
