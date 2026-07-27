@@ -21,6 +21,12 @@ namespace Entix
 
     EX_DEFINE_LOG_CATEGORY(LogTemp, Info);
     EX_DEFINE_LOG_CATEGORY(LogIO, Trace);
+
+    EX_DEFINE_LOG_CATEGORY(LogRHI, Trace);
+
+    EX_DEFINE_LOG_CATEGORY(VulkanGeneral, Debug);
+    EX_DEFINE_LOG_CATEGORY(VulkanPerformance, Warning);
+    EX_DEFINE_LOG_CATEGORY(VulkanValidation, Trace);
 }
 
 /**

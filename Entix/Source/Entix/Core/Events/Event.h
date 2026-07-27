@@ -5,7 +5,7 @@
 #include <concepts>
 #include <type_traits>
 
-#define DEFINE_EVENT_CATEGORY(NAME) struct NAME {}
+#define EX_DEFINE_EVENT_CATEGORY(NAME) struct NAME {}
 
 namespace Entix
 {
@@ -14,7 +14,7 @@ namespace Entix
     template<typename T>
     concept EventCategory = std::is_empty_v<T> && std::is_trivial_v<T>;
 
-    DEFINE_EVENT_CATEGORY(DefaultEventCategory);
+    EX_DEFINE_EVENT_CATEGORY(DefaultEventCategory);
 
     template<EventCategory... Categories>
     struct EventCategoryGroup {};

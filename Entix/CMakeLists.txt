@@ -33,7 +33,8 @@ target_precompile_headers(Entix PRIVATE
     <variant>
     <cstddef>
     <cstdint>
-    <print>)
+    <print>
+    <filesystem>)
 
 #####################################################
 ########### Compiler Options/Definitions ############
@@ -75,6 +76,17 @@ target_include_directories(Entix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 #####################################################
 ############## Third-Party Libraries ################
+
+if(MSVC)
+    target_include_directories(Entix PRIVATE
+        ${VULKAN_INCLUDE_DIRECTORY})
+
+    target_link_directories(Entix PRIVATE
+        ${VULKAN_LINK_DIRECTORY})
+    
+    target_link_libraries(Entix PRIVATE
+        vulkan-1.lib)
+endif()
 
 target_link_libraries(Entix PRIVATE
     Vendor::GLAD

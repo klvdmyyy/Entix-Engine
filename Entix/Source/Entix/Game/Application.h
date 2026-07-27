@@ -2,6 +2,9 @@
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Result.h"
+#include "Entix/Core/Memory.h"
+
+#include "Entix/RHI/Device.h"
 
 namespace Entix
 {
@@ -22,5 +25,7 @@ namespace Entix
         ENTIX_API Result<void> Shutdown();
 
         bool m_quit;
+
+        Ref<RHI::Device> m_rhiDevice;
     };
 }

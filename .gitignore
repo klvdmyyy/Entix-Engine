@@ -13,3 +13,6 @@
 
 # TAGS file
 TAGS
+
+# .env file
+.env

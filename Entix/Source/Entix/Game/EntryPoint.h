@@ -34,6 +34,7 @@ namespace Entix
 
 #ifndef ENTIX_PLATFORM_WINDOWS_
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>(), {
+            LogLevel::Trace,
             LogLevel::Debug,
             LogLevel::Info,
             LogLevel::Warning,

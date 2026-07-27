@@ -3,11 +3,14 @@
 #include "Entix/Core/Debug/Logger.h"
 #include "Entix/Core/Globals.h"
 
+#include "Platform/Vulkan/VulkanDevice.h"
+
 namespace Entix
 {
     Application::Application()
         : m_quit(false)
     {
+        m_rhiDevice = CreateRef<VulkanDevice>();
     }
 
     Application::~Application()
