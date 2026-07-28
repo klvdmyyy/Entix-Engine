@@ -27,13 +27,6 @@ namespace Entix
         
         std::vector<ResourceId> m_ids;
 
-        FORCE_INLINE
-        inline Scope<Resource> LoadInternal(IO::Reader& reader, const ResourceId& id)
-        {
-            if(std::find(m_ids.begin(), m_ids.end(), id) == m_ids.end())
-                m_ids.push_back(id);
-
-            return Load(id, reader);
-        }
+        Scope<Resource> LoadInternal(const ResourceId& id);
     };
 }

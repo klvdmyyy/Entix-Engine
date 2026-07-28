@@ -3,6 +3,8 @@
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Types.h"
 
+#include "Entix/Core/Result.h"
+
 #include <vector>
 #include <bitset>
 #include <filesystem>
@@ -20,6 +22,16 @@ namespace Entix::RHI
         return num & static_cast<Uint8>(stage);
     }
 
+    Uint8 operator|(Uint8 num, ShaderStage stage)
+    {
+        return num | static_cast<Uint8>(stage);
+    }
+
+    Uint8 operator|=(Uint8 num, ShaderStage stage)
+    {
+        return num | stage;
+    }
+
     Uint8 operator|(ShaderStage first, ShaderStage second)
     {
         return static_cast<Uint8>(first) | static_cast<Uint8>(second);
@@ -27,7 +39,7 @@ namespace Entix::RHI
 
     struct ShaderCompilationData
     {
-        Uint8 stages;
+        Uint8 stages = 0;
         std::vector<std::byte> code;
     };
 
@@ -38,7 +50,7 @@ namespace Entix::RHI
          * @brief It's only one right way to get ShaderCompiler.
          */
         [[nodiscard]]
-        static ShaderCompiler* Instance();
+        ENTIX_API static ShaderCompiler* Instance();
 
         virtual ~ShaderCompiler() = default;
 

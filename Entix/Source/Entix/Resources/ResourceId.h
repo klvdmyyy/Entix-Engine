@@ -3,6 +3,7 @@
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Types.h"
+#include "Entix/Core/String.h"
 
 #include <filesystem>
 
@@ -20,17 +21,11 @@ namespace Entix
         bool m_null;
 
     public:
-        ResourceId()
-            : k_filepath(), m_hash(0), m_null(true)
-        {
-        }
-        
-        explicit ResourceId(const std::filesystem::path& path)
-            : k_filepath(path), m_hash(std::hash<std::filesystem::path>{}(path)), m_null(false)
-        {
-        }
+        ResourceId();
+        explicit ResourceId(const std::filesystem::path& path);
 
-        size_t Hash() const { return m_hash; }
+        [[nodiscard]]
+        Usize Hash() const noexcept;
         
         operator bool() const { return !m_null; }
         operator std::filesystem::path() const noexcept { return k_filepath; }

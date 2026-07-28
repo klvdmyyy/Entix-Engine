@@ -16,6 +16,16 @@
     if(!SLANG_SUCCEEDED(EXPR)) \
         return Error(String("Following Slang expression fail: " + String(#EXPR)))
 
+#define EX_SLANG_CHECK_DIAGNOSTIC(VAR) \
+    do { if(VAR) \
+    { \
+        String msg( \
+            reinterpret_cast<const char*>(VAR->getBufferPointer()), \
+            reinterpret_cast<const char*>(VAR->getBufferPointer()) + VAR->getBufferSize() \
+        ); \
+        return Error(msg); \
+    } } while(0)
+
 namespace Entix::RHI
 {
     class SlangShaderCompiler : public ShaderCompiler
@@ -38,9 +48,80 @@ namespace Entix::RHI
             auto file = CreateScope<IO::FileStream>(filepath, IO::StreamMode::Read);
             auto input = CreateScope<IO::TextStream>(std::move(file));
 
-            EX_LET_TRY(source, input->ReadAll());
+            EX_LET_TRY(shaderCode, input->ReadAll());
 
+            Slang::ComPtr<slang::IBlob> diagnosticBlob;
+
+            slang::IModule* mod = m_session->loadModuleFromSourceString(
+                filepath.filename().replace_extension().string().c_str(),
+                filepath.filename().string().c_str(),
+                shaderCode.c_str(),
+                diagnosticBlob.writeRef()
+            );
+
+            EX_SLANG_CHECK_DIAGNOSTIC(diagnosticBlob);
+
+            slang::IEntryPoint* vertEntry;
+            EX_SLANG_TRY(mod->findEntryPointByName(GetStageEntryPoint(ShaderStage::Vertex), &vertEntry));
             
+            slang::IEntryPoint* fragEntry;
+            EX_SLANG_TRY(mod->findEntryPointByName(GetStageEntryPoint(ShaderStage::Fragment), &fragEntry));
+
+            Slang::ComPtr<slang::IComponentType> linkedProgram;
+            slang::IComponentType* components[] = {mod, vertEntry, fragEntry};
+            EX_SLANG_TRY(m_session->createCompositeComponentType(components, sizeof(components) / sizeof(slang::IComponentType*), linkedProgram.writeRef()));
+
+            Slang::ComPtr<slang::IBlob> codeBlob;
+            EX_SLANG_TRY(linkedProgram->getEntryPointCode(0, 0, codeBlob.writeRef(), diagnosticBlob.writeRef()));
+
+            EX_SLANG_CHECK_DIAGNOSTIC(diagnosticBlob);
+
+            res.code = std::vector<std::byte>(
+                reinterpret_cast<const std::byte*>(codeBlob->getBufferPointer()),
+                reinterpret_cast<const std::byte*>(codeBlob->getBufferPointer()) + codeBlob->getBufferSize()
+            );
+
+            slang::ProgramLayout* programLayout = linkedProgram->getLayout(0);
+
+            Usize entryPointCount = programLayout->getEntryPointCount();
+
+            for(Usize i = 0; i < entryPointCount; i++)
+            {
+                slang::EntryPointLayout* entryPointLayout = programLayout->getEntryPointByIndex(i);
+                if(entryPointLayout)
+                {
+                    SlangStage stage = entryPointLayout->getStage();
+
+                    switch(stage)
+                    {
+                        case SLANG_STAGE_VERTEX:
+                            res.stages |= ShaderStage::Vertex;
+                            EX_LOG(
+                                ShaderCompilation, Trace,
+                                "Vertex stage entry point found in '{}'",
+                                filepath.filename().string()
+                            );
+                            break;
+                        
+                        case SLANG_STAGE_FRAGMENT:
+                            res.stages |= ShaderStage::Fragment;
+                            EX_LOG(
+                                ShaderCompilation, Trace,
+                                "Fragment stage entry point found in '{}'",
+                                filepath.filename().string()
+                            );
+                            break;
+                        
+                        default:
+                            EX_LOG(
+                                ShaderCompilation, Warning,
+                                "Unresolved stage entry point in '{}': {}",
+                                filepath.filename().string(), static_cast<Uint16>(stage)
+                            );
+                            break;
+                    }
+                }
+            }
 
             return res;
         }
@@ -88,50 +169,5 @@ namespace Entix::RHI
     {
         static SlangShaderCompiler s_instance;
         return &s_instance;
-    }
-
-    Result<std::vector<std::byte>> CompileShader(IO::Stream& input)
-    {
-        Slang::ComPtr<slang::IGlobalSession> globalSession;
-        slang::createGlobalSession(globalSession.writeRef());
-
-        slang::TargetDesc targetDesc{};
-        targetDesc.format = SLANG_SPIRV;
-        targetDesc.profile = globalSession->findProfile("spirv_1_5");
-
-        slang::SessionDesc sessionDesc{};
-        sessionDesc.targets = &targetDesc;
-        sessionDesc.targetCount = 1;
-
-        Slang::ComPtr<slang::ISession> session;
-        globalSession->createSession(sessionDesc, session.writeRef());
-
-        EX_LET_TRY(shaderCode, IO::TextStream::CreateNonOwned(input).ReadAll());
-
-        Slang::ComPtr<slang::IBlob> diagnosticBlob;
-        slang::IModule* mod = session->loadModuleFromSourceString(
-            "SimpleShader",
-            "SimpleShader.slang",
-            shaderCode.c_str()
-            // diagnosticBlob.writeRef()
-        );
-
-        slang::IEntryPoint* vertEntry;
-        mod->findEntryPointByName("vertMain", &vertEntry);
-        
-        slang::IEntryPoint* fragEntry;
-        mod->findEntryPointByName("fragMain", &fragEntry);
-
-        Slang::ComPtr<slang::IComponentType> linkedProgram;
-        slang::IComponentType* components[] = {mod, vertEntry, fragEntry};
-        session->createCompositeComponentType(components, sizeof(components), linkedProgram.writeRef());
-
-        Slang::ComPtr<slang::IBlob> codeBlob;
-        linkedProgram->getEntryPointCode(0, 0, codeBlob.writeRef(), diagnosticBlob.writeRef());
-
-        return std::vector<std::byte>(
-            reinterpret_cast<const std::byte*>(codeBlob->getBufferPointer()),
-            reinterpret_cast<const std::byte*>(codeBlob->getBufferPointer()) + codeBlob->getBufferSize()
-        );
     }
 }

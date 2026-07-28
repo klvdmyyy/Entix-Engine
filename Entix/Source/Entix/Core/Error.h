@@ -29,7 +29,7 @@ namespace Entix
     class Error
     {
     public:
-        constexpr Error(StringView message, std::source_location location = std::source_location::current())
+        Error(const String& message, std::source_location location = std::source_location::current())
             : m_message(message), m_location(location)
         {
         }
@@ -47,13 +47,13 @@ namespace Entix
          * 
          * @return StringView
          */
-        constexpr StringView GetMessage() const noexcept
+        const String& GetMessage() const noexcept
         {
             return m_message;
         }
 
     protected:
-        StringView m_message;
+        String m_message;
         std::source_location m_location;
     };
 }

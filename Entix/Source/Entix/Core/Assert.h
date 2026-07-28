@@ -6,7 +6,7 @@
 #    define EX_ASSERT(EXPR)                                                                                            \
         do                                                                                                             \
         {                                                                                                              \
-            if (!(expr))                                                                                               \
+            if (!(EXPR))                                                                                               \
             {                                                                                                          \
                 Panic(std::format("Assertion failed: {}", #EXPR));                                                     \
             }                                                                                                          \
@@ -14,7 +14,7 @@
 #    define EX_ASSERT_FMT(EXPR, FMT, ...)                                                                              \
         do                                                                                                             \
         {                                                                                                              \
-            if (!(expr))                                                                                               \
+            if (!(EXPR))                                                                                               \
             {                                                                                                          \
                 Panic(std::format("Assertion failed: {} Message: {}", #EXPR, std::format(FMT, ##__VA_ARGS__)));        \
             }                                                                                                          \
