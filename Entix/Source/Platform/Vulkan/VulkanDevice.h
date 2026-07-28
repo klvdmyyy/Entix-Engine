@@ -8,9 +8,6 @@
 
 #include <vulkan/vulkan_raii.hpp>
 
-#define EX_VK_TRY(EXPR) \
-    do { try { EXPR } catch(const vk::SystemError& e) { return Error(e.what()); } catch (const std::exception& e) { return Error(e.what()); } } while(0)
-
 namespace Entix
 {
     class VulkanDevice : public RHI::Device
@@ -18,6 +15,8 @@ namespace Entix
     public:
         VulkanDevice();
         ~VulkanDevice();
+
+        Result<RHI::Shader*> CreateShader(const RHI::ShaderCompilationData& compilationData);
 
         static constexpr std::array<const char*, 1> VALIDATION_LAYERS = {
             "VK_LAYER_KHRONOS_validation"

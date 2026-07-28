@@ -34,6 +34,10 @@ namespace Entix
         m_window = CreateRef<WindowSDL>(k_config.window);
         m_rhiDevice = CreateRef<VulkanDevice>();
 
+        auto compiledShader = RHI::ShaderCompiler::Instance()->Compile("../../Shaders/SimpleShader.slang").Unwrap();
+
+        m_rhiShader = Ref<RHI::Shader>(m_rhiDevice->CreateShader(compiledShader).Unwrap());
+
         return {};
     }
 

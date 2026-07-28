@@ -1,9 +1,13 @@
 #include "Platform/Vulkan/VulkanDevice.h"
 
+#include "Platform/Vulkan/VulkanBase.h"
+
 #include "Entix/Core/Debug/Logger.h"
 #include "Entix/Core/Globals.h"
 
 #include "Entix/WSI/Base.h"
+
+#include "Platform/Vulkan/VulkanShader.h"
 
 #include <ranges>
 
@@ -76,6 +80,11 @@ namespace Entix
 
     VulkanDevice::~VulkanDevice()
     {
+    }
+
+    Result<RHI::Shader*> VulkanDevice::CreateShader(const RHI::ShaderCompilationData& compilationData)
+    {
+        return new VulkanShader(m_device, compilationData);
     }
 
     Result<void> VulkanDevice::CreateInstance()

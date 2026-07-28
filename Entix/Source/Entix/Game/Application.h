@@ -8,6 +8,7 @@
 #include "Entix/WSI/Window.h"
 
 #include "Entix/RHI/Device.h"
+#include "Entix/RHI/Shader.h"
 
 namespace Entix
 {
@@ -43,5 +44,6 @@ namespace Entix
 
         Ref<Window> m_window;
         Ref<RHI::Device> m_rhiDevice;
+        Ref<RHI::Shader> m_rhiShader;
     };
 }

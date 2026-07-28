@@ -8,6 +8,7 @@
 #include <vector>
 #include <bitset>
 #include <filesystem>
+#include <functional>
 
 namespace Entix::RHI
 {
@@ -17,22 +18,22 @@ namespace Entix::RHI
         Fragment = 1 << 1,
     };
 
-    Uint8 operator&(Uint8 num, ShaderStage stage)
+    inline Uint8 operator&(Uint8 num, ShaderStage stage)
     {
         return num & static_cast<Uint8>(stage);
     }
 
-    Uint8 operator|(Uint8 num, ShaderStage stage)
+    inline Uint8 operator|(Uint8 num, ShaderStage stage)
     {
         return num | static_cast<Uint8>(stage);
     }
 
-    Uint8 operator|=(Uint8 num, ShaderStage stage)
+    inline Uint8 operator|=(Uint8 num, ShaderStage stage)
     {
         return num | stage;
     }
 
-    Uint8 operator|(ShaderStage first, ShaderStage second)
+    inline Uint8 operator|(ShaderStage first, ShaderStage second)
     {
         return static_cast<Uint8>(first) | static_cast<Uint8>(second);
     }
@@ -65,5 +66,22 @@ namespace Entix::RHI
     {
     public:
         virtual ~Shader() = default;
+
+        virtual Result<void> EachStage(std::function<Result<void>(ShaderStage stage)> callback) const noexcept
+        {
+            for(ShaderStage stage : {
+                ShaderStage::Vertex,
+                ShaderStage::Fragment
+            })
+            {
+                if(HasStage(stage))
+                {
+                    EX_TRY(callback(stage));
+                }
+            }
+
+            return {};
+        }
+        virtual bool HasStage(ShaderStage stage) const noexcept = 0;
     };
 }
