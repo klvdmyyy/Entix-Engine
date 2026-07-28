@@ -152,6 +152,8 @@ namespace Entix::RHI
                 "../../Shaders/",
             };
 
+            EX_LOG(ShaderCompilation, Info, "Shader search paths: {}", searchDirs);
+
             slang::SessionDesc sessionDesc;
             sessionDesc.targets = &spirvTargetDesc;
             sessionDesc.targetCount = 1;
