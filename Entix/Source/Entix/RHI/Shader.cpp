@@ -43,6 +43,7 @@ namespace Entix::RHI
 
         Result<ShaderCompilationData> Compile(const std::filesystem::path& filepath) noexcept final
         {
+
             ShaderCompilationData res;
 
             auto file = CreateScope<IO::FileStream>(filepath, IO::StreamMode::Read);
@@ -147,9 +148,15 @@ namespace Entix::RHI
             spirvTargetDesc.format = SLANG_SPIRV;
             spirvTargetDesc.profile = m_globalSession->findProfile("spirv_1_5");
 
+            std::vector<const char*> searchDirs = {
+                "../../Shaders/",
+            };
+
             slang::SessionDesc sessionDesc;
             sessionDesc.targets = &spirvTargetDesc;
             sessionDesc.targetCount = 1;
+            sessionDesc.searchPathCount = static_cast<Int64>(searchDirs.size());
+            sessionDesc.searchPaths = searchDirs.data();
 
             EX_SLANG_TRY(m_globalSession->createSession(sessionDesc, m_session.writeRef()));
 
