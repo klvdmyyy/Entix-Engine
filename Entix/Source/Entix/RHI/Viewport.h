@@ -17,7 +17,7 @@ namespace Entix::RHI
         float height = 1.0f;
 
         ENTIX_API void UpdateAbsolute(const Rect& targetSize) noexcept;
-        ENTIX_API const float GetAspectRatio() const noexcept;
+        ENTIX_API float GetAspectRatio() const noexcept;
         ENTIX_API const Rect& GetAbsolutePosition() const noexcept;
         ENTIX_API const Rect& GetAbsoluteSize() const noexcept;
 

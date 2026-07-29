@@ -19,7 +19,7 @@ namespace Entix::IO
 
         ENTIX_API Result<void> Read(ByteSpan dest) override;
         ENTIX_API Result<void> Seek(Int64 offset, SeekOrigin origin) override;
-        ENTIX_API Usize Tell() const override { return m_exists ? static_cast<Usize>(m_file.tellg()) : 0Ui64; }
+        ENTIX_API Usize Tell() const override { return m_exists ? static_cast<Usize>(m_file.tellg()) : (Usize)0; }
         ENTIX_API Usize Size() const override { return m_size; }
 
     private:

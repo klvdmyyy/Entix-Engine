@@ -37,7 +37,6 @@ namespace Entix
         }
 
         bool IsValid() const noexcept { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Ready; }
-        bool IsLoading() const noexcept { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Loading; }
 
         explicit operator bool() const noexcept {
             return IsValid();

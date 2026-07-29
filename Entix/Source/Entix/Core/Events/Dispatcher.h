@@ -74,17 +74,15 @@ namespace Entix
     
     private:
         using HandlerWrapper = std::function<void(const void*)>;
+
         std::unordered_map<std::type_index, std::vector<HandlerWrapper>> m_handlers;
     };
 
-    namespace
+    struct QueuedEvent
     {
-        struct QueuedEvent
-        {
-            std::type_index Type;
-            std::function<void()> Dispatch;
-        };
-    }
+        std::type_index Type;
+        std::function<void()> Dispatch;
+    };
 
     class EventBus
     {

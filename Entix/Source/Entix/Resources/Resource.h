@@ -26,7 +26,7 @@ namespace Entix
 
         explicit Resource(const ResourceId& id);
 
-        ResourceId GetId() const noexcept { return m_id; }
+        const ResourceId& GetId() const noexcept { return m_id; }
         State GetState() const noexcept { return m_state; }
         Bytes GetMemorySize() const noexcept { return m_memorySize; }
 

@@ -1,7 +1,11 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 cmake_minimum_required(VERSION 3.31.6)
 
+include(third-party)
+
 project(Entix-Engine VERSION 1.0.0)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,15 +64,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(EnTT)
-
-FetchContent_Declare(
-  SDL3
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL
-  GIT_TAG release-3.4.10
-  OVERRIDE_FIND_PACKAGE
-)
-
-FetchContent_MakeAvailable(SDL3)
 
 FetchContent_Declare(
   glm

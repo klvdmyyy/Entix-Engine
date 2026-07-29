@@ -121,7 +121,7 @@ namespace Entix
             try {
                 return std::get<SuccessType>(m_value);
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("Unwrap on error value", location);
+                Panic(std::format("Unwrap on error value:\n{}", UnwrapErr()), location);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Entix
                 m_value = std::monostate{};
                 return res;
             } catch ([[maybe_unused]] const std::bad_variant_access& ex) {
-                Panic("Unwrap on error value", location);
+                Panic(std::format("Unwrap on error value:\n{}", UnwrapErr()), location);
             }
         }
 
@@ -210,7 +210,7 @@ namespace Entix
         void Unwrap(std::source_location location = std::source_location::current()) const
         {
             if(IsError())
-                Panic("Unwrap on error value", location);
+                Panic(std::format("Unwrap on error value:\n{}", UnwrapErr()), location);
         }
 
         [[nodiscard]]

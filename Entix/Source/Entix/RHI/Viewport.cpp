@@ -15,7 +15,7 @@ namespace Entix::RHI
         m_absoluteSize.y = static_cast<Uint32>(height * targetSize.y);
     }
 
-    const float Viewport::GetAspectRatio() const noexcept
+    float Viewport::GetAspectRatio() const noexcept
     {
         return static_cast<float>(m_absoluteSize.x - m_absolutePos.x) / static_cast<float>(m_absoluteSize.y - m_absolutePos.y);
     }

@@ -7,7 +7,7 @@ namespace Entix
     VulkanGraphicsPipeline::VulkanGraphicsPipeline(
         vk::raii::Device& device,
         const RHI::GraphicsPipelineSpecification& spec
-    ) : m_device(device), m_spec(spec)
+    ) : m_spec(spec), m_device(device)
     {
     }
 

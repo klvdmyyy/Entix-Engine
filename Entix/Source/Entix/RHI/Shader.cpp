@@ -8,9 +8,10 @@
 
 #include "Entix/Core/Globals.h"
 
-#include <slang/slang.h>
-#include <slang/slang-com-ptr.h>
-#include <slang/slang-com-helper.h>
+#include <print>
+#include <shader-slang/slang.h>
+#include <shader-slang/slang-com-ptr.h>
+#include <shader-slang/slang-com-helper.h>
 
 #define EX_SLANG_TRY(EXPR) \
     if(!SLANG_SUCCEEDED(EXPR)) \
@@ -149,7 +150,7 @@ namespace Entix::RHI
             spirvTargetDesc.profile = m_globalSession->findProfile("spirv_1_5");
 
             std::vector<const char*> searchDirs = {
-                "../../Shaders/",
+                "/home/dmitry/Projects/Entix-Engine/Shaders",
             };
 
             EX_LOG(ShaderCompilation, Info, "Shader search paths: {}", searchDirs);

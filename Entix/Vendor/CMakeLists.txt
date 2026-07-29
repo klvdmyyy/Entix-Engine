@@ -48,13 +48,20 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui-docking/backends/imgui_impl_opengl3.cpp
 )
 
-target_link_libraries(imgui PRIVATE
-  SDL3::SDL3-shared)
+file(
+  GLOB
+  IMGUI_VULKAN_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui-docking/backends/imgui_impl_vulkan.cpp
+)
+
+target_link_vulkan(imgui)
+target_link_sdl3(imgui)
 
 target_sources(imgui PRIVATE
   ${IMGUI_SOURCES}
   ${IMGUI_SDL_SOURCES}
-  ${IMGUI_OPENGL_SOURCES})
+  ${IMGUI_OPENGL_SOURCES}
+  ${IMGUI_VULKAN_SOURCES})
 
 add_library(Vendor::ImGui-Headers ALIAS imgui-headers)
 add_library(Vendor::ImGui ALIAS imgui)

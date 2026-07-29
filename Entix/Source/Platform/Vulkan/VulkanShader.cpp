@@ -10,7 +10,7 @@ namespace Entix
     VulkanShader::VulkanShader(
         vk::raii::Device& device,
         const RHI::ShaderCompilationData& compilationData
-    ) : m_device(device), m_compilationData(compilationData)
+    ) : m_compilationData(compilationData), m_device(device)
     {
         CreateShaderModule().Unwrap();
     }

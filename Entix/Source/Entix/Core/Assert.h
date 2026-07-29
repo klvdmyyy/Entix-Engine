@@ -23,11 +23,11 @@
 #    define EX_ASSERT(EXPR)                                                                                            \
         do                                                                                                             \
         {                                                                                                              \
-            EXPR                                                                                                       \
+            EXPR;                                                                                                      \
         } while (0)
 #    define EX_ASSERT_FMT(EXPR, ...)                                                                                   \
         do                                                                                                             \
         {                                                                                                              \
-            EXPR                                                                                                       \
+            EXPR;                                                                                                      \
         } while (0)
 #endif

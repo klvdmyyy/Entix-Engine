@@ -10,8 +10,7 @@
 #include "Entix/Core/IO/FileStream.h"
 
 #include "Entix/Core/Globals.h"
-
-#include "Entix/Core/Tasks/ThreadPool.h"
+#include "Entix/Core/Memory.h"
 
 #include "Entix/Game/Application.h"
 
@@ -49,22 +48,14 @@ namespace Entix
 
         try
         {
-            ThreadPool::Instance().Initialize();
-
-            auto app = CreateApplication();
+            auto app = Scope<Application>(CreateApplication());
 
             auto res = app->Run();
-
-            delete app;
-
-            ThreadPool::Instance().Shutdown();
             
             return res.IsSuccess() ? 0 : 1;
         }
         catch(const std::exception& e)
         {
-            ThreadPool::Instance().Shutdown();
-
             EX_LOG(LogTemp, Info, "Exception is catched. What: {}", e.what());
             return 2;
         }

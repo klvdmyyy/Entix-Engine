@@ -24,23 +24,23 @@ namespace Entix::IO
             return TextStream(&inner, false);
         }
 
-        Result<void> Write(StringView str)
+        Result<void> WriteText(StringView str)
         {
             return m_inner->Write(ConstByteSpan(reinterpret_cast<const std::byte*>(str.data()), str.size()));
         }
 
         template<typename... Args>
-        Result<void> WriteFmt(std::format_string<Args...> fmt, Args&&... args)
+        Result<void> WriteTextFmt(std::format_string<Args...> fmt, Args&&... args)
         {
             return Write(std::format(fmt, std::forward<Args>(args)...));
         }
 
         Result<void> WriteLine(StringView str)
         {
-            if(auto result = Write(str); result.IsError())
+            if(auto result = WriteText(str); result.IsError())
                 return result.UnwrapErr();
 
-            return Write("\n");
+            return WriteText("\n");
         }
 
         template<typename... Args>

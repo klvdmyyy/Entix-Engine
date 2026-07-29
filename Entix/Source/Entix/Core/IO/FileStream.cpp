@@ -6,7 +6,7 @@
 namespace Entix::IO
 {
     FileStream::FileStream(const std::filesystem::path& filepath, StreamMode mode)
-        : k_path(filepath), k_mode(mode)
+        :  k_mode(mode), k_path(filepath)
     {
         EX_LOG(LogIO, Debug, "Creating FileStream object. Path: '{}' StreamMode: {}", filepath.string(), mode);
         auto iosmode = std::ios::binary | std::ios::ate;

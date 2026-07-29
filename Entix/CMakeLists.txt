@@ -84,21 +84,11 @@ target_include_directories(Entix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 #####################################################
 ############## Third-Party Libraries ################
 
-if(MSVC)
-    target_include_directories(Entix PRIVATE
-        $ENV{VULKAN_SDK}/Include)
-
-    target_link_directories(Entix PRIVATE
-        $ENV{VULKAN_SDK}/Lib)
-    
-    target_link_libraries(Entix PRIVATE
-        vulkan-1.lib
-        slang.lib
-        slang-compiler.lib)
-endif()
+target_link_sdl3(Entix)
+target_link_vulkan(Entix)
+target_link_slang(Entix)
 
 target_link_libraries(Entix PRIVATE
-    SDL3::SDL3-shared
     Vendor::GLAD
     Vendor::TinyObjLoader
     Vendor::STBImage

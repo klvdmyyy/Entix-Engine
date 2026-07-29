@@ -3,6 +3,8 @@
 
 #include <Entix/RHI/Shader.h>
 
+#include <Entix/Core/Tasks/ThreadPool.h>
+
 namespace Entix
 {
     class SandboxApp : public Application

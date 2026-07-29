@@ -12,7 +12,7 @@ namespace Entix
     }
 
     ThreadPool::ThreadPool()
-        : m_stop(false), m_initialized(false)
+        : m_initialized(false), m_stop(false)
     {
     }
 
@@ -28,7 +28,7 @@ namespace Entix
         EX_LOG(ThreadPool, Info, "Initializing thread pool with {} threads.", numThreads);
 
         m_stop = false;
-        for(auto i = 0; i < numThreads; i++)
+        for(Usize i = 0; i < numThreads; i++)
         {
             m_workers.emplace_back(&ThreadPool::WorkerLoop, this);
         }

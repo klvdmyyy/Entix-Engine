@@ -20,7 +20,7 @@
  * 
  * @ingroup Core
  */
-extern void* operator new(size_t); // NOLINT
+extern void* operator new(Entix::Usize); // NOLINT
 
 /**
  * @brief Allocation overloading
@@ -30,7 +30,8 @@ extern void* operator new(size_t); // NOLINT
  * 
  * @ingroup Core
  */
-extern void operator delete(void*);
+extern void operator delete(void*) noexcept; // NOLINT
+extern void operator delete(void*, Entix::Usize) noexcept;
 
 namespace Entix
 {

@@ -7,9 +7,9 @@
 
 #include <filesystem>
 
-namespace {
+namespace std {
     template<class Key>
-    struct std::hash;
+    struct hash;
 }
 
 namespace Entix
@@ -21,16 +21,17 @@ namespace Entix
         bool m_null;
 
     public:
-        ResourceId();
-        explicit ResourceId(const std::filesystem::path& path);
+        ENTIX_API ResourceId();
+        ENTIX_API explicit ResourceId(const std::filesystem::path& path);
 
         [[nodiscard]]
-        Usize Hash() const noexcept;
+        ENTIX_API Usize Hash() const noexcept;
         
         operator bool() const { return !m_null; }
         operator std::filesystem::path() const noexcept { return k_filepath; }
         operator String() const noexcept { return k_filepath.string(); }
 
+        ResourceId(const ResourceId&) = default;
         ResourceId operator=(const ResourceId& other)
         {
             return ResourceId((std::filesystem::path)other);
@@ -38,7 +39,7 @@ namespace Entix
 
         bool operator==(const ResourceId& other) const
         {
-            return other.m_hash == m_hash && other.m_null == other.m_null;
+            return other.m_hash == m_hash && other.m_null == m_null;
         }
 
         struct Hasher {
