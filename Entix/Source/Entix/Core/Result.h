@@ -84,14 +84,14 @@ namespace Entix
         }
 
         EX_FORCE_INLINE
-        inline constexpr Result(SuccessType value)
+        inline constexpr Result(SuccessType&& value)
             requires ((!std::is_copy_assignable_v<SuccessType>) && std::is_move_assignable_v<SuccessType>)
             : m_value(std::move(value))
         {
         }
 
         EX_FORCE_INLINE
-        inline constexpr Result(ErrorType value)
+        inline constexpr Result(ErrorType&& value)
             requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
             : m_value(std::move(value))
         {
@@ -184,7 +184,7 @@ namespace Entix
         }
 
         EX_FORCE_INLINE
-        inline constexpr Result(ErrorType value)
+        inline constexpr Result(ErrorType&& value)
             requires ((!std::is_copy_assignable_v<ErrorType>) && std::is_move_assignable_v<ErrorType>)
             : m_value(std::move(value))
         {
