@@ -202,7 +202,7 @@ namespace Entix
             return std::holds_alternative<ErrorType>(m_value);
         }
 
-        operator bool() const noexcept
+        explicit operator bool() const noexcept
         {
             return IsSuccess();
         }
