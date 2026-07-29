@@ -5,6 +5,8 @@
 
 #include "Entix/Core/Result.h"
 
+#include "Entix/Resources/Resource.h"
+
 #include <vector>
 #include <bitset>
 #include <filesystem>
@@ -62,7 +64,7 @@ namespace Entix::RHI
         virtual const char* GetStageEntryPoint(ShaderStage stage) const noexcept = 0;
     };
 
-    class Shader
+    class Shader : public Resource
     {
     public:
         virtual ~Shader() = default;
