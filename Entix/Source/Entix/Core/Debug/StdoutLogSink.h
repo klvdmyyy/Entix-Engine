@@ -3,11 +3,16 @@
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Debug/LogSink.h"
 
+#include <mutex>
+
 namespace Entix
 {
-    class ENTIX_API StdoutLogSink : public LogSink
+    class StdoutLogSink : public LogSink
     {
     public:
-        void WriteLogEntry(LogEntry entry) override;
+        ENTIX_API void WriteLogEntry(LogEntry entry) override;
+
+    private:
+        std::mutex m_sync;
     };
 }

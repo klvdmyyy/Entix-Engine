@@ -35,7 +35,13 @@ target_precompile_headers(Entix PRIVATE
     <cstdint>
     <print>
     <filesystem>
-    <any>)
+    <any>
+    <condition_variable>
+    <queue>
+    <mutex>
+    <thread>
+    <type_traits>
+    <future>)
 
 #####################################################
 ########### Compiler Options/Definitions ############

@@ -24,6 +24,8 @@ namespace Entix
 
     EX_DEFINE_LOG_CATEGORY(LogRHI, Trace);
 
+    EX_DEFINE_LOG_CATEGORY(ThreadPool, Trace);
+
     EX_DEFINE_LOG_CATEGORY(Resources, Trace);
 
     EX_DEFINE_LOG_CATEGORY(ShaderCompilation, Trace);

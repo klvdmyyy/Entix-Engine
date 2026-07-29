@@ -5,6 +5,8 @@
 #include "Entix/Core/Debug/LogSink.h"
 #include "Entix/Core/IO/Stream.h"
 
+#include <mutex>
+
 namespace Entix
 {
     class StreamLogSink : public LogSink
@@ -18,6 +20,7 @@ namespace Entix
         ENTIX_API void WriteLogEntry(LogEntry entry) override;
         
     private:
+        std::mutex m_sync;
         Scope<IO::Stream> m_stream;
     };
 }

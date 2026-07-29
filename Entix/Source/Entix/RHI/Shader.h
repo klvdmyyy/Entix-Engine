@@ -64,7 +64,7 @@ namespace Entix::RHI
         virtual const char* GetStageEntryPoint(ShaderStage stage) const noexcept = 0;
     };
 
-    class Shader : public Resource
+    class Shader
     {
     public:
         virtual ~Shader() = default;
