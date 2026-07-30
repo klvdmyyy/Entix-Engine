@@ -1,5 +1,5 @@
 if(WIN32)
-    add_executable(Sandbox)
+    add_executable(Sandbox WIN32)
 else()
     add_executable(Sandbox)
 endif()
