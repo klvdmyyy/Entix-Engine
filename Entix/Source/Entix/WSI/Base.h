@@ -2,7 +2,7 @@
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Types.h"
-#include "Entix/Core/Events/Event.h"
+#include "Entix/Core/Events/Base.h"
 
 #include "Entix/Core/Result.h"
 
@@ -11,36 +11,66 @@
 namespace Entix
 {
     EX_DEFINE_ID_TYPE(WindowId);
-    EX_DEFINE_EVENT_CATEGORY(WindowEventCategory);
-    EX_DEFINE_EVENT_CATEGORY(MouseInputEventCategory);
 
-    struct WindowCloseEvent
+    class WindowEventBase
     {
-        using Category = WindowEventCategory;
+    public:
+        WindowEventBase(WindowId id) : m_windowId(id) {}
 
-        WindowId id;
+        WindowId GetWindowId() const noexcept { return m_windowId; }
+
+    private:
+        WindowId m_windowId;
     };
 
-    struct WindowResizeEvent
+    class WindowCloseEvent : public Event, public WindowEventBase
     {
-        using Category = WindowEventCategory;
+        EX_DEFINE_EVENT_TYPE_CATEGORY(WindowCloseEvent, EventCategory::Window);
 
-        WindowId id;
-        Uint32 width;
-        Uint32 height;
+    public:
+        WindowCloseEvent(WindowId id) : WindowEventBase(id) {}
     };
 
-    struct MouseMotionEvent
+    class WindowResizeEvent : public Event, public WindowEventBase
     {
-        using Category = MouseInputEventCategory;
+        EX_DEFINE_EVENT_TYPE_CATEGORY(WindowResizeEvent, EventCategory::Window);
 
-        WindowId windowId;
+    public:
+        WindowResizeEvent(WindowId id, Uint32 width, Uint32 height)
+            : WindowEventBase(id), m_width(width), m_height(height)
+        {
+        }
 
-        float xPosition;
-        float yPosition;
+        Uint32 GetWidth() const noexcept { return m_width; }
+        Uint32 GetHeight() const noexcept { return m_height; }
 
-        float xRelative;
-        float yRelative;
+    private:
+        Uint32 m_width;
+        Uint32 m_height;
+    };
+
+    class MouseMotionEvent : public Event, public WindowEventBase
+    {
+        EX_DEFINE_EVENT_TYPE_CATEGORY(MouseMotionEvent,
+            EventCategory::Window | EventCategory::Input | EventCategory::Mouse);
+
+    public:
+        MouseMotionEvent(WindowId id, float x, float y, float xRel, float yRel)
+            : WindowEventBase(id),
+              m_xPosition(x), m_yPosition(y),
+              m_xRelative(xRel), m_yRelative(yRel)
+        {
+        }
+
+        float GetPositionX() const noexcept { return m_xPosition; }
+        float GetPositionY() const noexcept { return m_yPosition; }
+
+        float GetRelativeX() const noexcept { return m_xRelative; }
+        float GetRelativeY() const noexcept { return m_yRelative; }
+
+    private:
+        float m_xPosition, m_yPosition;
+        float m_xRelative, m_yRelative;
     };
 
     namespace WSI
