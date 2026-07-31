@@ -17,7 +17,7 @@ namespace Entix
     public:
         WindowEventBase(WindowId id) : m_windowId(id) {}
 
-        WindowId GetWindowId() const noexcept { return m_windowId; }
+        inline WindowId GetWindowId() const noexcept { return m_windowId; }
 
     private:
         WindowId m_windowId;
@@ -41,8 +41,8 @@ namespace Entix
         {
         }
 
-        Uint32 GetWidth() const noexcept { return m_width; }
-        Uint32 GetHeight() const noexcept { return m_height; }
+        inline Uint32 GetWidth() const noexcept { return m_width; }
+        inline Uint32 GetHeight() const noexcept { return m_height; }
 
     private:
         Uint32 m_width;
@@ -62,11 +62,11 @@ namespace Entix
         {
         }
 
-        float GetPositionX() const noexcept { return m_xPosition; }
-        float GetPositionY() const noexcept { return m_yPosition; }
+        inline float GetPositionX() const noexcept { return m_xPosition; }
+        inline float GetPositionY() const noexcept { return m_yPosition; }
 
-        float GetRelativeX() const noexcept { return m_xRelative; }
-        float GetRelativeY() const noexcept { return m_yRelative; }
+        inline float GetRelativeX() const noexcept { return m_xRelative; }
+        inline float GetRelativeY() const noexcept { return m_yRelative; }
 
     private:
         float m_xPosition, m_yPosition;

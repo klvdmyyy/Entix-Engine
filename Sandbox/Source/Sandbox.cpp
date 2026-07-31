@@ -13,7 +13,6 @@ namespace Entix
         SandboxApp()
             : Application(ApplicationConfig())
         {
-
             std::vector<std::future<int>> results;
 
             for(int i = 0; i < 8; i++)

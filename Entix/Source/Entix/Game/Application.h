@@ -4,6 +4,8 @@
 #include "Entix/Core/Result.h"
 #include "Entix/Core/Memory.h"
 
+#include "Entix/Core/Events/Listener.h"
+
 #include "Entix/WSI/Base.h"
 #include "Entix/WSI/Window.h"
 
@@ -23,7 +25,7 @@ namespace Entix
         RHI::GraphicsApi graphicsApi = RHI::GraphicsApi::Vulkan;
     };
 
-    class Application
+    class Application : EventListener
     {
     public:
         ENTIX_API Application(const ApplicationConfig& config);
@@ -33,6 +35,7 @@ namespace Entix
 
         /** Events */
 
+        ENTIX_API void OnEvent(const Event& event) final;
         ENTIX_API void OnWindowCloseRequested(WindowId id) noexcept;
 
     private:

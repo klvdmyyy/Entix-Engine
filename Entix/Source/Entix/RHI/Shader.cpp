@@ -65,7 +65,7 @@ namespace Entix::RHI
 
             slang::IEntryPoint* vertEntry;
             EX_SLANG_TRY(mod->findEntryPointByName(GetStageEntryPoint(ShaderStage::Vertex), &vertEntry));
-            
+
             slang::IEntryPoint* fragEntry;
             EX_SLANG_TRY(mod->findEntryPointByName(GetStageEntryPoint(ShaderStage::Fragment), &fragEntry));
 
@@ -104,7 +104,7 @@ namespace Entix::RHI
                                 filepath.filename().string()
                             );
                             break;
-                        
+
                         case SLANG_STAGE_FRAGMENT:
                             res.stages |= ShaderStage::Fragment;
                             EX_LOG(
@@ -113,7 +113,7 @@ namespace Entix::RHI
                                 filepath.filename().string()
                             );
                             break;
-                        
+
                         default:
                             EX_LOG(
                                 ShaderCompilation, Warning,
@@ -143,6 +143,7 @@ namespace Entix::RHI
     private:
         Result<void> Initialize()
         {
+            EX_LOG(ShaderCompilation, Info, "Initializing a ShaderCompiler");
             slang::createGlobalSession(m_globalSession.writeRef());
 
             slang::TargetDesc spirvTargetDesc;
@@ -168,6 +169,7 @@ namespace Entix::RHI
 
         Result<void> Shutdown()
         {
+            EX_LOG(ShaderCompilation, Info, "Shutdown a ShaderCompiler");
             return {};
         }
 

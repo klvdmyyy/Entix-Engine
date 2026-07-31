@@ -120,7 +120,7 @@ namespace Entix
                     return strcmp(layerProperty.layerName, requiredLayer) == 0;
                 });
             });
-        
+
         if(unsupportedLayerIt != requiredLayers.end())
         {
             return Error("Required layer not supported: " + String(*unsupportedLayerIt));
@@ -211,7 +211,7 @@ namespace Entix
 
         if(physicalDevices.empty())
             return Error("Failed to find GPUs with Vulkan support!");
-        
+
         const auto devIter = std::ranges::find_if(physicalDevices, [&](const auto& physicalDevice) {
             return IsDeviceSuitable(physicalDevice);
         });
@@ -221,11 +221,15 @@ namespace Entix
 
         m_physicalDevice = *devIter;
 
+        EX_LOG(LogRHI, Info, "Found suitable GPU: {}", String(m_physicalDevice.getProperties().deviceName));
+
         return {};
     }
 
     Result<void> VulkanDevice::CreateLogicalDevice()
     {
+        EX_LOG(LogRHI, Info, "Creating Vulkan logical device.");
+
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = m_physicalDevice.getQueueFamilyProperties();
         auto graphicsQueueFamilyProperty = std::ranges::find_if(
             queueFamilyProperties,
@@ -250,7 +254,7 @@ namespace Entix
                            vk::PhysicalDeviceVulkan13Features,
                            vk::PhysicalDeviceExtendedDynamicStateFeaturesEXT>
             featureChain;
-        
+
         featureChain.get<vk::PhysicalDeviceVulkan11Features>().shaderDrawParameters = true;
         featureChain.get<vk::PhysicalDeviceVulkan13Features>().dynamicRendering = true;
         featureChain.get<vk::PhysicalDeviceExtendedDynamicStateFeaturesEXT>().extendedDynamicState = true;

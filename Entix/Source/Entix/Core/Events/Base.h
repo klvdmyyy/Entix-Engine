@@ -5,27 +5,27 @@
 
 #define EX_DEFINE_EVENT_TYPE(type) \
     public: \
-    static const char* GetStaticType() { return #type; } \
-    virtual const char* GetType() const noexcept override { return GetStaticType(); } \
-    virtual Event* Clone() const override { return new type(*this); }
+    inline static const char* GetStaticType() { return #type; } \
+    virtual inline const char* GetType() const noexcept override { return GetStaticType(); } \
+    virtual inline Event* Clone() const override { return new type(*this); }
 
 #define EX_DEFINE_EVENT_TYPE_CATEGORY(type, categoryFlags) \
     EX_DEFINE_EVENT_TYPE(type) \
     public: \
-    virtual Int32 GetCategoryFlags() const noexcept override { return static_cast<Int32>(categoryFlags); }
+    virtual inline Int32 GetCategoryFlags() const noexcept override { return static_cast<Int32>(categoryFlags); }
 
 namespace Entix
 {
     enum class EventCategory
     {
-        None = 0,
-        Application = 1 << 0,
-        Input = 1 << 1,
-        Keyboard = 1 << 2,
-        Mouse = 1 << 3,
-        MouseButton = 1 << 4,
-        Window = 1 << 5,
-        Resources = 1 << 6,
+        None        = -1,
+        Application = EX_BIT(0),
+        Input       = EX_BIT(1),
+        Keyboard    = EX_BIT(2),
+        Mouse       = EX_BIT(3),
+        MouseButton = EX_BIT(4),
+        Window      = EX_BIT(5),
+        Resources   = EX_BIT(6),
     };
 
     inline Int32 operator|(EventCategory f, EventCategory s)

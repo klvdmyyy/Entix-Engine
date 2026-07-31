@@ -13,15 +13,15 @@ namespace Entix::WSI
         if(!SDL_Init(SDL_INIT_VIDEO))
             return Error(SDL_GetError());
         
-        // if(!SDL_Vulkan_LoadLibrary(nullptr))
-        //     return Error(SDL_GetError());
+        if(!SDL_Vulkan_LoadLibrary(nullptr))
+            return Error(SDL_GetError());
 
         return {};
     }
 
     void Shutdown()
     {
-        // SDL_Vulkan_UnloadLibrary();
+        SDL_Vulkan_UnloadLibrary();
         SDL_Quit();
     }
 
@@ -35,27 +35,25 @@ namespace Entix::WSI
             switch(event.type)
             {
                 case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-                    bus.Send<WindowCloseEvent>(WindowCloseEvent {
-                        .id = event.window.windowID
-                    });
+                    bus.PublishEvent(WindowCloseEvent(event.window.windowID));
                     break;
                 
                 case SDL_EVENT_WINDOW_RESIZED:
-                    bus.Send<WindowResizeEvent>(WindowResizeEvent {
-                        .id = event.window.windowID,
-                        .width = static_cast<Uint32>(event.window.data1),
-                        .height = static_cast<Uint32>(event.window.data2)
-                    });
+                    bus.PublishEvent(WindowResizeEvent(
+                        event.window.windowID,
+                        static_cast<Uint32>(event.window.data1),
+                        static_cast<Uint32>(event.window.data2)
+                    ));
                     break;
                 
                 case SDL_EVENT_MOUSE_MOTION:
-                    bus.Send<MouseMotionEvent>(MouseMotionEvent {
-                        .windowId = event.motion.windowID,
-                        .xPosition = event.motion.x,
-                        .yPosition = event.motion.y,
-                        .xRelative = event.motion.xrel,
-                        .yRelative = event.motion.yrel
-                    });
+                    bus.PublishEvent(MouseMotionEvent(
+                        event.window.windowID,
+                        event.motion.x,
+                        event.motion.y,
+                        event.motion.xrel,
+                        event.motion.yrel
+                    ));
                     break;
                 
                 default:

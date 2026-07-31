@@ -47,7 +47,9 @@ target_precompile_headers(Entix PRIVATE
 ########### Compiler Options/Definitions ############
 
 target_compile_definitions(Entix PRIVATE
-    ENTIX_BUILD_DLL
+    ENTIX_BUILD_DLL)
+
+target_compile_definitions(Entix PUBLIC
     $<$<CONFIG:Debug>:ENTIX_BUILD_DEBUG>)
 
 if(MSVC)
@@ -64,7 +66,10 @@ else()
         -Wall -Wextra -Wpedantic -Werror)
     
     target_compile_options(Entix PUBLIC
-        $<$<CONFIG:Debug>:-fsanitize=address>)
+        $<$<CONFIG:Debug>:-fsanitize=address,leak,undefined>)
+
+    target_link_libraries(Entix PUBLIC
+        $<$<CONFIG:Debug>:-fsanitize=address,leak,undefined>)
 endif()
 
 #####################################################

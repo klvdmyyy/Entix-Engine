@@ -1,8 +1,7 @@
 #pragma once
 
+#include "Entix/Core/Types.h"
 #include "Entix/Core/Result.h"
-
-#include "Entix/WSI/Base.h"
 
 namespace Entix
 {

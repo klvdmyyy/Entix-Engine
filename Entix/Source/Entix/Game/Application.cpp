@@ -15,23 +15,23 @@ namespace Entix
     Application::Application(const ApplicationConfig& config)
         : m_quit(false), k_config(config)
     {
+        EventBus::Instance().AddListener(this,
+            EventCategory::Application | EventCategory::Window,
+            5);
         ThreadPool::Instance().Initialize();
+        Initialize().Unwrap();
     }
 
     Application::~Application()
     {
+        Shutdown().Unwrap();
         ThreadPool::Instance().Shutdown();
+        EventBus::Instance().RemoveListener(this);
     }
 
     Result<void> Application::Initialize()
     {
         EX_LOG(LogTemp, Info, "Initializing the application.");
-
-        auto& bus = EventBus::Instance();
-
-        bus.Subscribe<WindowCloseEvent>([&](const WindowCloseEvent& event) {
-            OnWindowCloseRequested(event.id);
-        });
 
         EX_TRY(WSI::Initialize());
 
@@ -47,8 +47,6 @@ namespace Entix
 
     Result<void> Application::Run()
     {
-        EX_TRY(Initialize());
-
         while(!m_quit)
         {
             EventBus::Instance().ProcessEvents();
@@ -56,16 +54,22 @@ namespace Entix
             WSI::PollEvents();
         }
 
-        EX_TRY(Shutdown());
-
         return {};
     }
 
     Result<void> Application::Shutdown()
     {
         EX_LOG(LogTemp, Info, "Quit the application.");
+
         WSI::Shutdown();
         return {};
+    }
+
+    void Application::OnEvent(const Event& event)
+    {
+        EventBus::Dispatch<WindowCloseEvent>(event, [&](const WindowCloseEvent& event) {
+            OnWindowCloseRequested(event.GetWindowId());
+        });
     }
 
     void Application::OnWindowCloseRequested([[maybe_unused]] WindowId id) noexcept
