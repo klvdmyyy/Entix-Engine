@@ -1,13 +1,15 @@
 #include "Entix/Resources/ResourceManager.h"
 
+#include "Entix/Resources/HotReloadResourceManager.h"
+
 namespace Entix
 {
     ResourceManager& ResourceManager::Instance()
     {
-        static ResourceManager s_instance;
+        static HotReloadResourceManager s_instance;
         return s_instance;
     }
-    
+
     void* ResourceManager::GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept
     {
         auto& typeResources = m_resources.at(idx);

@@ -6,6 +6,7 @@
 #include <Entix/Core/Tasks/ThreadPool.h>
 
 #include <Entix/Resources/ResourceManager.h>
+#include <Entix/Resources/HotReloadResourceManager.h>
 
 namespace Entix
 {
@@ -37,7 +38,7 @@ namespace Entix
         SandboxApp()
             : Application(ApplicationConfig())
         {
-            auto rm = ResourceManager();
+            auto rm = HotReloadResourceManager();
 
             ResourceId testId("asd");
             auto resource = rm.Load<TestResource>(testId);
