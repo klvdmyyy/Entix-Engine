@@ -20,6 +20,8 @@ namespace Entix
     class ResourceManager
     {
     public:
+        ENTIX_API static ResourceManager& Instance();
+
         template<std::derived_from<Resource> T>
         ResourceHandle<T> Load(const ResourceId& resourceId)
         {
@@ -54,7 +56,7 @@ namespace Entix
         template<std::derived_from<Resource> T>
         T* GetResource(const ResourceId& resourceId) const noexcept
         {
-            return GetResource(std::type_index(typeid(T)), resourceId);
+            return static_cast<T*>(GetResource(std::type_index(typeid(T)), resourceId));
         }
 
         template<std::derived_from<Resource> T>
@@ -63,34 +65,13 @@ namespace Entix
             return HasResource(std::type_index(typeid(T)), resourceId);
         }
 
-        void* GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept
-        {
-            auto& typeResources = m_resources.at(idx);
-            auto it = typeResources.find(resourceId);
-
-            if(it != typeResources.end())
-            {
-                return static_cast<void*>(it->second.get().get());
-            }
-
-            return nullptr;
-        }
-
-        bool HasResource(std::type_index idx, const ResourceId& resourceId) const noexcept
-        {
-            return GetResource(idx, resourceId) == nullptr ? false : true;
-        }
+        ENTIX_API void* GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
+        ENTIX_API bool HasResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
 
     private:
         template<typename T>
         using ResourceStorage =
             std::unordered_map<std::type_index, std::unordered_map<ResourceId, T, ResourceId::Hasher>>;
-
-        struct ResourceData
-        {
-            Ref<Resource> resource;
-            Usize refCount;
-        };
 
         ResourceStorage<std::shared_future<Ref<Resource>>> m_resources;
         std::unordered_map<ResourceId, Usize, ResourceId::Hasher> m_refCounts;
