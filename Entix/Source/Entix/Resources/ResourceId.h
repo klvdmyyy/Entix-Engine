@@ -24,18 +24,29 @@ namespace Entix
         ENTIX_API ResourceId();
         ENTIX_API explicit ResourceId(const std::filesystem::path& path);
 
-        [[nodiscard]]
-        ENTIX_API Usize Hash() const noexcept;
-        
-        operator bool() const { return !m_null; }
-        operator std::filesystem::path() const noexcept { return k_filepath; }
-        operator String() const noexcept { return k_filepath.string(); }
-
         ResourceId(const ResourceId&) = default;
         ResourceId operator=(const ResourceId& other)
         {
             return ResourceId((std::filesystem::path)other);
         }
+
+        [[nodiscard]]
+        ENTIX_API Usize Hash() const noexcept;
+        
+        operator bool() const { return !m_null; }
+
+        [[nodiscard]] const std::filesystem::path& GetFilepath() const noexcept { return k_filepath; }
+        [[nodiscard]] String GetFilepathString() const noexcept { return GetFilepath().string(); }
+
+        [[nodiscard]] std::filesystem::path GetFilename() const noexcept { return k_filepath.filename(); }
+        [[nodiscard]] String GetFilenameString() const noexcept { return GetFilename().string(); }
+
+        [[nodiscard]] std::filesystem::path GetExtension() const noexcept { return k_filepath.extension(); }
+        [[nodiscard]] String GetExtensionString() const noexcept { return GetExtension().string(); }
+
+        explicit operator Usize() const noexcept { return Hash(); }
+        explicit operator std::filesystem::path() const noexcept { return GetFilepath(); }
+        explicit operator String() const noexcept { return GetFilepathString(); }
 
         bool operator==(const ResourceId& other) const
         {

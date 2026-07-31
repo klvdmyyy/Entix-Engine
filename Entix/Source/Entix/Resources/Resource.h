@@ -1,80 +1,41 @@
-// -*- mode: c++; -*-
 #pragma once
 
-#include "Entix/Core/Bytes.h"
-#include "Entix/Core/Debug/Logger.h"
-
-#include "Entix/Core/Globals.h"
+#include "Entix/Core/Result.h"
 
 #include "Entix/Resources/ResourceId.h"
-
-#include <typeindex>
 
 namespace Entix
 {
     class Resource
     {
     public:
+        explicit Resource(const ResourceId& id) : m_resourceId(id) {}
         virtual ~Resource() = default;
 
-        enum class State
+        const ResourceId& GetId() const { return m_resourceId; }
+        bool IsLoaded() const { return m_loaded; }
+
+        Result<void> Load()
         {
-            Unloaded,
-            Ready,
-            Failed,
-        };
+            auto res = LoadInternal();
+            m_loaded = res.IsSuccess();
+            return res;
+        }
 
-        explicit Resource(const ResourceId& id);
-
-        const ResourceId& GetId() const noexcept { return m_id; }
-        State GetState() const noexcept { return m_state; }
-        Bytes GetMemorySize() const noexcept { return m_memorySize; }
-
-        void AddRef() { m_refCount++; }
-        void Release();
-        
-        Uint64 GetRefCount() const { return m_refCount; }
-
-        std::type_index GetLoaderType() const noexcept { return m_loaderType; }
-        std::type_index GetResourceType() const noexcept
+        void Unload()
         {
-            return m_resourceType;
+            if(!m_loaded) return;
+            
+            UnloadInternal();
+            m_loaded = false;
         }
 
     protected:
-        friend class ResourceManager;
-        friend class ResourceLoader;
-
-        void SetLoaderType(std::type_index loaderType) noexcept
-        {
-            m_loaderType = loaderType;
-        }
-        void SetResourceType(std::type_index resourceType) noexcept
-        {
-            m_resourceType = resourceType;
-        }
-
-        void SetMemorySize(Bytes memorySize) noexcept
-        {
-            m_memorySize = memorySize;
-        }
-
-        void SetState(State state) noexcept { m_state = state; }
-
-        virtual void HotReload([[maybe_unused]] Scope<Resource> other)
-        {
-            EX_LOG(Resources, Warning,
-                   "Resource doesn't support hot-reload: '{}'",
-                   ((std::filesystem::path)(m_id)).filename().string());
-        }
+        virtual Result<void> LoadInternal() = 0;
+        virtual void UnloadInternal() = 0;
 
     private:
-        ResourceId m_id;
-        State m_state;
-        Uint64 m_refCount;
-        Bytes m_memorySize;
-
-        std::type_index m_loaderType   = typeid(std::nullptr_t);
-        std::type_index m_resourceType = typeid(std::nullptr_t);
+        bool m_loaded = false;
+        ResourceId m_resourceId;
     };
-} // namespace Entix
+}

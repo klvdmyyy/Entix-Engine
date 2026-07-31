@@ -1,65 +1,71 @@
-// -*- mode: c++; -*-
 #pragma once
 
-#include "Entix/Core/Types.h"
-#include "Entix/Core/Assert.h"
-#include "Entix/Core/IO/Stream.h"
-
+#include "Entix/Core/Base.h"
 #include "Entix/Resources/Resource.h"
+#include "Entix/Resources/ResourceId.h"
 
 #include <concepts>
-#include <filesystem>
+#include <typeindex>
 
 namespace Entix
 {
+    class ResourceManager;
+
+    ENTIX_API bool  HasResourceByIndex(
+        ResourceManager* rm,
+        std::type_index idx,
+        const ResourceId& id
+    );
+    ENTIX_API void* GetResourceByIndex(
+        ResourceManager* rm,
+        std::type_index idx,
+        const ResourceId& id
+    );
+
     template<std::derived_from<Resource> T>
-    class ResourceHandle {
+    class ResourceHandle
+    {
     public:
-        ResourceHandle()
-            : m_id(), m_ptr(nullptr)
+        ResourceHandle() : m_resourceManager(nullptr) {}
+        ResourceHandle(ResourceId id, ResourceManager* rm)
+            : m_resourceId(id), m_resourceManager(rm) {}
+        
+        T* Get() const noexcept
         {
+            return static_cast<T*>(GetResourceByIndex(
+                m_resourceManager,
+                std::type_index(typeid(T)),
+                m_resourceId
+            ));
         }
 
-        explicit ResourceHandle(const ResourceId& id)
-            : m_id(id), m_ptr(nullptr)
+        bool IsValid() const noexcept
         {
+            return m_resourceManager && HasResourceByIndex(m_resourceManager, std::type_index(typeid(T)), m_resourceId);
         }
 
-        explicit ResourceHandle(const ResourceId& id, T* ptr = nullptr)
-            : m_id(id), m_ptr(ptr)
+        const ResourceId& GetId() const noexcept
         {
+            return m_resourceId;
         }
 
-        ~ResourceHandle()
+        T* operator->() const
         {
-            if(m_ptr)
-                m_ptr->Release();
+            return Get();
         }
 
-        bool IsValid() const noexcept { return m_ptr != nullptr && m_ptr->GetState() == Resource::State::Ready; }
+        T& operator*() const
+        {
+            return *Get();
+        }
 
-        explicit operator bool() const noexcept {
+        operator bool() const noexcept
+        {
             return IsValid();
         }
 
-        T* operator->() const {
-            EX_ASSERT_FMT(IsValid(), "Trying to use invalid resource handle!");
-            return m_ptr;
-        }
-
-        T* operator*() const {
-            EX_ASSERT_FMT(IsValid(), "Trying to use invalid resource handle!");
-            return m_ptr;
-        }
-
-        [[nodiscard]]
-        T* Get() const noexcept { return m_ptr; }
-
-        [[nodiscard]]
-        ResourceId GetId() const noexcept { return m_id; }
-
     private:
-        ResourceId m_id;
-        T* m_ptr;
+        ResourceId m_resourceId;
+        ResourceManager* m_resourceManager;
     };
 }
