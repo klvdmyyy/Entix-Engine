@@ -8,6 +8,7 @@
 #include "Entix/WSI/Base.h"
 
 #include "Platform/Vulkan/VulkanShader.h"
+#include "Platform/Vulkan/VulkanSwapchain.h"
 
 #include <ranges>
 
@@ -70,10 +71,14 @@ namespace Entix
         return vk::False;
     }
 
-    VulkanDevice::VulkanDevice()
+    VulkanDevice::VulkanDevice(Window* window)
+        : m_window(window)
     {
         CreateInstance().Unwrap();
         SetupDebugMessenger().Unwrap();
+
+        m_surface = vk::raii::SurfaceKHR(m_instance, CreateSurface(window).Unwrap());
+
         PickPhysicalDevice().Unwrap();
         CreateLogicalDevice().Unwrap();
     }
@@ -85,6 +90,21 @@ namespace Entix
     Result<RHI::Shader*> VulkanDevice::CreateShader(const RHI::ShaderCompilationData& compilationData)
     {
         return new VulkanShader(m_device, compilationData);
+    }
+
+    Result<RHI::Swapchain*> VulkanDevice::CreateSwapchain(Window& window)
+    {
+        if((&window) == m_window && m_surface != nullptr)
+        {
+            auto res = new VulkanSwapchain(m_device, window, std::move(m_surface));
+            m_surface = nullptr;
+            return res;
+        }
+        else
+        {
+            EX_LET_TRY(surface, CreateSurface(&window));
+            return new VulkanSwapchain(m_device, window, vk::raii::SurfaceKHR(m_instance, surface));
+        }
     }
 
     Result<void> VulkanDevice::CreateInstance()
@@ -165,6 +185,21 @@ namespace Entix
         return {};
     }
 
+    Result<vk::SurfaceKHR> VulkanDevice::CreateSurface(Window* window)
+    {
+        if(!window)
+        {
+            return Error(
+                "No window provided. "
+                "To create rendering vulkan device you need to provide at least one window for validation!"
+            );
+        }
+
+        EX_LET_TRY(rawSurface, window->CreateVulkanSurface(*m_instance));
+
+        return vk::SurfaceKHR(static_cast<VkSurfaceKHR>(rawSurface));
+    }
+
     bool VulkanDevice::IsDeviceSuitable(const vk::raii::PhysicalDevice& physicalDevice)
     {
         bool supportsVulkan1_3 = physicalDevice.getProperties().apiVersion >= vk::ApiVersion13;
@@ -225,20 +260,30 @@ namespace Entix
 
         return {};
     }
-
+    
     Result<void> VulkanDevice::CreateLogicalDevice()
     {
         EX_LOG(LogRHI, Info, "Creating Vulkan logical device.");
 
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = m_physicalDevice.getQueueFamilyProperties();
-        auto graphicsQueueFamilyProperty = std::ranges::find_if(
-            queueFamilyProperties,
-            [](const auto &qfp) {
-                return (qfp.queueFlags & vk::QueueFlagBits::eGraphics) != static_cast<vk::QueueFlags>(0);
-            }
-        );
+        Uint32 graphicsIndex = 0;
+        bool graphicsIndexFound = false;
 
-        auto graphicsIndex = static_cast<Uint32>(std::distance(queueFamilyProperties.begin(), graphicsQueueFamilyProperty));
+        for(Uint32 qfpIndex = 0; qfpIndex < queueFamilyProperties.size(); qfpIndex++)
+        {
+            if((queueFamilyProperties[qfpIndex].queueFlags & vk::QueueFlagBits::eGraphics) &&
+                m_physicalDevice.getSurfaceSupportKHR(qfpIndex, *m_surface))
+            {
+                graphicsIndex = qfpIndex;
+                graphicsIndexFound = true;
+                break;
+            }
+        }
+
+        if(!graphicsIndexFound)
+        {
+            return Error("Failed to find a vulkan queue for graphics and present.");
+        }
 
         vk::DeviceQueueCreateInfo queueCreateInfo;
         queueCreateInfo.queueFamilyIndex = graphicsIndex;

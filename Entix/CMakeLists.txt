@@ -97,7 +97,8 @@ target_link_libraries(Entix PRIVATE
     Vendor::GLAD
     Vendor::TinyObjLoader
     Vendor::STBImage
-    Vendor::ImGui)
+    Vendor::ImGui
+    Tracy::TracyClient)
 
 #####################################################
 ################# Setup Source Files ################

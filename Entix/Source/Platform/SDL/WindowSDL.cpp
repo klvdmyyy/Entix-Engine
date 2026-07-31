@@ -1,5 +1,7 @@
 #include "Platform/SDL/WindowSDL.h"
 
+#include <SDL3/SDL_vulkan.h>
+
 namespace Entix
 {
     WindowSDL::WindowSDL(const WindowConfig& config)
@@ -36,6 +38,17 @@ namespace Entix
             return Error("SDL_Window is nullptr!");
 
         return m_window;
+    }
+
+    Result<void*> WindowSDL::CreateVulkanSurface(void* instance) noexcept
+    {
+        VkSurfaceKHR surface;
+        if(!SDL_Vulkan_CreateSurface(m_window, static_cast<VkInstance_T*>(instance), nullptr, &surface))
+        {
+            return Error(SDL_GetError());
+        }
+
+        return static_cast<void*>(surface);
     }
 
     Result<Uint32> WindowSDL::GetWidth() const noexcept

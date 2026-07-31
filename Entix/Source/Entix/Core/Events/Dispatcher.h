@@ -15,10 +15,8 @@ namespace Entix
     class EventBus
     {
     public:
-        ENTIX_API static EventBus& Instance();
-
         EX_FORCE_INLINE
-        inline void AddListener(
+        inline static void AddListener(
             EventListener* listener,
             EventCategory categoryFilter,
             Int32 priority = 0
@@ -27,14 +25,14 @@ namespace Entix
             AddListener(listener, static_cast<Int32>(categoryFilter), priority);
         }
 
-        ENTIX_API void AddListener(
+        ENTIX_API static void AddListener(
             EventListener* listener,
             Int32 categoryFilter = static_cast<Int32>(EventCategory::None),
             Int32 priority = 0
         );
-        ENTIX_API void RemoveListener(EventListener* listener);
+        ENTIX_API static void RemoveListener(EventListener* listener);
 
-        ENTIX_API void PublishEvent(const Event& event);
+        ENTIX_API static void PublishEvent(const Event& event);
 
         template<std::derived_from<Event> E, typename F>
             requires (std::is_invocable_v<F, const E&>)
@@ -46,10 +44,10 @@ namespace Entix
             }
         }
 
-        ENTIX_API void ProcessEvents();
+        ENTIX_API static void ProcessEvents();
 
-        ENTIX_API void SetImmediateMode(bool enabled) noexcept;
-        ENTIX_API bool GetImmediateMode() const noexcept;
+        ENTIX_API static void SetImmediateMode(bool enabled) noexcept;
+        ENTIX_API static bool GetImmediateMode() noexcept;
 
     private:
         struct ListenerInfo
@@ -59,10 +57,10 @@ namespace Entix
             Int32 priority;
         };
 
-        std::vector<ListenerInfo> m_listeners;
-        std::queue<Scope<Event>> m_eventQueue;
-        std::mutex m_queueMutex;
+        inline static std::vector<ListenerInfo> m_listeners;
+        inline static std::queue<Scope<Event>> m_eventQueue;
+        inline static std::mutex m_queueMutex;
 
-        bool m_immediateMode;
+        inline static bool m_immediateMode;
     };
 }

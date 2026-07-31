@@ -12,7 +12,7 @@ namespace Entix::WSI
     {
         if(!SDL_Init(SDL_INIT_VIDEO))
             return Error(SDL_GetError());
-        
+
         if(!SDL_Vulkan_LoadLibrary(nullptr))
             return Error(SDL_GetError());
 
@@ -27,27 +27,25 @@ namespace Entix::WSI
 
     void PollEvents()
     {
-        auto& bus = EventBus::Instance();
-
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
             switch(event.type)
             {
                 case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-                    bus.PublishEvent(WindowCloseEvent(event.window.windowID));
+                    EventBus::PublishEvent(WindowCloseEvent(event.window.windowID));
                     break;
-                
+
                 case SDL_EVENT_WINDOW_RESIZED:
-                    bus.PublishEvent(WindowResizeEvent(
+                    EventBus::PublishEvent(WindowResizeEvent(
                         event.window.windowID,
                         static_cast<Uint32>(event.window.data1),
                         static_cast<Uint32>(event.window.data2)
                     ));
                     break;
-                
+
                 case SDL_EVENT_MOUSE_MOTION:
-                    bus.PublishEvent(MouseMotionEvent(
+                    EventBus::PublishEvent(MouseMotionEvent(
                         event.window.windowID,
                         event.motion.x,
                         event.motion.y,
@@ -55,7 +53,7 @@ namespace Entix::WSI
                         event.motion.yrel
                     ));
                     break;
-                
+
                 default:
                     break;
             }

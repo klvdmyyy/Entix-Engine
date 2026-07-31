@@ -1,11 +1,26 @@
 #pragma once
 
+#include "Entix/Core/Base.h"
 #include "Entix/Core/Result.h"
+#include "Entix/Core/Events/Base.h"
 
 #include "Entix/Resources/ResourceId.h"
 
 namespace Entix
 {
+    class ResourceReloadedEvent : public Event
+    {
+        EX_DEFINE_EVENT_TYPE_CATEGORY(ResourceReloadedEvent, EventCategory::Resources);
+
+    public:
+        ResourceReloadedEvent(const ResourceId resourceId) : m_resourceId(resourceId) {}
+
+        const ResourceId& GetResourceId() const noexcept { return m_resourceId; }
+
+    private:
+        ResourceId m_resourceId;
+    };
+
     class Resource
     {
     public:
@@ -15,20 +30,8 @@ namespace Entix
         const ResourceId& GetId() const { return m_resourceId; }
         bool IsLoaded() const { return m_loaded; }
 
-        Result<void> Load()
-        {
-            auto res = LoadInternal();
-            m_loaded = res.IsSuccess();
-            return res;
-        }
-
-        void Unload()
-        {
-            if(!m_loaded) return;
-            
-            UnloadInternal();
-            m_loaded = false;
-        }
+        ENTIX_API Result<void> Load();
+        ENTIX_API void Unload();
 
     protected:
         virtual Result<void> LoadInternal() = 0;

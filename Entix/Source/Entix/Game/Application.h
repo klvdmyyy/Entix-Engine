@@ -11,6 +11,7 @@
 
 #include "Entix/RHI/Device.h"
 #include "Entix/RHI/Shader.h"
+#include "Entix/RHI/Swapchain.h"
 
 namespace Entix
 {
@@ -31,6 +32,14 @@ namespace Entix
         ENTIX_API Application(const ApplicationConfig& config);
         ENTIX_API ~Application();
 
+        // Unable to copy
+        Application(const Application&) = delete;
+        Application& operator=(const Application&) = delete;
+
+        // Unable to move
+        Application(Application&&) = delete;
+        Application& operator=(Application&&) = delete;
+
         ENTIX_API Result<void> Run();
 
         /** Events */
@@ -48,5 +57,6 @@ namespace Entix
         Ref<Window> m_window;
         Ref<RHI::Device> m_rhiDevice;
         Ref<RHI::Shader> m_rhiShader;
+        Ref<RHI::Swapchain> m_rhiSwapchain;
     };
 }

@@ -25,7 +25,7 @@ namespace Entix
             nextValue = nextValue * 2;
 
             std::this_thread::sleep_for(std::chrono::seconds(3));
-            
+
             return {};
         }
 
@@ -38,10 +38,11 @@ namespace Entix
         SandboxApp()
             : Application(ApplicationConfig())
         {
-            auto rm = HotReloadResourceManager();
+            ResourceManager::SetInstance(new HotReloadResourceManager());
+            auto rm = ResourceManager::Instance();
 
             ResourceId testId("asd");
-            auto resource = rm.Load<TestResource>(testId);
+            auto resource = rm->Load<TestResource>(testId);
 
             std::vector<std::future<int>> results;
 
@@ -57,10 +58,15 @@ namespace Entix
             for(auto& result : results)
                 EX_LOG(LogTemp, Warning, "THREAD POOL TESTING: {}", result.get());
 
-            ResourceId testId2("asd2");
-            auto resource2 = rm.Load<TestResource>(testId2);
+            ResourceId testId2("/home/dmitry/Projects/Entix-Engine/Shaders/BasePositions.slang");
+            auto resource2 = rm->Load<TestResource>(testId2);
 
             EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource->value);
+            EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource->value);
+            EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource->value);
+            EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource->value);
+            EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource->value);
+            EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource2->value);
             EX_LOG(LogTemp, Warning, "RESOURCE MANAGER TEST: {}", resource2->value);
         }
     };

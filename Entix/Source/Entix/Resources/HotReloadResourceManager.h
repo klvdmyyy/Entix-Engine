@@ -10,30 +10,13 @@ namespace Entix
     class HotReloadResourceManager : public ResourceManager
     {
     public:
-        ENTIX_API static HotReloadResourceManager& Instance();
-
         ENTIX_API HotReloadResourceManager();
         ENTIX_API ~HotReloadResourceManager();
 
         ENTIX_API void StartWatcher();
         ENTIX_API void StopWatcher();
 
-        template<std::derived_from<Resource> T>
-        ResourceHandle<T> Load(const ResourceId& resourceId)
-        {
-            auto handle = ResourceManager::Load<T>(resourceId);
-
-            try
-            {
-                m_fileTimestamps[resourceId] = std::filesystem::last_write_time(resourceId.GetFilepath());
-            }
-            catch(const std::filesystem::filesystem_error& e)
-            {
-                EX_LOG(Resources, Warning, "Failed to watch resource file: '{}'", resourceId.GetFilenameString());
-            }
-
-            return handle;
-        }
+        ENTIX_API void LoadMiddleware(const ResourceId& resourceId) final;
 
     private:
         ENTIX_API void WatcherThread();

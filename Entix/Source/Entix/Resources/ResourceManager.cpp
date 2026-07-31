@@ -1,17 +1,31 @@
 #include "Entix/Resources/ResourceManager.h"
 
-#include "Entix/Resources/HotReloadResourceManager.h"
+#include <tracy/Tracy.hpp>
 
 namespace Entix
 {
-    ResourceManager& ResourceManager::Instance()
+    Scope<ResourceManager> ResourceManager::s_resourceManager = ResourceManager::CreateScopeRM();
+
+    Scope<ResourceManager> ResourceManager::CreateScopeRM()
     {
-        static HotReloadResourceManager s_instance;
-        return s_instance;
+        return Scope<ResourceManager>(new ResourceManager());
+    }
+
+    void ResourceManager::SetInstance(ResourceManager* rm)
+    {
+        s_resourceManager.reset(rm);
+    }
+
+    ResourceManager* ResourceManager::Instance()
+    {
+        return s_resourceManager.get();
     }
 
     void* ResourceManager::GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept
     {
+        ZoneScoped;
+        ZoneTextF("%s", resourceId.GetFilepathString().c_str());
+
         auto& typeResources = m_resources.at(idx);
         auto it = typeResources.find(resourceId);
 
@@ -25,6 +39,9 @@ namespace Entix
 
     bool ResourceManager::HasResource(std::type_index idx, const ResourceId& resourceId) const noexcept
     {
+        ZoneScoped;
+        ZoneTextF("%s", resourceId.GetFilepathString().c_str());
+
         return GetResource(idx, resourceId) == nullptr ? false : true;
     }
 }

@@ -8,35 +8,50 @@
 #include "Entix/Core/Tasks/ThreadPool.h"
 
 #include "Platform/Vulkan/VulkanDevice.h"
+
 #include "Platform/SDL/WindowSDL.h"
+
+#include <tracy/Tracy.hpp>
 
 namespace Entix
 {
     Application::Application(const ApplicationConfig& config)
         : m_quit(false), k_config(config)
     {
-        EventBus::Instance().AddListener(this,
-            EventCategory::Application | EventCategory::Window,
-            5);
+        // Main application class should have greater priority than anything else.
+        EventBus::AddListener(this, EventCategory::Application | EventCategory::Window, 5);
+
+        // Manually initialize a thread pool
         ThreadPool::Instance().Initialize();
+
+        // Initialize the application
         Initialize().Unwrap();
     }
 
     Application::~Application()
     {
+        // Shutdown the application
         Shutdown().Unwrap();
+
+        // Shutdown a thread pool
         ThreadPool::Instance().Shutdown();
-        EventBus::Instance().RemoveListener(this);
+
+        // Unsubscribe from events
+        EventBus::RemoveListener(this);
     }
 
     Result<void> Application::Initialize()
     {
+        ZoneScopedN("Application initialization");
+
         EX_LOG(LogTemp, Info, "Initializing the application.");
 
         EX_TRY(WSI::Initialize());
 
         m_window = CreateRef<WindowSDL>(k_config.window);
-        m_rhiDevice = CreateRef<VulkanDevice>();
+        m_rhiDevice = CreateRef<VulkanDevice>(m_window.get());
+
+        m_rhiSwapchain = Ref<RHI::Swapchain>(m_rhiDevice->CreateSwapchain(*m_window).Unwrap());
 
         auto compiledShader = RHI::ShaderCompiler::Instance()->Compile("/home/dmitry/Projects/Entix-Engine/Shaders/SimpleShader.slang").Unwrap();
 
@@ -49,9 +64,11 @@ namespace Entix
     {
         while(!m_quit)
         {
-            EventBus::Instance().ProcessEvents();
+            EventBus::ProcessEvents();
 
             WSI::PollEvents();
+
+            FrameMark;
         }
 
         return {};
@@ -59,6 +76,8 @@ namespace Entix
 
     Result<void> Application::Shutdown()
     {
+        ZoneScopedN("Application shutdown");
+
         EX_LOG(LogTemp, Info, "Quit the application.");
 
         WSI::Shutdown();

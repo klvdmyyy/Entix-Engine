@@ -1,15 +1,13 @@
 #include "Entix/Resources/HotReloadResourceManager.h"
 
+#include "Entix/Core/Events/Dispatcher.h"
+
 #include <chrono>
+
+#include <tracy/Tracy.hpp>
 
 namespace Entix
 {
-    HotReloadResourceManager& HotReloadResourceManager::Instance()
-    {
-        static HotReloadResourceManager s_instance;
-        return s_instance;
-    }
-
     HotReloadResourceManager::HotReloadResourceManager() { StartWatcher(); }
     HotReloadResourceManager::~HotReloadResourceManager() { StopWatcher(); }
 
@@ -59,6 +57,23 @@ namespace Entix
 
     void HotReloadResourceManager::ReloadResource(const ResourceId& resourceId)
     {
-        (void)resourceId;
+        ZoneScopedN("Resource reloading");
+        ZoneTextF("%s", resourceId.GetFilepathString().c_str());
+
+        EX_LOG(Resources, Info, "Changes detected. Reloading resource: '{}'", resourceId.GetFilenameString());
+
+        EventBus::PublishEvent(ResourceReloadedEvent(resourceId));
+    }
+
+    void HotReloadResourceManager::LoadMiddleware(const ResourceId& resourceId)
+    {
+        try
+        {
+            m_fileTimestamps[resourceId] = std::filesystem::last_write_time(resourceId.GetFilepath());
+        }
+        catch(const std::filesystem::filesystem_error& e)
+        {
+            EX_LOG(Resources, Warning, "Failed to watch resource file: '{}'", resourceId.GetFilenameString());
+        }
     }
 }

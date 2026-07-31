@@ -20,7 +20,18 @@ namespace Entix
     class ResourceManager
     {
     public:
-        ENTIX_API static ResourceManager& Instance();
+        ENTIX_API static void SetInstance(ResourceManager* rm);
+        ENTIX_API static ResourceManager* Instance();
+
+        virtual ~ResourceManager() = default;
+
+        // Unable to copy
+        ResourceManager(const ResourceManager&) = delete;
+        ResourceManager& operator=(const ResourceManager&) = delete;
+
+        // Unable to move
+        ResourceManager(ResourceManager&&) = delete;
+        ResourceManager& operator=(ResourceManager&&) = delete;
 
         template<std::derived_from<Resource> T>
         ResourceHandle<T> Load(const ResourceId& resourceId)
@@ -50,6 +61,8 @@ namespace Entix
                 return resource;
             });
 
+            LoadMiddleware(resourceId);
+
             return ResourceHandle<T>(resourceId, this);
         }
 
@@ -68,7 +81,16 @@ namespace Entix
         ENTIX_API void* GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
         ENTIX_API bool HasResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
 
+    protected:
+        ResourceManager() = default;
+
+        virtual void LoadMiddleware([[maybe_unused]] const ResourceId& resourceId) {}
+
     private:
+        static Scope<ResourceManager> s_resourceManager;
+
+        ENTIX_API static Scope<ResourceManager> CreateScopeRM();
+
         template<typename T>
         using ResourceStorage =
             std::unordered_map<std::type_index, std::unordered_map<ResourceId, T, ResourceId::Hasher>>;

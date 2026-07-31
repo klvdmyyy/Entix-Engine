@@ -21,6 +21,8 @@ namespace Entix
 
         virtual Result<void*> GetWindowHandle() const noexcept = 0;
 
+        virtual Result<void*> CreateVulkanSurface(void* instance) noexcept = 0;
+
         virtual Result<Uint32> GetWidth() const noexcept = 0;
         virtual Result<Uint32> GetHeight() const noexcept = 0;
 

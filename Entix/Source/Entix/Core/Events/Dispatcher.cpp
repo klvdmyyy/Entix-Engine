@@ -8,12 +8,6 @@
 
 namespace Entix
 {
-    EventBus& EventBus::Instance()
-    {
-        static EventBus s_instance;
-        return s_instance;
-    }
-
     void EventBus::AddListener(EventListener* listener, Int32 categoryFilter, Int32 priority)
     {
         m_listeners.push_back({.listener = listener, .categoryFilter = categoryFilter, .priority = priority});
@@ -91,7 +85,7 @@ namespace Entix
         m_immediateMode = enabled;
     }
 
-    bool EventBus::GetImmediateMode() const noexcept
+    bool EventBus::GetImmediateMode() noexcept
     {
         return m_immediateMode;
     }

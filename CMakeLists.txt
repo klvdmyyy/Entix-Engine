@@ -77,7 +77,7 @@ FetchContent_MakeAvailable(glm)
 FetchContent_Declare(
   Tracy
   GIT_REPOSITORY https://github.com/wolfpld/tracy
-  GIT_TAG v0.13.1
+  GIT_TAG bf21d8ea115318e32ea0d97d2b4fbcb9f5773774
   OVERRIDE_FIND_PACKAGE
 )
 

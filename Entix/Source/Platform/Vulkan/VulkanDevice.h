@@ -4,6 +4,8 @@
 
 #include "Entix/Core/Result.h"
 
+#include "Entix/WSI/Window.h"
+
 #include <array>
 
 #include <vulkan/vulkan_raii.hpp>
@@ -13,10 +15,11 @@ namespace Entix
     class VulkanDevice : public RHI::Device
     {
     public:
-        VulkanDevice();
+        VulkanDevice(Window* window = nullptr);
         ~VulkanDevice();
 
-        Result<RHI::Shader*> CreateShader(const RHI::ShaderCompilationData& compilationData);
+        Result<RHI::Shader*> CreateShader(const RHI::ShaderCompilationData& compilationData) final;
+        Result<RHI::Swapchain*> CreateSwapchain(Window& window) final;
 
         static constexpr std::array<const char*, 1> VALIDATION_LAYERS = {
             "VK_LAYER_KHRONOS_validation"
@@ -37,12 +40,17 @@ namespace Entix
 
         Result<void> CreateInstance();
         Result<void> SetupDebugMessenger();
+        Result<vk::SurfaceKHR> CreateSurface(Window* window);
         Result<void> PickPhysicalDevice();
         Result<void> CreateLogicalDevice();
 
         vk::raii::Context m_context;
         vk::raii::Instance m_instance = nullptr;
         vk::raii::DebugUtilsMessengerEXT m_debugMessenger = nullptr;
+
+        Window* m_window;
+        vk::raii::SurfaceKHR m_surface = nullptr;
+
         vk::raii::PhysicalDevice m_physicalDevice = nullptr;
         vk::raii::Device m_device = nullptr;
         vk::raii::Queue m_graphicsQueue = nullptr;
