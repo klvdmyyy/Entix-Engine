@@ -2,7 +2,7 @@
 
 #include <concepts>
 
-namespace Entix::IO
+namespace Entix
 {
     template<typename T, typename A>
     concept HasSerializeMethod = requires(T& obj, A& ar)
