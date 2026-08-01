@@ -16,3 +16,6 @@ TAGS
 
 # .env file
 .env
+
+# Log files
+*.log

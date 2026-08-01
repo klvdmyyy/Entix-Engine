@@ -17,11 +17,13 @@ namespace Entix
 
     VulkanShader::~VulkanShader()
     {
+        EX_LOG(LogRHI, Debug, "Destroying VulkanShader class");
     }
 
     Result<void> VulkanShader::CreateShaderModule()
     {
         EX_LOG(LogRHI, Debug, "Creating shader module. Shader code size: {}", m_compilationData.code.size());
+
         vk::ShaderModuleCreateInfo createInfo;
         createInfo.codeSize = m_compilationData.code.size();
         createInfo.pCode = reinterpret_cast<const Uint32*>(m_compilationData.code.data());

@@ -85,6 +85,7 @@ namespace Entix
 
     VulkanDevice::~VulkanDevice()
     {
+        EX_LOG(LogRHI, Debug, "Destroying VulkanDevice class");
     }
 
     Result<RHI::Shader*> VulkanDevice::CreateShader(const RHI::ShaderCompilationData& compilationData)
@@ -96,14 +97,14 @@ namespace Entix
     {
         if((&window) == m_window && m_surface != nullptr)
         {
-            auto res = new VulkanSwapchain(m_device, window, std::move(m_surface));
-            m_surface = nullptr;
+            auto res = new VulkanSwapchain(m_physicalDevice, m_device, window, m_surface);
             return res;
         }
         else
         {
-            EX_LET_TRY(surface, CreateSurface(&window));
-            return new VulkanSwapchain(m_device, window, vk::raii::SurfaceKHR(m_instance, surface));
+            Panic("Unreachable");
+            // EX_LET_TRY(surface, CreateSurface(&window));
+            // return new VulkanSwapchain(m_physicalDevice, m_device, window, vk::raii::SurfaceKHR(m_instance, surface));
         }
     }
 

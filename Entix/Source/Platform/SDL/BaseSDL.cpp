@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 
 #include <SDL3/SDL_vulkan.h>
+#include <cstdlib>
 
 namespace Entix::WSI
 {
@@ -21,8 +22,8 @@ namespace Entix::WSI
 
     void Shutdown()
     {
-        SDL_Vulkan_UnloadLibrary();
-        SDL_Quit();
+        std::atexit(SDL_Vulkan_UnloadLibrary);
+        std::atexit(SDL_Quit);
     }
 
     void PollEvents()
