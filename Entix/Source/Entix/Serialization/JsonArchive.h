@@ -7,6 +7,8 @@
 #include "Entix/Core/IO/Stream.h"
 #include "Entix/Core/IO/TextStream.h"
 
+#include "Entix/Core/TypeName.h"
+
 #include "Entix/Serialization/Concepts.h"
 
 #include "Entix/Core/String.h"
@@ -112,7 +114,7 @@ namespace Entix
                 }
                 else
                 {
-                    EX_LOG(Serialization, Warning, "Can't read value.");
+                    EX_LOG(Serialization, Warning, "`Deserialize()` static method isn't impemented for {}", TypeName<T>());
                 }
             }
             else
@@ -125,7 +127,7 @@ namespace Entix
                 }
                 else
                 {
-                    EX_LOG(Serialization, Warning, "Can't write value.");
+                    EX_LOG(Serialization, Warning, "`Serialize()` method isn't impemented for {}", TypeName<T>());
                 }
             }
 
