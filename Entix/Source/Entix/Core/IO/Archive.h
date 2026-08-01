@@ -17,6 +17,13 @@ namespace Entix::IO
             return GetDerived();
         }
 
+        template<typename T>
+            requires (HasSerializeMethod<T, Derived>)
+        void Process(T& value)
+        {
+            value.Serialize(GetDerived());
+        }
+
         Derived& GetDerived() noexcept
         {
             return static_cast<Derived&>(*this);

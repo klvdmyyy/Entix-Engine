@@ -6,6 +6,7 @@
 
 #include "Entix/Core/Events/Listener.h"
 
+#include "Entix/RHI/Pipeline.h"
 #include "Entix/WSI/Base.h"
 #include "Entix/WSI/Window.h"
 
@@ -58,5 +59,6 @@ namespace Entix
         Ref<RHI::Device> m_rhiDevice;
         ResourceHandle<RHI::Shader> m_rhiShader;
         Ref<RHI::Swapchain> m_rhiSwapchain;
+        Ref<RHI::GraphicsPipeline> m_rhiGraphicsPipeline;
     };
 }

@@ -39,6 +39,9 @@ namespace Entix::IO
         virtual Result<void> Seek(Int64 offset, SeekOrigin origin) = 0;
         virtual Usize Tell() const = 0;
         virtual Usize Size() const = 0;
+
+        // General
+        virtual StreamMode GetStreamMode() const noexcept = 0;
     };
 
     class StreamDecorator : public Stream
@@ -66,6 +69,9 @@ namespace Entix::IO
         virtual Result<void> Seek(Int64 offset, SeekOrigin origin) override { return m_inner->Seek(offset, origin); };
         virtual Usize Size() const override { return m_inner->Size(); };
         virtual Usize Tell() const override { return m_inner->Tell(); }
+
+        // General
+        virtual StreamMode GetStreamMode() const noexcept override { return m_inner->GetStreamMode(); }
 
     protected:
         Stream* m_inner;

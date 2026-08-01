@@ -1,7 +1,6 @@
 #pragma once
 
 #include <concepts>
-#include <type_traits>
 
 namespace Entix::IO
 {
@@ -17,6 +16,12 @@ namespace Entix::IO
         { T::Deserialize(ar) } -> std::same_as<T>;
     };
 
+    // Serializable class must be default initializable.
+    //
+    // If deserialization target (i.e file) can't be found it just returns default value.
     template<typename T, typename A>
-    concept Serializable = HasSerializeMethod<T, A> && HasDeserializeStaticMethod<T, A>;
+    concept Serializable = (HasSerializeMethod<T, A>
+                        && HasDeserializeStaticMethod<T, A>
+                        && std::default_initializable<T>)
+                        || std::is_trivial_v<T>;
 }

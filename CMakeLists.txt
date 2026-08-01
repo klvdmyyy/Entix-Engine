@@ -27,8 +27,8 @@ file(
   *.glsl
 )
 
-include(etags)
-etags_generate(${CL_FILES})
+# include(etags)
+# etags_generate(${CL_FILES})
 
 file(
   GLOB_RECURSE

@@ -22,6 +22,8 @@ namespace Entix::IO
         ENTIX_API Usize Tell() const override { return m_exists ? static_cast<Usize>(m_file.tellg()) : (Usize)0; }
         ENTIX_API Usize Size() const override { return m_size; }
 
+        ENTIX_API StreamMode GetStreamMode() const noexcept override { return k_mode; }
+
     private:
         const StreamMode k_mode;
 

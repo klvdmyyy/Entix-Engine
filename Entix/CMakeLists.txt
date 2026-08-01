@@ -98,7 +98,8 @@ target_link_libraries(Entix PRIVATE
     Vendor::TinyObjLoader
     Vendor::STBImage
     Vendor::ImGui
-    Tracy::TracyClient)
+    Tracy::TracyClient
+    nlohmann_json::nlohmann_json)
 
 #####################################################
 ################# Setup Source Files ################

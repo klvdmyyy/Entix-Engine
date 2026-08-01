@@ -33,6 +33,8 @@ namespace Entix
     EX_DEFINE_LOG_CATEGORY(VulkanGeneral, Debug);
     EX_DEFINE_LOG_CATEGORY(VulkanPerformance, Warning);
     EX_DEFINE_LOG_CATEGORY(VulkanValidation, Trace);
+
+    EX_DEFINE_LOG_CATEGORY(Serialization, Warning);
 }
 
 /**

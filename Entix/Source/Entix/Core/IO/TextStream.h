@@ -32,7 +32,7 @@ namespace Entix::IO
         template<typename... Args>
         Result<void> WriteTextFmt(std::format_string<Args...> fmt, Args&&... args)
         {
-            return Write(std::format(fmt, std::forward<Args>(args)...));
+            return WriteText(std::format(fmt, std::forward<Args>(args)...));
         }
 
         Result<void> WriteLine(StringView str)
