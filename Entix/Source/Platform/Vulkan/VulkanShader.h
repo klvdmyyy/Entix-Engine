@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Entix/Core/Memory.h"
 #include "Entix/RHI/Shader.h"
 
 #include <vulkan/vulkan_raii.hpp>
@@ -11,21 +10,21 @@ namespace Entix
     {
     public:
         VulkanShader(
-            vk::raii::Device& device,
-            const RHI::ShaderCompilationData& compilationData
+            const ResourceId& resourceId,
+            vk::raii::Device& device
         );
         ~VulkanShader();
-
-        bool HasStage(RHI::ShaderStage stage) const noexcept final
-        {
-            return m_compilationData.stages & stage;
-        }
+        
+    protected:
+        Result<void> LoadInternal() final;
+        Result<void> ReloadInternal() final;
+        void UnloadInternal() final;
 
     private:
-        Result<void> CreateShaderModule();
+        Result<void> CreateShaderModule(const RHI::ShaderCompilationData& compilationData);
 
-        RHI::ShaderCompilationData m_compilationData;
         vk::raii::Device& m_device;
+        
         vk::raii::ShaderModule m_shaderModule = nullptr;
     };
 }

@@ -27,14 +27,19 @@ namespace Entix
         explicit Resource(const ResourceId& id) : m_resourceId(id) {}
         virtual ~Resource() = default;
 
-        const ResourceId& GetId() const { return m_resourceId; }
+        const ResourceId& GetResourceId() const { return m_resourceId; }
         bool IsLoaded() const { return m_loaded; }
 
         ENTIX_API Result<void> Load();
+        ENTIX_API Result<void> Reload();
         ENTIX_API void Unload();
 
     protected:
         virtual Result<void> LoadInternal() = 0;
+        virtual Result<void> ReloadInternal()
+        {
+            return Error("Reloading doesn't supported by this resource type!");
+        }
         virtual void UnloadInternal() = 0;
 
     private:

@@ -7,6 +7,8 @@
 
 #include "Entix/WSI/Base.h"
 
+#include "Entix/Resources/ResourceManager.h"
+
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"
 
@@ -85,26 +87,27 @@ namespace Entix
 
     VulkanDevice::~VulkanDevice()
     {
+        ResourceManager::Instance()->UnloadType<VulkanShader>();
         EX_LOG(LogRHI, Debug, "Destroying VulkanDevice class");
     }
 
-    Result<RHI::Shader*> VulkanDevice::CreateShader(const RHI::ShaderCompilationData& compilationData)
+    ResourceHandle<RHI::Shader> VulkanDevice::LoadShader(const ResourceId& resourceId)
     {
-        return new VulkanShader(m_device, compilationData);
+        return ResourceManager::Instance()->Load<VulkanShader>(resourceId, m_device);
     }
 
     Result<RHI::Swapchain*> VulkanDevice::CreateSwapchain(Window& window)
     {
         if((&window) == m_window && m_surface != nullptr)
         {
-            auto res = new VulkanSwapchain(m_physicalDevice, m_device, window, m_surface);
+            auto res = new VulkanSwapchain(m_physicalDevice, m_device, window, std::move(m_surface));
+            m_surface = nullptr;
             return res;
         }
         else
         {
-            Panic("Unreachable");
-            // EX_LET_TRY(surface, CreateSurface(&window));
-            // return new VulkanSwapchain(m_physicalDevice, m_device, window, vk::raii::SurfaceKHR(m_instance, surface));
+            EX_LET_TRY(surface, CreateSurface(&window));
+            return new VulkanSwapchain(m_physicalDevice, m_device, window, vk::raii::SurfaceKHR(m_instance, surface));
         }
     }
 

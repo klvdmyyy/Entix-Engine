@@ -19,5 +19,7 @@ namespace Entix
         RHI::GraphicsPipelineSpecification m_spec;
 
         vk::raii::Device& m_device;
+
+        Uint8 m_enabledStages = 0;
     };
 }

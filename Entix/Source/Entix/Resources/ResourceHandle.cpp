@@ -12,4 +12,12 @@ namespace Entix
     {
         return rm->GetResource(idx, id);
     }
+
+    void DecrementResourceRefCountByIndex(
+        ResourceManager* rm,
+        const ResourceId& id
+    )
+    {
+        rm->DecrementRefCountOf(id);
+    }
 }

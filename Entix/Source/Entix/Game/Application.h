@@ -56,7 +56,7 @@ namespace Entix
 
         Ref<Window> m_window;
         Ref<RHI::Device> m_rhiDevice;
-        Ref<RHI::Shader> m_rhiShader;
+        ResourceHandle<RHI::Shader> m_rhiShader;
         Ref<RHI::Swapchain> m_rhiSwapchain;
     };
 }

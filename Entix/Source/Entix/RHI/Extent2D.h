@@ -4,11 +4,11 @@
 
 namespace Entix::RHI
 {
-    class Rect
+    class Extent2D
     {
     public:
-        Rect() = default;
-        Rect(Uint32 x_, Uint32 y_) : x(x_), y(y_) {}
+        Extent2D() = default;
+        Extent2D(Uint32 x_, Uint32 y_) : x(x_), y(y_) {}
 
         Uint32 x = 0;
         Uint32 y = 0;

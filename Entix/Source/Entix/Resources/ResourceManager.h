@@ -33,8 +33,8 @@ namespace Entix
         ResourceManager(ResourceManager&&) = delete;
         ResourceManager& operator=(ResourceManager&&) = delete;
 
-        template<std::derived_from<Resource> T>
-        ResourceHandle<T> Load(const ResourceId& resourceId)
+        template<std::derived_from<Resource> T, typename... Args>
+        ResourceHandle<T> Load(const ResourceId& resourceId, Args&&... args)
         {
             const auto resourceTypeIndex = std::type_index(typeid(T));
             auto& typeResources = m_resources[resourceTypeIndex];
@@ -47,8 +47,8 @@ namespace Entix
                 return ResourceHandle<T>(resourceId, this);
             }
 
-            typeResources[resourceId] = ThreadPool::Instance().Enqueue([&]() -> Ref<Resource> {
-                auto resource = CreateRef<T>(resourceId);
+            typeResources[resourceId] = ThreadPool::Instance().Enqueue([&, resourceId]() -> Ref<Resource> {
+                auto resource = CreateRef<T>(resourceId, std::forward<Args>(args)...);
 
                 EX_LOG(Resources, Debug, "Loading resource: '{}'", resourceId.GetFilenameString());
                 if(auto res = resource->Load(); res.IsError())
@@ -67,6 +67,20 @@ namespace Entix
         }
 
         template<std::derived_from<Resource> T>
+        void UnloadType()
+        {
+            auto typeResources = m_resources[std::type_index(typeid(T))];
+            
+            for(auto& [resourceId, resource] : typeResources)
+            {
+                (void)resourceId;
+                resource.get()->Unload();
+            }
+
+            m_resources.erase(std::type_index(typeid(T)));
+        }
+
+        template<std::derived_from<Resource> T>
         T* GetResource(const ResourceId& resourceId) const noexcept
         {
             return static_cast<T*>(GetResource(std::type_index(typeid(T)), resourceId));
@@ -78,24 +92,51 @@ namespace Entix
             return HasResource(std::type_index(typeid(T)), resourceId);
         }
 
-        ENTIX_API void* GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
-        ENTIX_API bool HasResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
-
     protected:
         ResourceManager() = default;
 
         virtual void LoadMiddleware([[maybe_unused]] const ResourceId& resourceId) {}
 
+        Result<std::shared_future<Ref<Resource>>> FindResourceById(const ResourceId& resourceId);
+
     private:
+        friend bool HasResourceByIndex(
+            ResourceManager* rm,
+            std::type_index idx,
+            const ResourceId& id
+        );
+
+        friend void* GetResourceByIndex(
+            ResourceManager* rm,
+            std::type_index idx,
+            const ResourceId& id
+        );
+
+        friend void DecrementResourceRefCountByIndex(
+            ResourceManager* rm,
+            const ResourceId& id
+        );
+
+        ENTIX_API void* GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
+        ENTIX_API bool HasResource(std::type_index idx, const ResourceId& resourceId) const noexcept;
+
+        ENTIX_API void DecrementRefCountOf(const ResourceId& resourceId);
+
         static Scope<ResourceManager> s_resourceManager;
 
         ENTIX_API static Scope<ResourceManager> CreateScopeRM();
 
+        using StoragedResource = std::shared_future<Ref<Resource>>;
+
+        template<typename T>
+        using ResourceStorageInner =
+            std::unordered_map<ResourceId, T, ResourceId::Hasher>;
+
         template<typename T>
         using ResourceStorage =
-            std::unordered_map<std::type_index, std::unordered_map<ResourceId, T, ResourceId::Hasher>>;
+            std::unordered_map<std::type_index, ResourceStorageInner<T>>;
 
-        ResourceStorage<std::shared_future<Ref<Resource>>> m_resources;
+        ResourceStorage<StoragedResource> m_resources;
         std::unordered_map<ResourceId, Usize, ResourceId::Hasher> m_refCounts;
     };
 }

@@ -7,9 +7,19 @@ namespace Entix
     Result<void> Resource::Load()
     {
         ZoneScopedN("Resource loading");
-        ZoneTextF("%s", GetId().GetFilepathString().c_str());
+        ZoneTextF("%s", GetResourceId().GetFilepathString().c_str());
 
         auto res = LoadInternal();
+        m_loaded = res.IsSuccess();
+        return res;
+    }
+
+    Result<void> Resource::Reload()
+    {
+        ZoneScopedN("Resource reloading");
+        ZoneTextF("%s", GetResourceId().GetFilepathString().c_str());
+
+        auto res = ReloadInternal();
         m_loaded = res.IsSuccess();
         return res;
     }
@@ -17,7 +27,7 @@ namespace Entix
     void Resource::Unload()
     {
         ZoneScopedN("Resource unloading");
-        ZoneTextF("%s", GetId().GetFilepathString().c_str());
+        ZoneTextF("%s", GetResourceId().GetFilepathString().c_str());
 
         if(!m_loaded) return;
         

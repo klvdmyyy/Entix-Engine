@@ -1,7 +1,5 @@
 #include "Entix/Core/Debug/Logger.h"
 
-#include <print>
-
 namespace Entix
 {
     Logger& Logger::Instance()

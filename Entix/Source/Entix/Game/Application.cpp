@@ -7,6 +7,9 @@
 
 #include "Entix/Core/Tasks/ThreadPool.h"
 
+#include "Entix/Resources/HotReloadResourceManager.h"
+#include "Entix/Resources/ResourceManager.h"
+
 #include "Platform/Vulkan/VulkanDevice.h"
 
 #include "Platform/SDL/WindowSDL.h"
@@ -46,16 +49,15 @@ namespace Entix
 
         EX_LOG(LogTemp, Info, "Initializing the application.");
 
+        ResourceManager::SetInstance(new HotReloadResourceManager());
+
         EX_TRY(WSI::Initialize());
 
         m_window = CreateRef<WindowSDL>(k_config.window);
         m_rhiDevice = CreateRef<VulkanDevice>(m_window.get());
 
         m_rhiSwapchain = Ref<RHI::Swapchain>(m_rhiDevice->CreateSwapchain(*m_window).Unwrap());
-
-        auto compiledShader = RHI::ShaderCompiler::Instance()->Compile("/home/dmitry/Projects/Entix-Engine/Shaders/SimpleShader.slang").Unwrap();
-
-        m_rhiShader = Ref<RHI::Shader>(m_rhiDevice->CreateShader(compiledShader).Unwrap());
+        m_rhiShader = m_rhiDevice->LoadShader(ResourceId("/home/dmitry/Projects/Entix-Engine/Shaders/SimpleShader.slang"));
 
         return {};
     }

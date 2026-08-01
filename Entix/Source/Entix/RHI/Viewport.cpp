@@ -7,7 +7,7 @@ namespace Entix::RHI
     {
     }
 
-    void Viewport::UpdateAbsolute(const Rect& targetSize) noexcept
+    void Viewport::UpdateAbsolute(const Extent2D& targetSize) noexcept
     {
         m_absolutePos.x = static_cast<Uint32>(x * targetSize.x);
         m_absolutePos.y = static_cast<Uint32>(y * targetSize.y);
@@ -20,12 +20,12 @@ namespace Entix::RHI
         return static_cast<float>(m_absoluteSize.x - m_absolutePos.x) / static_cast<float>(m_absoluteSize.y - m_absolutePos.y);
     }
 
-    const Rect& Viewport::GetAbsolutePosition() const noexcept
+    const Extent2D& Viewport::GetAbsolutePosition() const noexcept
     {
         return m_absolutePos;
     }
 
-    const Rect& Viewport::GetAbsoluteSize() const noexcept
+    const Extent2D& Viewport::GetAbsoluteSize() const noexcept
     {
         return m_absoluteSize;
     }

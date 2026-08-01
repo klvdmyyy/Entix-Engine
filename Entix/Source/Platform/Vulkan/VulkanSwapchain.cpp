@@ -14,11 +14,11 @@ namespace Entix
         vk::raii::PhysicalDevice& physicalDevice,
         vk::raii::Device& device,
         Window& window,
-        vk::raii::SurfaceKHR& surface
+        vk::raii::SurfaceKHR surface
     ) : m_physicalDevice(physicalDevice),
         m_device(device),
         m_window(window),
-        m_surface(surface)
+        m_surface(std::move(surface))
     {
         CreateSwapchain().Unwrap();
         CreateImageViews().Unwrap();

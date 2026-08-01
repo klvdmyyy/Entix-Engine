@@ -1,5 +1,6 @@
 #include "Platform/Vulkan/VulkanShader.h"
 
+#include "Entix/RHI/Shader.h"
 #include "Platform/Vulkan/VulkanBase.h"
 
 #include "Entix/Core/Globals.h"
@@ -8,11 +9,10 @@
 namespace Entix
 {
     VulkanShader::VulkanShader(
-        vk::raii::Device& device,
-        const RHI::ShaderCompilationData& compilationData
-    ) : m_compilationData(compilationData), m_device(device)
+        const ResourceId& resourceId,
+        vk::raii::Device& device
+    ) : RHI::Shader(resourceId), m_device(device)
     {
-        CreateShaderModule().Unwrap();
     }
 
     VulkanShader::~VulkanShader()
@@ -20,13 +20,36 @@ namespace Entix
         EX_LOG(LogRHI, Debug, "Destroying VulkanShader class");
     }
 
-    Result<void> VulkanShader::CreateShaderModule()
+    Result<void> VulkanShader::LoadInternal()
     {
-        EX_LOG(LogRHI, Debug, "Creating shader module. Shader code size: {}", m_compilationData.code.size());
+        auto shaderc = RHI::ShaderCompiler::Instance();
+
+        EX_LET_TRY(compilationData, shaderc->Compile(GetResourceId().GetFilepath()));
+
+        EX_TRY(CreateShaderModule(compilationData));
+
+        return {};
+    }
+
+    Result<void> VulkanShader::ReloadInternal()
+    {
+        Unload();
+        EX_TRY(RHI::ShaderCompiler::Instance()->RecreateSession());
+        return Load();
+    }
+
+    void VulkanShader::UnloadInternal()
+    {
+        m_shaderModule.clear();
+    }
+
+    Result<void> VulkanShader::CreateShaderModule(const RHI::ShaderCompilationData& compilationData)
+    {
+        EX_LOG(LogRHI, Debug, "Creating shader module. Shader code size: {}", compilationData.code.size());
 
         vk::ShaderModuleCreateInfo createInfo;
-        createInfo.codeSize = m_compilationData.code.size();
-        createInfo.pCode = reinterpret_cast<const Uint32*>(m_compilationData.code.data());
+        createInfo.codeSize = compilationData.code.size();
+        createInfo.pCode = reinterpret_cast<const Uint32*>(compilationData.code.data());
 
         EX_VK_TRY(
             m_shaderModule = vk::raii::ShaderModule(m_device, createInfo);

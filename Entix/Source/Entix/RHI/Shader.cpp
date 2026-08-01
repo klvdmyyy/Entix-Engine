@@ -42,6 +42,29 @@ namespace Entix::RHI
             Shutdown().Unwrap();
         }
 
+        Result<void> RecreateSession() final
+        {
+            slang::TargetDesc spirvTargetDesc;
+            spirvTargetDesc.format = SLANG_SPIRV;
+            spirvTargetDesc.profile = m_globalSession->findProfile("spirv_1_5");
+
+            std::vector<const char*> searchDirs = {
+                "/home/dmitry/Projects/Entix-Engine/Shaders",
+            };
+
+            EX_LOG(ShaderCompilation, Info, "Shader search paths: {}", searchDirs);
+
+            slang::SessionDesc sessionDesc;
+            sessionDesc.targets = &spirvTargetDesc;
+            sessionDesc.targetCount = 1;
+            sessionDesc.searchPathCount = static_cast<Int64>(searchDirs.size());
+            sessionDesc.searchPaths = searchDirs.data();
+
+            EX_SLANG_TRY(m_globalSession->createSession(sessionDesc, m_session.writeRef()));
+
+            return {};
+        }
+
         Result<ShaderCompilationData> Compile(const std::filesystem::path& filepath) noexcept final
         {
 
@@ -127,7 +150,7 @@ namespace Entix::RHI
 
             return res;
         }
-
+        
         [[nodiscard]]
         constexpr const char* GetStageEntryPoint(ShaderStage stage) const noexcept
         {
@@ -146,23 +169,7 @@ namespace Entix::RHI
             EX_LOG(ShaderCompilation, Info, "Initializing a ShaderCompiler");
             slang::createGlobalSession(m_globalSession.writeRef());
 
-            slang::TargetDesc spirvTargetDesc;
-            spirvTargetDesc.format = SLANG_SPIRV;
-            spirvTargetDesc.profile = m_globalSession->findProfile("spirv_1_5");
-
-            std::vector<const char*> searchDirs = {
-                "/home/dmitry/Projects/Entix-Engine/Shaders",
-            };
-
-            EX_LOG(ShaderCompilation, Info, "Shader search paths: {}", searchDirs);
-
-            slang::SessionDesc sessionDesc;
-            sessionDesc.targets = &spirvTargetDesc;
-            sessionDesc.targetCount = 1;
-            sessionDesc.searchPathCount = static_cast<Int64>(searchDirs.size());
-            sessionDesc.searchPaths = searchDirs.data();
-
-            EX_SLANG_TRY(m_globalSession->createSession(sessionDesc, m_session.writeRef()));
+            EX_TRY(RecreateSession());
 
             return {};
         }

@@ -8,7 +8,6 @@
 #include "Entix/Resources/Resource.h"
 
 #include <vector>
-#include <bitset>
 #include <filesystem>
 #include <functional>
 
@@ -60,30 +59,16 @@ namespace Entix::RHI
         [[nodiscard]]
         virtual Result<ShaderCompilationData> Compile(const std::filesystem::path& filepath) noexcept = 0;
 
+        virtual Result<void> RecreateSession() = 0;
+
         [[nodiscard]]
         virtual const char* GetStageEntryPoint(ShaderStage stage) const noexcept = 0;
     };
 
-    class Shader
+    class Shader : public Resource
     {
     public:
+        Shader(const ResourceId& resourceId) : Resource(resourceId) {}
         virtual ~Shader() = default;
-
-        virtual Result<void> EachStage(std::function<Result<void>(ShaderStage stage)> callback) const noexcept
-        {
-            for(ShaderStage stage : {
-                ShaderStage::Vertex,
-                ShaderStage::Fragment
-            })
-            {
-                if(HasStage(stage))
-                {
-                    EX_TRY(callback(stage));
-                }
-            }
-
-            return {};
-        }
-        virtual bool HasStage(ShaderStage stage) const noexcept = 0;
     };
 }

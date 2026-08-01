@@ -16,7 +16,7 @@ namespace Entix
             vk::raii::PhysicalDevice& physicalDevice,
             vk::raii::Device& device,
             Window& window,
-            vk::raii::SurfaceKHR& surface
+            vk::raii::SurfaceKHR surface
         );
         ~VulkanSwapchain();
 
@@ -33,7 +33,7 @@ namespace Entix
         vk::raii::Device& m_device;
         Window& m_window;
 
-        vk::raii::SurfaceKHR& m_surface;
+        vk::raii::SurfaceKHR m_surface;
         vk::raii::SwapchainKHR m_swapchain = nullptr;
         std::vector<vk::Image> m_swapchainImages;
         vk::SurfaceFormatKHR m_swapchainSurfaceFormat;
