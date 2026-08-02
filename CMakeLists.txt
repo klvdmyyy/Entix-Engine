@@ -1,11 +1,12 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 cmake_minimum_required(VERSION 3.31.6)
 
-project(Entix VERSION 1.0.0)
+include(third-party)
 
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+project(Entix-Engine VERSION 1.0.0)
 
-# set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -26,8 +27,8 @@ file(
   *.glsl
 )
 
-include(etags)
-etags_generate(${CL_FILES})
+# include(etags)
+# etags_generate(${CL_FILES})
 
 file(
   GLOB_RECURSE
@@ -39,15 +40,56 @@ file(
   *.glsl
 )
 
-list(FILTER VBOX_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
-list(FILTER VBOX_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/[Bb]uild)
-list(FILTER VBOX_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/[Oo]ut)
-list(FILTER VBOX_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Vendor)
+list(FILTER PROJECT_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+list(FILTER PROJECT_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/[Bb]uild)
+list(FILTER PROJECT_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/[Oo]ut)
+list(FILTER PROJECT_CL_FILES EXCLUDE REGEX ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Vendor)
 
 include(formatting)
 clang_format(format ${PROJECT_CL_FILES})
 
-set(ENTIX_SHADERS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
+add_subdirectory(Entix)
+add_subdirectory(Sandbox)
 
-add_subdirectory(Libraries)
-add_subdirectory(Projects)
+#####################################################
+############### Third Party Libraries ###############
+
+include(FetchContent)
+
+FetchContent_Declare(
+  EnTT
+  GIT_REPOSITORY https://github.com/skypjack/entt
+  GIT_TAG v3.16.0
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(EnTT)
+
+FetchContent_Declare(
+  glm
+  GIT_REPOSITORY https://github.com/g-truc/glm
+  GIT_TAG 1.0.3
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(glm)
+
+FetchContent_Declare(
+  Tracy
+  GIT_REPOSITORY https://github.com/wolfpld/tracy
+  GIT_TAG bf21d8ea115318e32ea0d97d2b4fbcb9f5773774
+  OVERRIDE_FIND_PACKAGE
+)
+
+set(TRACY_ON_DEMAND OFF CACHE BOOL "" FORCE)
+set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(Tracy)
+
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+  GIT_TAG v3.12.0
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
