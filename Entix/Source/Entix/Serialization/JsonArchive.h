@@ -20,9 +20,14 @@
 #include <unordered_map>
 #include <set>
 #include <map>
+#include <stack>
+
+#include <nlohmann/json.hpp>
 
 namespace Entix
 {
+    using json = nlohmann::json;
+
     template<typename T>
     class AField
     {
@@ -44,7 +49,7 @@ namespace Entix
         {
             if(auto res = this->Process(field.name, field.value); res.IsError())
             {
-                EX_LOG(Serialization, Error, "Failed to serialize field '{}'", field.name);
+                EX_LOG(Serialization, Error, "Failed to serialize field '{}'. Error:\n{}", field.name, res.UnwrapErr());
             }
             return *this;
         }
@@ -163,6 +168,8 @@ namespace Entix
 
     private:
         Result<void> PreprocessWriting(IO::TextStream& stream);
+
+        std::stack<json> m_dataStack;
 
         bool m_skipNames = false;
         bool m_isFirstValue = true;

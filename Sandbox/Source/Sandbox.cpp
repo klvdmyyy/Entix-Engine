@@ -8,13 +8,26 @@ namespace Entix
 {
     struct SerTest
     {
-        int first = 10;
-        String second = "Hello, World!";
+        Uint32 first;
+        Int32 second;
+        String third;
 
         void Serialize(JsonArchive& ar)
         {
             ar & AField("first", first)
-               & AField("second", second);
+               & AField("second", second)
+               & AField("third", third);
+        }
+
+        static SerTest Deserialize(JsonArchive& ar)
+        {
+            SerTest res;
+
+            ar & AField("first", res.first)
+               & AField("second", res.second)
+               & AField("third", res.third);
+
+            return res;
         }
     };
 
@@ -24,25 +37,12 @@ namespace Entix
         SandboxApp()
             : Application(ApplicationConfig())
         {
-            IO::FileStream stream("ArchiveTesting.json", IO::StreamMode::Write);
+            IO::FileStream stream("ArchiveTesting.json", IO::StreamMode::Read);
             JsonArchive ar(stream);
 
-            int value = 10;
+            auto serTest = SerTest::Deserialize(ar);
 
-            std::vector<int> arrayValue = {1, 2, 3, 4, 5, 6, 7};
-            std::unordered_map<String, int> seqValue = {
-                {"a", 1},
-                {"b", 2},
-                {"c", 3}
-            };
-
-            SerTest structureValue;
-
-            ar & AField("hello", value)
-               & AField("world", value)
-               & AField("array", arrayValue)
-               & AField("sequence", seqValue)
-               & AField("structure", structureValue);
+            EX_LOG(LogTemp, Info, "first: {} second: {} third: {}", serTest.first, serTest.second, serTest.third);
         }
     };
 

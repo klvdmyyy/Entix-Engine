@@ -9,24 +9,50 @@ namespace Entix
     {
         auto stream = IO::TextStream::CreateNonOwned(m_stream);
 
-        stream.WriteText("{").Unwrap();
+        if(IsReading())
+        {
+            m_dataStack.emplace(json::parse(stream.ReadAll().Unwrap()));
+        }
+        else
+        {
+            stream.WriteText("{").Unwrap();
+        }
     }
 
     JsonArchive::~JsonArchive()
     {
         auto stream = IO::TextStream::CreateNonOwned(m_stream);
 
-        stream.WriteText("}").Unwrap();
+        if(IsReading())
+        {
+        }
+        else
+        {
+            stream.WriteText("}").Unwrap();
+        }
     }
 
     Result<void> JsonArchive::BeginArray(StringView name) noexcept
     {
         auto stream = IO::TextStream::CreateNonOwned(m_stream);
 
-        EX_TRY(PreprocessWriting(stream));
-        EX_TRY(stream.WriteTextFmt("\"{}\":[", name));
-        m_isFirstValue = true;
-        m_skipNames = true;
+        if(IsReading())
+        {
+            if(!m_dataStack.top().contains(name))
+                return Error(std::format("No required field with name: {}", name));
+
+            m_dataStack.emplace(m_dataStack.top()[name]);
+
+            if(!m_dataStack.top().is_array())
+                return Error("Failed to read JSON array data!");
+        }
+        else
+        {
+            EX_TRY(PreprocessWriting(stream));
+            EX_TRY(stream.WriteTextFmt("\"{}\":[", name));
+            m_isFirstValue = true;
+            m_skipNames = true;
+        }
 
         return {};
     }
@@ -35,8 +61,15 @@ namespace Entix
     {
         auto stream = IO::TextStream::CreateNonOwned(m_stream);
 
-        EX_TRY(stream.WriteText("]"));
-        m_skipNames = false;
+        if(IsReading())
+        {
+            m_dataStack.pop();
+        }
+        else
+        {
+            EX_TRY(stream.WriteText("]"));
+            m_skipNames = false;
+        }
 
         return {};
     }
@@ -45,9 +78,22 @@ namespace Entix
     {
         auto stream = IO::TextStream::CreateNonOwned(m_stream);
 
-        EX_TRY(PreprocessWriting(stream));
-        EX_TRY(stream.WriteTextFmt("\"{}\":{{", name));
-        m_isFirstValue = true;
+        if(IsReading())
+        {
+            if(!m_dataStack.top().contains(name))
+                return Error(std::format("No required field with name: {}", name));
+
+            m_dataStack.emplace(m_dataStack.top()[name]);
+
+            if(!m_dataStack.top().is_structured())
+                return Error("Failed to read JSON sequence data!");
+        }
+        else
+        {
+            EX_TRY(PreprocessWriting(stream));
+            EX_TRY(stream.WriteTextFmt("\"{}\":{{", name));
+            m_isFirstValue = true;
+        }
 
         return {};
     }
@@ -56,7 +102,14 @@ namespace Entix
     {
         auto stream = IO::TextStream::CreateNonOwned(m_stream);
 
-        EX_TRY(stream.WriteText("}"));
+        if(IsReading())
+        {
+            m_dataStack.pop();
+        }
+        else
+        {
+            EX_TRY(stream.WriteText("}"));
+        }
 
         return {};
     }
@@ -67,7 +120,15 @@ namespace Entix
 
         if(IsReading())
         {
+            if(!m_dataStack.top().contains(name))
+                return Error(std::format("No required field with name: {}", name));
 
+            auto jsonValue = m_dataStack.top()[name];
+
+            if(jsonValue.is_number_unsigned())
+                return Error("Failed to read JSON unsgigned integer data!");
+
+            value = jsonValue.get<Uint32>();
         }
         else
         {
@@ -91,7 +152,15 @@ namespace Entix
 
         if(IsReading())
         {
+            if(!m_dataStack.top().contains(name))
+                return Error(std::format("No required field with name: {}", name));
 
+            auto jsonValue = m_dataStack.top()[name];
+
+            if(jsonValue.is_number_integer())
+                return Error("Failed to read JSON integer data!");
+
+            value = jsonValue.get<Int32>();
         }
         else
         {
@@ -115,7 +184,15 @@ namespace Entix
 
         if(IsReading())
         {
+            if(!m_dataStack.top().contains(name))
+                return Error(std::format("No required field with name: {}", name));
 
+            auto jsonValue = m_dataStack.top()[name];
+
+            if(jsonValue.is_string())
+                return Error("Failed to read JSON string data!");
+
+            value = jsonValue.get<String>();
         }
         else
         {
