@@ -13,6 +13,7 @@
 
 #include "Entix/Core/String.h"
 
+#include <type_traits>
 #include <vector>
 #include <array>
 #include <unordered_set>
@@ -59,7 +60,8 @@ namespace Entix
         ENTIX_API Result<void> BeginSequence(StringView name) noexcept;
         ENTIX_API Result<void> EndSequence() noexcept;
 
-        template<IndirectString T>
+        template<typename T>
+            requires (IndirectString<T> && std::is_scoped_enum_v<T>)
         Result<void> Process(StringView name, T& obj)
         {
             if(IsReading())

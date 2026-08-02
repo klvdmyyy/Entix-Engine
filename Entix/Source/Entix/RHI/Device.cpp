@@ -16,6 +16,8 @@ namespace Entix
             case Entix::RHI::GraphicsApi::Vulkan:
                 return "Vulkan";
         }
+
+        Panic();
     }
 
     template<>
