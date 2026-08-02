@@ -17,6 +17,26 @@ namespace Entix
     T FromString(const String& str);
 
     template<typename T>
+    T DefaultOf();
+
+    template<typename T>
+    concept HasDefaultStaticMethod = requires ()
+    {
+        { T::Default() } -> std::same_as<T>;
+    };
+
+    template<typename T>
+    concept DefaultOfImplemented = requires ()
+    {
+        { DefaultOf<T>() } -> std::same_as<T>;
+    };
+
+    template<typename T>
+    concept HasDefaults = HasDefaultStaticMethod<T>
+                       || std::default_initializable<T>
+                       || DefaultOfImplemented<T>;
+
+    template<typename T>
     concept ToStringImplemented = requires (const T& obj)
     {
         { ToString(obj) } -> std::same_as<String>;
@@ -46,9 +66,10 @@ namespace Entix
     };
 
     template<typename T>
-    concept ConstructibleFromString = std::constructible_from<T, String>
+    concept ConstructibleFromString = (std::constructible_from<T, String>
                                    || HasFromStaticMethodFor<T, String>
-                                   || FromStringImplemented<T>;
+                                   || FromStringImplemented<T>)
+                                   && HasDefaults<T>;
 
     // Косвенно строка.
     //
@@ -56,6 +77,20 @@ namespace Entix
     // объект <-> строка.
     template<typename T>
     concept IndirectString = ConvertibleToString<T> && ConstructibleFromString<T>;
+
+    template<typename T>
+        requires (std::default_initializable<T>)
+    T DefaultOf()
+    {
+        return T{};
+    }
+
+    template<typename T>
+        requires (HasDefaultStaticMethod<T>)
+    T DefaultOf()
+    {
+        return T::Default();
+    }
 
     template<typename T>
         requires (HasToStringMethod<T>)

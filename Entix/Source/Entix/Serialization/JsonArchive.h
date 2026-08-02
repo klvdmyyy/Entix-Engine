@@ -59,6 +59,24 @@ namespace Entix
         ENTIX_API Result<void> BeginSequence(StringView name) noexcept;
         ENTIX_API Result<void> EndSequence() noexcept;
 
+        template<IndirectString T>
+        Result<void> Process(StringView name, T& obj)
+        {
+            if(IsReading())
+            {
+                String str;
+                EX_TRY(this->Process(name, str));
+                obj = FromString<T>(str);
+            }
+            else
+            {
+                String str = ToString(obj);
+                EX_TRY(this->Process(name, str));
+            }
+
+            return {};
+        }
+
         template<Serializable<JsonArchive> T>
         Result<void> Process(StringView name, std::vector<T>& value)
         {
