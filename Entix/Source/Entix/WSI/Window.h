@@ -3,6 +3,8 @@
 #include "Entix/Core/Types.h"
 #include "Entix/Core/Result.h"
 
+#include "Entix/Serialization/JsonArchive.h"
+
 namespace Entix
 {
     struct WindowConfig
@@ -12,6 +14,24 @@ namespace Entix
         Uint32 width = 800;
         Uint32 height = 600;
         String title = "No Title";
+
+        void Serialize(JsonArchive& ar)
+        {
+            ar & AField("width", width)
+               & AField("height", height)
+               & AField("title", title);
+        }
+
+        static WindowConfig Deserialize(JsonArchive& ar)
+        {
+            WindowConfig config;
+
+            ar & AField("width", config.width)
+               & AField("height", config.height)
+               & AField("title", config.title);
+
+            return config;
+        }
     };
 
     class Window

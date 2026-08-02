@@ -11,7 +11,8 @@ namespace Entix
 
         if(IsReading())
         {
-            m_dataStack.emplace(json::parse(stream.ReadAll().Unwrap()));
+            if(auto res = stream.ReadAll(); res.IsSuccess())
+                m_dataStack.emplace(json::parse(res.Unwrap()));
         }
         else
         {
@@ -125,7 +126,7 @@ namespace Entix
 
             auto jsonValue = m_dataStack.top()[name];
 
-            if(jsonValue.is_number_unsigned())
+            if(!jsonValue.is_number_unsigned())
                 return Error("Failed to read JSON unsgigned integer data!");
 
             value = jsonValue.get<Uint32>();
@@ -157,7 +158,7 @@ namespace Entix
 
             auto jsonValue = m_dataStack.top()[name];
 
-            if(jsonValue.is_number_integer())
+            if(!jsonValue.is_number_integer())
                 return Error("Failed to read JSON integer data!");
 
             value = jsonValue.get<Int32>();
@@ -189,7 +190,7 @@ namespace Entix
 
             auto jsonValue = m_dataStack.top()[name];
 
-            if(jsonValue.is_string())
+            if(!jsonValue.is_string())
                 return Error("Failed to read JSON string data!");
 
             value = jsonValue.get<String>();

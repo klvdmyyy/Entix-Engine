@@ -24,6 +24,8 @@ namespace Entix::IO
 
         ENTIX_API StreamMode GetStreamMode() const noexcept override { return k_mode; }
 
+        ENTIX_API bool Exists() const noexcept { return m_exists; }
+
     private:
         const StreamMode k_mode;
 

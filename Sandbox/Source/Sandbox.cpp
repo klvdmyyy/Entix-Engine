@@ -35,7 +35,6 @@ namespace Entix
     {
     public:
         SandboxApp()
-            : Application(ApplicationConfig())
         {
             IO::FileStream stream("ArchiveTesting.json", IO::StreamMode::Read);
             JsonArchive ar(stream);

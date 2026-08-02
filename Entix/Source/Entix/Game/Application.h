@@ -6,13 +6,15 @@
 
 #include "Entix/Core/Events/Listener.h"
 
-#include "Entix/RHI/Pipeline.h"
 #include "Entix/WSI/Base.h"
 #include "Entix/WSI/Window.h"
 
+#include "Entix/RHI/Pipeline.h"
 #include "Entix/RHI/Device.h"
 #include "Entix/RHI/Shader.h"
 #include "Entix/RHI/Swapchain.h"
+
+#include "Entix/Serialization/JsonArchive.h"
 
 namespace Entix
 {
@@ -25,12 +27,28 @@ namespace Entix
 
         WindowConfig window;
         RHI::GraphicsApi graphicsApi = RHI::GraphicsApi::Vulkan;
+
+        void Serialize(JsonArchive& ar)
+        {
+            ar & AField("window", window)
+               & AField("graphicsApi", graphicsApi);
+        }
+
+        static ApplicationConfig Deserialize(JsonArchive& ar)
+        {
+            ApplicationConfig config;
+
+            ar & AField("window", config.window)
+               & AField("graphicsApi", config.graphicsApi);
+
+            return config;
+        }
     };
 
     class Application : EventListener
     {
     public:
-        ENTIX_API Application(const ApplicationConfig& config);
+        ENTIX_API Application();
         ENTIX_API ~Application();
 
         // Unable to copy
@@ -53,7 +71,7 @@ namespace Entix
         ENTIX_API Result<void> Shutdown();
 
         bool m_quit;
-        const ApplicationConfig k_config;
+        ApplicationConfig m_config;
 
         Ref<Window> m_window;
         Ref<RHI::Device> m_rhiDevice;

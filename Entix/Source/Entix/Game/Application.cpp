@@ -5,6 +5,7 @@
 
 #include "Entix/Core/Events/Dispatcher.h"
 
+#include "Entix/Core/IO/FileStream.h"
 #include "Entix/Core/Tasks/ThreadPool.h"
 
 #include "Entix/Resources/HotReloadResourceManager.h"
@@ -18,9 +19,24 @@
 
 namespace Entix
 {
-    Application::Application(const ApplicationConfig& config)
-        : m_quit(false), k_config(config)
+    Application::Application()
+        : m_quit(false)
     {
+        // Read config
+        {
+            IO::FileStream configFile("ApplicationConfig.json", IO::StreamMode::Read);
+            JsonArchive configArchive(configFile);
+
+            if(configFile.Exists())
+            {
+                m_config = ApplicationConfig::Deserialize(configArchive);
+            }
+            else
+            {
+                m_config = DefaultOf<ApplicationConfig>();
+            }
+        }
+
         // Main application class should have greater priority than anything else.
         EventBus::AddListener(this, EventCategory::Application | EventCategory::Window, 5);
 
@@ -41,6 +57,14 @@ namespace Entix
 
         // Unsubscribe from events
         EventBus::RemoveListener(this);
+
+        // Save config
+        {
+            IO::FileStream configFile("ApplicationConfig.json", IO::StreamMode::Write);
+            JsonArchive configArchive(configFile);
+
+            m_config.Serialize(configArchive);
+        }
     }
 
     Result<void> Application::Initialize()
@@ -53,7 +77,7 @@ namespace Entix
 
         EX_TRY(WSI::Initialize());
 
-        m_window = CreateRef<WindowSDL>(k_config.window);
+        m_window = CreateRef<WindowSDL>(m_config.window);
         m_rhiDevice = CreateRef<VulkanDevice>(m_window.get());
 
         m_rhiSwapchain = Ref<RHI::Swapchain>(m_rhiDevice->CreateSwapchain(*m_window).Unwrap());
