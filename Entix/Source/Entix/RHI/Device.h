@@ -44,11 +44,11 @@ namespace Entix::RHI
 namespace Entix
 {
     template<>
-    RHI::GraphicsApi DefaultOf<RHI::GraphicsApi>();
+    ENTIX_API RHI::GraphicsApi DefaultOf<RHI::GraphicsApi>();
 
     template<>
-    String ToString<RHI::GraphicsApi>(const RHI::GraphicsApi& api);
+    ENTIX_API String ToString<RHI::GraphicsApi>(const RHI::GraphicsApi& api);
 
     template<>
-    RHI::GraphicsApi FromString<RHI::GraphicsApi>(const String& str_);
+    ENTIX_API RHI::GraphicsApi FromString<RHI::GraphicsApi>(const String& str_);
 }
