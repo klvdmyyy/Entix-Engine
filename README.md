@@ -1,12 +1,16 @@
 
 # Entix Engine
 
-**Entix Engine is a powerfull 3d game engine written in modern C++ with monolithic architecture.**
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/9jCmeAGZtj)
+[![Boosty](https://img.shields.io/badge/Boosty-FF6600?style=for-the-badge&logo=boosty&logoColor=white)](https://boosty.to/entixengine)
+
+**Entix Engine is a powerfull 3D game engine written in modern C++ with monolithic architecture.**
 
 ## Table Of Content
 
 - [Features](#features)
     - [Simple serialization](#simple-serialization)
+	- [RHI (Rendering Hardware Interface)](#rhi-rendering-hardware-interface)
 
 ## Features
 
@@ -49,3 +53,5 @@ struct MyDataStructure
 	}
 };
 ```
+
+### RHI (Rendering Hardware Interface)
