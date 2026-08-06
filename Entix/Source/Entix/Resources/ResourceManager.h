@@ -20,6 +20,9 @@ namespace Entix
     class ResourceManager
     {
     public:
+        template<typename T>
+        using Future = std::shared_future<T>;
+
         ENTIX_API static void SetInstance(ResourceManager* rm);
         ENTIX_API static ResourceManager* Instance();
 
@@ -57,7 +60,10 @@ namespace Entix
                     return Ref<Resource>(nullptr);
                 }
 
-                m_refCounts[resourceId]++;
+                {
+                    m_refCounts[resourceId]++;
+                }
+
                 return resource;
             });
 
@@ -97,7 +103,7 @@ namespace Entix
 
         virtual void LoadMiddleware([[maybe_unused]] const ResourceId& resourceId) {}
 
-        Result<std::shared_future<Ref<Resource>>> FindResourceById(const ResourceId& resourceId);
+        Result<Future<Ref<Resource>>> FindResourceById(const ResourceId& resourceId);
 
     private:
         friend bool HasResourceByIndex(
@@ -126,7 +132,7 @@ namespace Entix
 
         ENTIX_API static Scope<ResourceManager> CreateScopeRM();
 
-        using StoragedResource = std::shared_future<Ref<Resource>>;
+        using StoragedResource = Future<Ref<Resource>>;
 
         template<typename T>
         using ResourceStorageInner =

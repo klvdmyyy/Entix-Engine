@@ -37,7 +37,7 @@ namespace Entix::RHI
         virtual ResourceHandle<Shader> LoadShader(const ResourceId& resourceId) = 0;
 
         virtual Result<Swapchain*> CreateSwapchain(Window& window) = 0;
-        // virtual Result<GraphicsPipeline*> CreateGraphicsPipeline(const GraphicsPipelineSpecification& spec) = 0;
+        virtual Result<GraphicsPipeline*> CreateGraphicsPipeline(const GraphicsPipelineSpecification& spec, const std::vector<ResourceHandle<Shader>>& shaders) = 0;
     };
 }
 

@@ -14,7 +14,8 @@ namespace Entix
     public:
         VulkanGraphicsPipeline(
             vk::raii::Device& device,
-            const RHI::GraphicsPipelineSpecification& spec
+            const RHI::GraphicsPipelineSpecification& spec,
+            const std::vector<ResourceHandle<RHI::Shader>>& shaders
         );
         ~VulkanGraphicsPipeline();
 
@@ -23,10 +24,16 @@ namespace Entix
         void OnShaderReloaded(const ResourceId& shaderId);
 
     private:
+        Result<void> CreateGraphicsPipeline();
+
         RHI::GraphicsPipelineSpecification m_spec;
+        std::vector<ResourceHandle<RHI::Shader>> m_shaders;
 
         vk::raii::Device& m_device;
 
-        Uint8 m_enabledStages = 0;
+        vk::raii::PipelineLayout m_pipelineLayout = nullptr;
+        vk::raii::Pipeline m_pipeline = nullptr;
+
+        Uint8 m_foundStages = 0;
     };
 }

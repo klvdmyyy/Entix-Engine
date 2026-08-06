@@ -59,6 +59,8 @@ namespace Entix
 
         ENTIX_API Result<void> Process(StringView name, String& value);
 
+        ENTIX_API Result<void> Process(StringView name, bool& value);
+
         ENTIX_API Result<void> BeginArray(StringView name) noexcept;
         ENTIX_API Result<void> EndArray() noexcept;
 
@@ -173,6 +175,7 @@ namespace Entix
 
         bool m_skipNames = false;
         bool m_isFirstValue = true;
+        Usize m_arrayCounter = 0;
 
         IO::Stream& m_stream;
     };
