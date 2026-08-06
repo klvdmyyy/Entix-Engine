@@ -28,6 +28,8 @@ namespace Entix
 
         EX_TRY(CreateShaderModule(compilationData));
 
+        m_stages = compilationData.stages;
+
         return {};
     }
 
@@ -48,12 +50,14 @@ namespace Entix
         EX_LOG(LogRHI, Debug, "Creating shader module. Shader code size: {}", compilationData.code.size());
 
         vk::ShaderModuleCreateInfo createInfo;
-        createInfo.codeSize = compilationData.code.size();
+        createInfo.codeSize = compilationData.code.size() * sizeof(std::byte);
         createInfo.pCode = reinterpret_cast<const Uint32*>(compilationData.code.data());
 
         EX_VK_TRY(
             m_shaderModule = vk::raii::ShaderModule(m_device, createInfo);
         );
+
+        m_stages = compilationData.stages;
 
         return {};
     }

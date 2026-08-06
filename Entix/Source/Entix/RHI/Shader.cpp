@@ -46,7 +46,7 @@ namespace Entix::RHI
         {
             slang::TargetDesc spirvTargetDesc;
             spirvTargetDesc.format = SLANG_SPIRV;
-            spirvTargetDesc.profile = m_globalSession->findProfile("spirv_1_5");
+            spirvTargetDesc.profile = m_globalSession->findProfile("spirv_1_4");
 
             std::vector<const char*> searchDirs = {
                 "/home/dmitry/Projects/Entix-Engine/Shaders",
@@ -97,7 +97,7 @@ namespace Entix::RHI
             EX_SLANG_TRY(m_session->createCompositeComponentType(components, sizeof(components) / sizeof(slang::IComponentType*), linkedProgram.writeRef()));
 
             Slang::ComPtr<slang::IBlob> codeBlob;
-            EX_SLANG_TRY(linkedProgram->getEntryPointCode(0, 0, codeBlob.writeRef(), diagnosticBlob.writeRef()));
+            EX_SLANG_TRY(linkedProgram->getTargetCode(0, codeBlob.writeRef(), diagnosticBlob.writeRef()));
 
             EX_SLANG_CHECK_DIAGNOSTIC(diagnosticBlob);
 
@@ -120,7 +120,7 @@ namespace Entix::RHI
                     switch(stage)
                     {
                         case SLANG_STAGE_VERTEX:
-                            res.stages |= ShaderStage::Vertex;
+                            res.stages = res.stages | ShaderStage::Vertex;
                             EX_LOG(
                                 ShaderCompilation, Trace,
                                 "Vertex stage entry point found in '{}'",
@@ -129,7 +129,7 @@ namespace Entix::RHI
                             break;
 
                         case SLANG_STAGE_FRAGMENT:
-                            res.stages |= ShaderStage::Fragment;
+                            res.stages = res.stages | ShaderStage::Fragment;
                             EX_LOG(
                                 ShaderCompilation, Trace,
                                 "Fragment stage entry point found in '{}'",
@@ -188,5 +188,22 @@ namespace Entix::RHI
     {
         static SlangShaderCompiler s_instance;
         return &s_instance;
+    }
+}
+
+namespace Entix
+{
+    template<>
+    String ToString<RHI::ShaderStage>(const RHI::ShaderStage& stage)
+    {
+        using ShaderStage = RHI::ShaderStage;
+
+        switch(stage)
+        {
+            case ShaderStage::Vertex: return "Vertex";
+            case ShaderStage::Fragment: return "Fragment";
+        }
+
+        Panic("Unreachable");
     }
 }

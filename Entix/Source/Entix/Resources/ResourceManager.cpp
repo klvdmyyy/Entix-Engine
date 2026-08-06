@@ -37,6 +37,7 @@ namespace Entix
             return static_cast<void*>(it->second.get().get());
         }
 
+        EX_LOG(Resources, Error, "Trying to access to unexisting resource.\nType: {}\nId: {}", idx.name(), (bool)resourceId ? resourceId.GetFilenameString() : "null");
         return nullptr;
     }
 
@@ -48,7 +49,7 @@ namespace Entix
         return GetResource(idx, resourceId) == nullptr ? false : true;
     }
 
-    Result<std::shared_future<Ref<Resource>>> ResourceManager::FindResourceById(const ResourceId& resourceId)
+    Result<ResourceManager::Future<Ref<Resource>>> ResourceManager::FindResourceById(const ResourceId& resourceId)
     {
         auto typeIt = std::ranges::find_if(m_resources, [&resourceId](const auto& pair){
             return std::ranges::any_of(pair.second, [&resourceId](const auto& pair) {

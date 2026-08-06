@@ -34,6 +34,7 @@ namespace Entix::IO
 
     FileStream::~FileStream()
     {
+        Flush();
         m_file.close();
     }
 

@@ -8,7 +8,6 @@ namespace Entix::RHI
 {
     struct GraphicsPipelineSpecification
     {
-        std::vector<ResourceHandle<Shader>> shaders;
     };
 
     class GraphicsPipeline

@@ -14,10 +14,10 @@ namespace Entix
     }
 
     void DecrementResourceRefCountByIndex(
-        ResourceManager* rm,
-        const ResourceId& id
+        [[maybe_unused]] ResourceManager* rm,
+        [[maybe_unused]] const ResourceId& id
     )
     {
-        rm->DecrementRefCountOf(id);
+        // rm->DecrementRefCountOf(id);
     }
 }

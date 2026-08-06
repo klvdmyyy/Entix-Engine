@@ -9,6 +9,7 @@
 
 #include "Entix/Resources/ResourceManager.h"
 
+#include "Platform/Vulkan/VulkanPipeline.h"
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"
 
@@ -93,7 +94,9 @@ namespace Entix
 
     ResourceHandle<RHI::Shader> VulkanDevice::LoadShader(const ResourceId& resourceId)
     {
-        return ResourceManager::Instance()->Load<VulkanShader>(resourceId, m_device);
+        auto shader = (ResourceHandle<RHI::Shader>)ResourceManager::Instance()->Load<VulkanShader>(resourceId, m_device);
+        EX_LOG(LogTemp, Info, "Vulkan Shader Id: {}", shader.GetId().GetFilenameString());
+        return shader;
     }
 
     Result<RHI::Swapchain*> VulkanDevice::CreateSwapchain(Window& window)
@@ -109,6 +112,11 @@ namespace Entix
             EX_LET_TRY(surface, CreateSurface(&window));
             return new VulkanSwapchain(m_physicalDevice, m_device, window, vk::raii::SurfaceKHR(m_instance, surface));
         }
+    }
+
+    Result<RHI::GraphicsPipeline*> VulkanDevice::CreateGraphicsPipeline(const RHI::GraphicsPipelineSpecification& spec, const std::vector<ResourceHandle<RHI::Shader>>& shaders)
+    {
+        return new VulkanGraphicsPipeline(m_device, spec, shaders);
     }
 
     Result<void> VulkanDevice::CreateInstance()

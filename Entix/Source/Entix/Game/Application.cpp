@@ -8,6 +8,7 @@
 #include "Entix/Core/IO/FileStream.h"
 #include "Entix/Core/Tasks/ThreadPool.h"
 
+#include "Entix/RHI/Pipeline.h"
 #include "Entix/Resources/HotReloadResourceManager.h"
 #include "Entix/Resources/ResourceManager.h"
 
@@ -20,7 +21,7 @@
 namespace Entix
 {
     Application::Application()
-        : m_quit(false)
+        : m_quit(false), m_rhiShader(ResourceId("HELLO"), nullptr)
     {
         // Read config
         {
@@ -79,9 +80,19 @@ namespace Entix
 
         m_window = CreateRef<WindowSDL>(m_config.window);
         m_rhiDevice = CreateRef<VulkanDevice>(m_window.get());
+        
+        auto resId = ResourceId("Hello");
+        EX_LOG(LogTemp, Info, "RESIDTEST: {}", resId.GetFilenameString());
+
+        resId = ResourceId("Hello2");
+        EX_LOG(LogTemp, Info, "RESIDTEST2: {}", resId.GetFilenameString());
 
         m_rhiSwapchain = Ref<RHI::Swapchain>(m_rhiDevice->CreateSwapchain(*m_window).Unwrap());
         m_rhiShader = m_rhiDevice->LoadShader(ResourceId("/home/dmitry/Projects/Entix-Engine/Shaders/SimpleShader.slang"));
+
+        EX_LOG(LogTemp, Info, "Shader Id: {}", m_rhiShader.GetId().GetFilenameString());
+
+        m_rhiGraphicsPipeline = Ref<RHI::GraphicsPipeline>(m_rhiDevice->CreateGraphicsPipeline({}, {m_rhiShader}).Unwrap());
 
         return {};
     }

@@ -5,6 +5,7 @@
 #include "Entix/Resources/ResourceId.h"
 
 #include <concepts>
+#include <source_location>
 #include <typeindex>
 
 namespace Entix
@@ -30,7 +31,7 @@ namespace Entix
     class ResourceHandle
     {
     public:
-        ResourceHandle() : m_resourceManager(nullptr) {}
+        ResourceHandle(std::source_location location = std::source_location::current()) : m_resourceId(location), m_resourceManager(nullptr) {}
         ResourceHandle(ResourceId id, ResourceManager* rm)
             : m_resourceId(id), m_resourceManager(rm) {}
         
@@ -56,6 +57,21 @@ namespace Entix
         const ResourceId& GetId() const noexcept
         {
             return m_resourceId;
+        }
+
+        ResourceHandle(const ResourceHandle<T>& other)
+            : m_resourceId(other.m_resourceId),
+              m_resourceManager(other.m_resourceManager)
+        {
+        }
+
+        void operator=(const ResourceHandle<T>& other)
+        {
+            if(this == &other)
+                return;
+
+            m_resourceId = other.m_resourceId;
+            m_resourceManager = other.m_resourceManager;
         }
 
         T* operator->() const

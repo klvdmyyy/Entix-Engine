@@ -5,6 +5,8 @@
 #include "Entix/Core/Types.h"
 #include "Entix/Core/String.h"
 
+#include <source_location>
+
 #include <filesystem>
 
 namespace std {
@@ -15,19 +17,30 @@ namespace std {
 namespace Entix
 {
     class ResourceId {
-        const std::filesystem::path k_filepath;
+        std::filesystem::path m_filepath;
 
         Usize m_hash;
         bool m_null;
 
     public:
-        ENTIX_API ResourceId();
+        ENTIX_API ResourceId(std::source_location location = std::source_location::current());
         ENTIX_API explicit ResourceId(const std::filesystem::path& path);
 
-        ResourceId(const ResourceId&) = default;
-        ResourceId operator=(const ResourceId& other)
+        ResourceId(const ResourceId& other)
+            : m_filepath(other.m_filepath),
+              m_hash(other.m_hash),
+              m_null(other.m_null)
         {
-            return ResourceId((std::filesystem::path)other);
+        }
+        
+        void operator=(const ResourceId& other)
+        {
+            if(this == &other)
+                return;
+
+            m_filepath = other.m_filepath;
+            m_hash = other.m_hash;
+            m_null = other.m_null;
         }
 
         [[nodiscard]]
@@ -35,13 +48,13 @@ namespace Entix
         
         operator bool() const { return !m_null; }
 
-        [[nodiscard]] const std::filesystem::path& GetFilepath() const noexcept { return k_filepath; }
+        [[nodiscard]] const std::filesystem::path& GetFilepath() const noexcept { return m_filepath; }
         [[nodiscard]] String GetFilepathString() const noexcept { return GetFilepath().string(); }
 
-        [[nodiscard]] std::filesystem::path GetFilename() const noexcept { return k_filepath.filename(); }
+        [[nodiscard]] std::filesystem::path GetFilename() const noexcept { return m_filepath.filename(); }
         [[nodiscard]] String GetFilenameString() const noexcept { return GetFilename().string(); }
 
-        [[nodiscard]] std::filesystem::path GetExtension() const noexcept { return k_filepath.extension(); }
+        [[nodiscard]] std::filesystem::path GetExtension() const noexcept { return m_filepath.extension(); }
         [[nodiscard]] String GetExtensionString() const noexcept { return GetExtension().string(); }
 
         explicit operator Usize() const noexcept { return Hash(); }

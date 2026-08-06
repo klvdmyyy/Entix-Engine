@@ -21,6 +21,7 @@ namespace Entix
         ResourceHandle<RHI::Shader> LoadShader(const ResourceId& resourceId) final;
 
         Result<RHI::Swapchain*> CreateSwapchain(Window& window) final;
+        Result<RHI::GraphicsPipeline*> CreateGraphicsPipeline(const RHI::GraphicsPipelineSpecification& spec, const std::vector<ResourceHandle<RHI::Shader>>& shaders) final;
 
         static constexpr std::array<const char*, 1> VALIDATION_LAYERS = {
             "VK_LAYER_KHRONOS_validation"
