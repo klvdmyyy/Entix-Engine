@@ -84,8 +84,8 @@ namespace Entix
 		void Serialize(JsonArchive& ar)
 		{
 			ar & AField("first", firstValue)
-			& AField("second", secondValue)
-			& AField("transform", transform);
+			   & AField("second", secondValue)
+			   & AField("transform", transform);
 		}
 		
 		static MyDataStructure Deserialize(JsonArchive& ar)
@@ -95,8 +95,8 @@ namespace Entix
 			TransformComponent transform;
 			
 			ar & AField("first", first)
-			& AField("second", second);
-			& AField("transform", transform);
+			   & AField("second", second);
+			   & AField("transform", transform);
 			
 			return MyDataStructure {
 				.firstValue = first,
