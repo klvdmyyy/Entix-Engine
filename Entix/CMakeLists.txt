@@ -1,21 +1,126 @@
 add_subdirectory(Vendor)  # Vendor Libraries
-add_library(Entix SHARED) # Entix-Engine
 
-if(MSVC)
-    set_target_properties(Entix PROPERTIES
-        VS_GLOBAL_RunCodeAnalysis true
+# Helper functions
 
-        # Use visual studio core guidelines
-        VS_GLOBAL_EnableMicrosoftCodeAnalysis true
+function(collect_module_files MODULE_NAME)
+    set(HEADERS)
+    set(SOURCES)
 
-        # Use clangtidy
-        VS_GLOBAL_EnableClangTidyCodeAnalysis true
-        VS_GLOBAL_ClangTidyChecks -checks=*,modernize-*,-modernize-use-trailing-return-type
+    file(GLOB_RECURSE MODULE_HEADERS
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/${MODULE_NAME}/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/${MODULE_NAME}/*.hpp"
     )
+    list(APPEND HEADERS ${MODULE_HEADERS})
+    
+    file(GLOB_RECURSE MODULE_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/${MODULE_NAME}/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/${MODULE_NAME}/*.cpp"
+    )
+    list(APPEND SOURCES ${MODULE_SOURCES})
+
+    set(ENTIX_HEADERS ${ENTIX_HEADERS} ${HEADERS} PARENT_SCOPE)
+    set(ENTIX_SOURCES ${ENTIX_SOURCES} ${SOURCES} PARENT_SCOPE)
+endfunction()
+
+function(collect_platform_files PLATFORM_NAME)
+    set(HEADERS)
+    set(SOURCES)
+
+    file(GLOB_RECURSE PLATFORM_HEADERS
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/${PLATFORM_NAME}/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/${PLATFORM_NAME}/*.hpp"
+    )
+    list(APPEND HEADERS ${PLATFORM_HEADERS})
+    
+    file(GLOB_RECURSE PLATFORM_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/${PLATFORM_NAME}/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/${PLATFORM_NAME}/*.cpp"
+    )
+    list(APPEND SOURCES ${PLATFORM_SOURCES})
+
+    set(ENTIX_HEADERS ${ENTIX_HEADERS} ${HEADERS} PARENT_SCOPE)
+    set(ENTIX_SOURCES ${ENTIX_SOURCES} ${SOURCES} PARENT_SCOPE)
+endfunction()
+
+# Module files
+
+collect_module_files(Core)
+collect_module_files(Resources)
+collect_module_files(RHI)
+collect_module_files(Serialization)
+collect_module_files(Utils)
+collect_module_files(WSI)
+
+collect_module_files(Game)
+
+# Platform files
+
+collect_platform_files(SDL)
+collect_platform_files(OpenGL)
+collect_platform_files(Vulkan)
+
+if(WIN32)
+    collect_platform_files(Direct3D)
 endif()
 
-#####################################################
-############### Precompiled Headers #################
+# Library definition
+
+if(ENTIX_BUILD_STATIC)
+    add_library(Entix STATIC
+        ${ENTIX_HEADERS} ${ENTIX_SOURCES})
+else()
+    add_library(Entix SHARED
+        ${ENTIX_HEADERS} ${ENTIX_SOURCES})
+endif()
+
+target_include_directories(Entix PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+
+# ClangTidy, VisualStudio code analysis
+
+include(utilities)
+
+force_utf8_for(Entix)
+enable_code_analysis_for(Entix)
+enable_all_warnings_for(Entix)
+enable_sanitizers_for(Entix)
+warnings_are_errors_for(Entix)
+
+# Configured files
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/Core/Base.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/Core/Base.h
+    @ONLY
+)
+
+# Third-Party libraries
+
+include(third-party)
+
+target_link_sdl3(Entix)
+target_link_vulkan(Entix)
+target_link_slang(Entix)
+
+target_link_libraries(Entix PRIVATE
+    Vendor::GLAD
+    Vendor::TinyObjLoader
+    Vendor::STBImage
+    Vendor::ImGui
+    Tracy::TracyClient)
+
+target_link_libraries(Entix PUBLIC
+    nlohmann_json::nlohmann_json)
+
+# Compiler definitions
+
+target_compile_definitions(Entix PRIVATE
+    ENTIX_BUILD_DLL)
+
+target_compile_definitions(Entix PUBLIC
+    $<$<CONFIG:Debug>:ENTIX_BUILD_DEBUG>)
+
+# Precompiled headers
 
 target_precompile_headers(Entix PRIVATE
     <iostream>
@@ -42,113 +147,3 @@ target_precompile_headers(Entix PRIVATE
     <thread>
     <type_traits>
     <future>)
-
-#####################################################
-########### Compiler Options/Definitions ############
-
-target_compile_definitions(Entix PRIVATE
-    ENTIX_BUILD_DLL)
-
-target_compile_definitions(Entix PUBLIC
-    $<$<CONFIG:Debug>:ENTIX_BUILD_DEBUG>)
-
-if(MSVC)
-    target_compile_options(Entix PRIVATE
-        /utf-8
-        /W4 /WX)
-    
-    target_compile_options(Entix PUBLIC
-        $<$<CONFIG:Debug>:/fsanitize=address>)
-else()
-    target_compile_options(Entix PRIVATE
-        -fexec-charset=UTF-8
-        -finput-charset=UTF-8
-        -Wall -Wextra -Wpedantic -Werror)
-    
-    target_compile_options(Entix PUBLIC
-        $<$<CONFIG:Debug>:-fsanitize=address,leak,undefined>)
-
-    target_link_libraries(Entix PUBLIC
-        $<$<CONFIG:Debug>:-fsanitize=address,leak,undefined>)
-endif()
-
-#####################################################
-################# Configured Files ##################
-
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/Core/Base.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/Core/Base.h
-    @ONLY
-)
-
-#####################################################
-################ Include Directories ################
-
-target_include_directories(Entix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
-
-#####################################################
-############## Third-Party Libraries ################
-
-target_link_sdl3(Entix)
-target_link_vulkan(Entix)
-target_link_slang(Entix)
-
-target_link_libraries(Entix PRIVATE
-    Vendor::GLAD
-    Vendor::TinyObjLoader
-    Vendor::STBImage
-    Vendor::ImGui
-    Tracy::TracyClient)
-
-target_link_libraries(Entix PUBLIC
-    nlohmann_json::nlohmann_json)
-
-#####################################################
-################# Setup Source Files ################
-
-file(
-    GLOB_RECURSE
-    ENTIX_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entix/*.cpp
-)
-
-file(
-    GLOB_RECURSE
-    PLATFORM_SDL_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/SDL/*.cpp
-)
-
-file(
-    GLOB_RECURSE
-    PLATFORM_OPENGL_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/OpenGL/*.cpp
-)
-
-file(
-    GLOB_RECURSE
-    PLATFORM_VULKAN_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/Vulkan/*.cpp
-)
-
-file(
-    GLOB_RECURSE
-    PLATFORM_DIRECT3D_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Platform/Direct3D/*.cpp
-)
-
-target_sources(Entix PRIVATE ${ENTIX_SOURCES})
-
-if(WIN32)
-    target_sources(Entix PRIVATE
-        ${PLATFORM_SDL_SOURCES}
-        ${PLATFORM_OPENGL_SOURCES}
-        ${PLATFORM_VULKAN_SOURCES}
-        ${PLATFORM_DIRECT3D_SOURCES})
-elseif(LINUX)
-    target_sources(Entix PRIVATE
-        ${PLATFORM_SDL_SOURCES}
-        ${PLATFORM_OPENGL_SOURCES}
-        ${PLATFORM_VULKAN_SOURCES})
-else()
-    message(FATAL_ERROR "Platform doesn't support current platform!")
-endif()
