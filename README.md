@@ -119,6 +119,7 @@ namespace Entix
 	{
 		auto rm = ResourceManager::Instance();
 
+		// Instantly getting the handle of resource
 		ResourceHandle<Texture> tex = rm.Load<Texture>(ResourceId("your_so_big_texture.png"));
 
 		// Wait until your texture is ready!
