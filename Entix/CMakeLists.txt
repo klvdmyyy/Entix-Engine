@@ -56,7 +56,11 @@ collect_module_files(Game)
 # Platform files
 
 collect_platform_files(SDL)
-collect_platform_files(OpenGL)
+
+if(ENTIX_OPENGL_SUPPORT)
+    collect_platform_files(OpenGL)
+endif()
+
 collect_platform_files(Vulkan)
 
 if(WIN32)
@@ -115,7 +119,10 @@ target_link_libraries(Entix PUBLIC
 # Compiler definitions
 
 target_compile_definitions(Entix PRIVATE
-    ENTIX_BUILD_DLL)
+    ENTIX_BUILD_DLL
+
+    # Provide macro to check if OpenGL backend enabled
+    $<$<ENTIX_OPENGL_SUPPORT:ON>:ENTIX_OPENGL_SUPPORT>)
 
 target_compile_definitions(Entix PUBLIC
     $<$<CONFIG:Debug>:ENTIX_BUILD_DEBUG>)
