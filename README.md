@@ -31,6 +31,8 @@ On linux you must install following packages:
 
 Other third-party libraries are installed via `FetchContent` in CMake or exists in Vendor folder
 
+> Maybe we can move to LunarG VulkanSDK also for Linux ?!
+
 #### Building process
 
 Just run following commands in shell:
