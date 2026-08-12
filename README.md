@@ -8,11 +8,48 @@
 
 ## Table Of Content
 
+- [Building From Source](#building-from-source)
+    - [For Linux](#for-linux)
+    - [For Windows](#for-windows)
 - [Features](#features)
 	- [Rust-like error handling](#rust-like-error-handling)
     - [Simple serialization](#simple-serialization)
 	- [Async Resource Manager](#async-resource-manager)
 	- [RHI (Rendering Hardware Interface)](#rhi-rendering-hardware-interface)
+
+## Building From Source
+
+### For Linux
+
+#### Third-Party
+
+On linux you must install following packages:
+- GPU Drivers with vulkan support (like `mesa`)
+- Vulkan headers (`vulkan-headers` package on arch-based distros)
+- Vulkan Validation Layers (`vulkan-validation-layers` package on arch-based distros)
+- SDL3 library (`sdl3` package on arch-based distros)
+
+Other third-party libraries are installed via `FetchContent` in CMake or exists in Vendor folder
+
+#### Building process
+
+Just run following commands in shell:
+```sh
+$ mkdir -p build
+$ cd build
+$ cmake .. # It can takes a lot of time (Installation of third-party libraries and building it from source)
+$ make
+```
+
+### For Windows
+
+#### Third-Party
+
+Just install [VulkanSDK](https://sdk.lunarg.com/sdk/download/1.4.350.0/windows/vulkansdk-windows-X64-1.4.350.0.exe) with all options enabled.
+
+#### Building Process
+
+TODO
 
 ## Features
 
