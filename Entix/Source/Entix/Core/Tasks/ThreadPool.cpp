@@ -5,36 +5,22 @@
 
 namespace Entix
 {
-    ThreadPool& ThreadPool::Instance()
-    {
-        static ThreadPool s_instance;
-        return s_instance;
-    }
-
-    ThreadPool::ThreadPool()
+    ThreadPool::ThreadPool(Usize workerCount)
         : m_initialized(false), m_stop(false)
-    {
-    }
-
-    ThreadPool::~ThreadPool()
-    {
-    }
-
-    void ThreadPool::Initialize(Usize numThreads)
     {
         if(m_initialized) return;
         else m_initialized = true;
 
-        EX_LOG(ThreadPool, Info, "Initializing thread pool with {} threads.", numThreads);
+        EX_LOG(ThreadPool, Info, "Initializing thread pool with {} threads.", workerCount);
 
         m_stop = false;
-        for(Usize i = 0; i < numThreads; i++)
+        for(Usize i = 0; i < workerCount; i++)
         {
             m_workers.emplace_back(&ThreadPool::WorkerLoop, this);
         }
     }
 
-    void ThreadPool::Shutdown()
+    ThreadPool::~ThreadPool()
     {
         if(!m_initialized) return;
 
@@ -51,6 +37,24 @@ namespace Entix
             worker.join();
         }
     }
+
+    void ThreadPool::ExecuteMainThreadQueue()
+    {
+        std::queue<std::function<void()>> localQueue;
+
+        {
+            std::unique_lock lock(m_mainThreadSync);
+            std::swap(localQueue, m_mainThreadQueue);
+        }
+
+        while(!localQueue.empty())
+        {
+            auto func = localQueue.front();
+            func();
+            localQueue.pop();
+        }
+    }
+
 
     void ThreadPool::WorkerLoop()
     {

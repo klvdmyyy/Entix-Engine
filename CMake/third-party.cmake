@@ -89,3 +89,12 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(nlohmann_json)
+
+FetchContent_Declare(
+    Slang
+    GIT_REPOSITORY https://github.com/shader-slang/slang
+    GIT_TAG v2026.14.1
+    OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(Slang)

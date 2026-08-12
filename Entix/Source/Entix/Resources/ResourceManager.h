@@ -11,6 +11,8 @@
 #include "Entix/Resources/ResourceHandle.h"
 #include "Entix/Resources/Resource.h"
 
+#include "Entix/Utils/FileWatcher.h"
+
 #include <future>
 #include <typeindex>
 #include <unordered_map>
@@ -23,9 +25,10 @@ namespace Entix
         template<typename T>
         using Future = std::shared_future<T>;
 
-        ENTIX_API static void SetInstance(ResourceManager* rm);
-        ENTIX_API static ResourceManager* Instance();
-
+        ENTIX_API ResourceManager(
+            ThreadPool& threadPool,
+            bool enableHotReload = false
+        );
         virtual ~ResourceManager() = default;
 
         // Unable to copy
@@ -50,7 +53,7 @@ namespace Entix
                 return ResourceHandle<T>(resourceId, this);
             }
 
-            typeResources[resourceId] = ThreadPool::Instance().Enqueue([&, resourceId]() -> Ref<Resource> {
+            typeResources[resourceId] = m_threadPool.Enqueue([&, resourceId]() -> Ref<Resource> {
                 auto resource = CreateRef<T>(resourceId, std::forward<Args>(args)...);
 
                 EX_LOG(Resources, Debug, "Loading resource: '{}'", resourceId.GetFilenameString());
@@ -67,10 +70,15 @@ namespace Entix
                 return resource;
             });
 
-            LoadMiddleware(resourceId);
+            if(k_enableHotReload)
+            {
+                (void)m_fileWatcher->Emplace(resourceId.GetFilepath());
+            }
 
             return ResourceHandle<T>(resourceId, this);
         }
+
+        ENTIX_API void ReloadResource(const ResourceId& resourceId);
 
         template<std::derived_from<Resource> T>
         void UnloadType()
@@ -79,7 +87,10 @@ namespace Entix
             
             for(auto& [resourceId, resource] : typeResources)
             {
-                (void)resourceId;
+                if(k_enableHotReload)
+                {
+                    (void)m_fileWatcher->Erase(resourceId.GetFilepath());
+                }
                 resource.get()->Unload();
             }
 
@@ -99,10 +110,6 @@ namespace Entix
         }
 
     protected:
-        ResourceManager() = default;
-
-        virtual void LoadMiddleware([[maybe_unused]] const ResourceId& resourceId) {}
-
         Result<Future<Ref<Resource>>> FindResourceById(const ResourceId& resourceId);
 
     private:
@@ -128,10 +135,6 @@ namespace Entix
 
         ENTIX_API void DecrementRefCountOf(const ResourceId& resourceId);
 
-        static Scope<ResourceManager> s_resourceManager;
-
-        ENTIX_API static Scope<ResourceManager> CreateScopeRM();
-
         using StoragedResource = Future<Ref<Resource>>;
 
         template<typename T>
@@ -141,6 +144,11 @@ namespace Entix
         template<typename T>
         using ResourceStorage =
             std::unordered_map<std::type_index, ResourceStorageInner<T>>;
+
+        ThreadPool& m_threadPool;
+
+        const bool k_enableHotReload;
+        Scope<FileWatcher> m_fileWatcher;
 
         ResourceStorage<StoragedResource> m_resources;
         std::unordered_map<ResourceId, Usize, ResourceId::Hasher> m_refCounts;

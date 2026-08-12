@@ -11,25 +11,19 @@
 #include <queue>
 #include <functional>
 #include <future>
-#include <type_traits>
 
 namespace Entix
 {
     class ThreadPool
     {
     public:
-        ENTIX_API static ThreadPool& Instance();
-
-        ENTIX_API ThreadPool();
+        ENTIX_API ThreadPool(Usize workerCount = std::thread::hardware_concurrency());
         ENTIX_API ~ThreadPool();
 
         ThreadPool(ThreadPool&) = delete;
         ThreadPool(const ThreadPool&) = delete;
         ThreadPool& operator=(ThreadPool&&) = delete;
         ThreadPool& operator=(const ThreadPool&&) = delete;
-
-        ENTIX_API void Initialize(Usize numThreads = std::thread::hardware_concurrency());
-        ENTIX_API void Shutdown();
 
         template<typename F, typename... Args>
         inline auto Enqueue(F&& f, Args&&... args)
@@ -39,7 +33,7 @@ namespace Entix
 
             auto futureObject = encapsulatedPtr->get_future();
             {
-                std::unique_lock<std::mutex> lock(m_sync);
+                std::unique_lock lock(m_sync);
                 m_queue.emplace([encapsulatedPtr]() {
                     (*encapsulatedPtr)();
                 });
@@ -48,16 +42,30 @@ namespace Entix
             return futureObject;
         }
 
-    private:
+        template<typename F, typename... Args>
+        inline void EnqueueToMainThread(F&& f, Args&&... args)
+        {
+            auto func = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
+            {
+                std::unique_lock lock(m_mainThreadSync);
+                m_queue.emplace(func);
+            }
+        }
 
+        ENTIX_API void ExecuteMainThreadQueue();
+
+    private:
         ENTIX_API void WorkerLoop();
 
         bool m_initialized;
 
+        std::queue<std::function<void()>> m_mainThreadQueue;
+        std::mutex m_mainThreadSync;
+
         std::vector<std::thread> m_workers;
+        std::queue<std::function<void()>> m_queue;
         std::mutex m_sync;
         std::condition_variable m_cv;
-        std::queue<std::function<void()>> m_queue;
 
         bool m_stop;
     };

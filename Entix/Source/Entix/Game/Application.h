@@ -1,54 +1,26 @@
 #pragma once
 
 #include "Entix/Core/Base.h"
-#include "Entix/Core/Result.h"
-#include "Entix/Core/Memory.h"
+#include "Entix/Core/Tasks/ThreadPool.h"
 
-#include "Entix/Core/Events/Listener.h"
+#include "Entix/Resources/ResourceManager.h"
 
-#include "Entix/WSI/Base.h"
-#include "Entix/WSI/Window.h"
-
-#include "Entix/RHI/Pipeline.h"
-#include "Entix/RHI/Device.h"
-#include "Entix/RHI/Shader.h"
-#include "Entix/RHI/Swapchain.h"
-
-#include "Entix/Serialization/JsonArchive.h"
+#include "Entix/Game/WorldContext.h"
+#include "Entix/Game/ControlFlow.h"
 
 namespace Entix
 {
-    /**
-     * @todo Serialization through IO::Archive
-     */
-    struct ApplicationConfig
+    struct [[nodiscard]] ApplicationDesc
     {
-        ApplicationConfig() = default;
+        Usize threads = 0;
 
-        WindowConfig window;
-        RHI::GraphicsApi graphicsApi = RHI::GraphicsApi::Vulkan;
-
-        void Serialize(JsonArchive& ar)
-        {
-            ar & AField("window", window)
-               & AField("graphicsApi", graphicsApi);
-        }
-
-        static ApplicationConfig Deserialize(JsonArchive& ar)
-        {
-            ApplicationConfig config;
-
-            ar & AField("window", config.window)
-               & AField("graphicsApi", config.graphicsApi);
-
-            return config;
-        }
+        bool enableHotReload = false;
     };
 
-    class Application : EventListener
+    class Application
     {
     public:
-        ENTIX_API Application();
+        ENTIX_API Application(const ApplicationDesc& desc = DefaultOf<ApplicationDesc>());
         ENTIX_API ~Application();
 
         // Unable to copy
@@ -59,24 +31,13 @@ namespace Entix
         Application(Application&&) = delete;
         Application& operator=(Application&&) = delete;
 
-        ENTIX_API Result<void> Run();
-
-        /** Events */
-
-        ENTIX_API void OnEvent(const Event& event) final;
-        ENTIX_API void OnWindowCloseRequested(WindowId id) noexcept;
+        void Run();
 
     private:
-        ENTIX_API Result<void> Initialize();
-        ENTIX_API Result<void> Shutdown();
+        ThreadPool m_threadPool;
+        ResourceManager m_resourceManager;
 
-        bool m_quit;
-        ApplicationConfig m_config;
-
-        Ref<Window> m_window;
-        Ref<RHI::Device> m_rhiDevice;
-        ResourceHandle<RHI::Shader> m_rhiShader;
-        Ref<RHI::Swapchain> m_rhiSwapchain;
-        Ref<RHI::GraphicsPipeline> m_rhiGraphicsPipeline;
+        WorldContext m_worldContext;
+        ControlFlow m_controlFlow;
     };
 }

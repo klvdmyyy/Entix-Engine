@@ -6,16 +6,11 @@
 
 namespace Entix
 {
-    class SandboxApp : public Application
+    ApplicationDesc CreateApplication()
     {
-    public:
-        SandboxApp()
-        {
-        }
-    };
-
-    Application* CreateApplication()
-    {
-        return new SandboxApp();
+        return {
+            .threads = 2,
+            .enableHotReload = true
+        };
     }
 }

@@ -57,10 +57,6 @@ collect_module_files(Game)
 
 collect_platform_files(SDL)
 
-if(ENTIX_OPENGL_SUPPORT)
-    collect_platform_files(OpenGL)
-endif()
-
 collect_platform_files(Vulkan)
 
 if(WIN32)
@@ -104,14 +100,14 @@ include(third-party)
 
 target_link_sdl3(Entix)
 target_link_vulkan(Entix)
-target_link_slang(Entix)
 
 target_link_libraries(Entix PRIVATE
     Vendor::GLAD
     Vendor::TinyObjLoader
     Vendor::STBImage
     Vendor::ImGui
-    Tracy::TracyClient)
+    Tracy::TracyClient
+    slang)
 
 target_link_libraries(Entix PUBLIC
     nlohmann_json::nlohmann_json)
@@ -119,10 +115,7 @@ target_link_libraries(Entix PUBLIC
 # Compiler definitions
 
 target_compile_definitions(Entix PRIVATE
-    ENTIX_BUILD_DLL
-
-    # Provide macro to check if OpenGL backend enabled
-    $<$<ENTIX_OPENGL_SUPPORT:ON>:ENTIX_OPENGL_SUPPORT>)
+    ENTIX_BUILD_DLL)
 
 target_compile_definitions(Entix PUBLIC
     $<$<CONFIG:Debug>:ENTIX_BUILD_DEBUG>)

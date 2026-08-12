@@ -1,27 +1,48 @@
 #include "Entix/Resources/ResourceManager.h"
 
+#include "Entix/Core/Events/Dispatcher.h"
+
 #include <algorithm>
-#include <ranges>
 
 #include <tracy/Tracy.hpp>
 
 namespace Entix
 {
-    Scope<ResourceManager> ResourceManager::s_resourceManager = ResourceManager::CreateScopeRM();
-
-    Scope<ResourceManager> ResourceManager::CreateScopeRM()
+    ResourceManager::ResourceManager(ThreadPool& threadPool, bool enableHotReload)
+        : m_threadPool(threadPool), k_enableHotReload(enableHotReload)
     {
-        return Scope<ResourceManager>(new ResourceManager());
+        if(k_enableHotReload)
+        {
+            m_fileWatcher = CreateScope<FileWatcher>(threadPool, [this](const std::filesystem::path& path)
+            {
+                ReloadResource(ResourceId(path));
+            });
+        }
     }
 
-    void ResourceManager::SetInstance(ResourceManager* rm)
+    void ResourceManager::ReloadResource(const ResourceId& resourceId)
     {
-        s_resourceManager.reset(rm);
-    }
+        ZoneScopedN("Resource reloading");
+        ZoneTextF("%s", resourceId.GetFilepathString().c_str());
 
-    ResourceManager* ResourceManager::Instance()
-    {
-        return s_resourceManager.get();
+        if(auto res = FindResourceById(resourceId); res.IsSuccess())
+        {
+            EX_LOG(Resources, Info, "Changes detected. Reloading resource: '{}'", resourceId.GetFilenameString());
+
+            Ref<Resource> resource = res.Unwrap().get();
+
+            if(auto res = resource->Reload(); res.IsError())
+            {
+                EX_LOG(Resources, Error, "Failed to reload resource '{}':\n{}\nDependencies wouldn't be signaled about resource reloading to keep older version!", resourceId.GetFilenameString(), res.UnwrapErr());
+                return;
+            }
+
+            EventBus::PublishEvent(ResourceReloadedEvent(resourceId));
+        }
+        else
+        {
+            EX_LOG(Resources, Error, "Changes detected in resource '{}' but it won't be found. It's must be unreachable error! Error: {}", resourceId.GetFilenameString(), res.UnwrapErr());
+        }
     }
 
     void* ResourceManager::GetResource(std::type_index idx, const ResourceId& resourceId) const noexcept

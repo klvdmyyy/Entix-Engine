@@ -19,9 +19,9 @@
 
 namespace Entix
 {
-    extern Application* CreateApplication();
+    extern ApplicationDesc CreateApplication();
 
-    static int Main(int argc, char** argv)
+    static int Main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
     {
         auto file = CreateScope<IO::FileStream>(std::format("{0:%F}T{0:%H-%M%Z}.log", std::chrono::utc_clock::now()), IO::StreamMode::Write);
         Logger::Instance().AddSink(CreateScope<StreamLogSink>(std::move(file)), {
@@ -48,16 +48,16 @@ namespace Entix
 
         try
         {
-            auto app = Scope<Application>(CreateApplication());
+            Application app(CreateApplication());
 
-            auto res = app->Run();
+            app.Run();
             
-            return res.IsSuccess() ? 0 : 1;
+            return 0;
         }
         catch(const std::exception& e)
         {
             EX_LOG(LogTemp, Info, "Exception is catched. What: {}", e.what());
-            return 2;
+            return 1;
         }
     }
 }

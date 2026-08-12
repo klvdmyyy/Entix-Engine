@@ -50,10 +50,5 @@ option(ENTIX_BUILD_STATIC
   OFF
 )
 
-option(ENTIX_OPENGL_SUPPORT
-  "Enable OpenGL backend api support for Entix RHI. It can provide better performance on old hardware"
-  OFF
-)
-
 add_subdirectory(Entix)
 add_subdirectory(Sandbox)
