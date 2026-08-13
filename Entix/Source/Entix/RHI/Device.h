@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Entix/Core/Globals.h"
-#include "Entix/Core/Debug/Logger.h"
 #include "Entix/Core/Result.h"
 
 #include "Entix/Core/String.h"

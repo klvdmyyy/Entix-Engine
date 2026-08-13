@@ -17,7 +17,9 @@ namespace Entix
     class ThreadPool
     {
     public:
-        ENTIX_API ThreadPool(Usize workerCount = std::thread::hardware_concurrency());
+        static Usize GetOptimalWorkerCount();
+
+        ENTIX_API ThreadPool(Usize workerCount = GetOptimalWorkerCount());
         ENTIX_API ~ThreadPool();
 
         ThreadPool(ThreadPool&) = delete;

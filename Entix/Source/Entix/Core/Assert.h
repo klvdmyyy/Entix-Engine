@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Entix/Core/Panic.h"
 
 #ifdef ENTIX_BUILD_DEBUG
+#    include "Entix/Core/Panic.h"
 #    define EX_ASSERT(EXPR)                                                                                            \
         do                                                                                                             \
         {                                                                                                              \
@@ -23,11 +23,11 @@
 #    define EX_ASSERT(EXPR)                                                                                            \
         do                                                                                                             \
         {                                                                                                              \
-            EXPR;                                                                                                      \
+            (void)(EXPR);                                                                                                      \
         } while (0)
 #    define EX_ASSERT_FMT(EXPR, ...)                                                                                   \
         do                                                                                                             \
         {                                                                                                              \
-            EXPR;                                                                                                      \
+            (void)(EXPR);                                                                                                      \
         } while (0)
 #endif

@@ -4,11 +4,10 @@ namespace Entix
 {
     WorldContext::WorldContext(
         ThreadPool& threadPool,
-        ResourceManager& resourceManager,
-        const Ref<RHI::Device>& renderingDevice
+        ResourceManager& resourceManager
     ) : m_threadPool(threadPool),
         m_resourceManager(resourceManager),
-        m_renderingDevice(renderingDevice)
+        m_renderingDevice(nullptr)
     {
     }
 }

@@ -26,7 +26,7 @@ namespace Entix
 
         struct GpuInfo
         {
-            StringView name;
+            String name;
 
             // It must be a private member but I want to keep GpuInfo
             // just plain data structure
@@ -36,7 +36,7 @@ namespace Entix
         struct FactoryDesc
         {
             BackendApi backendApi;
-            StringView applicationName;
+            String applicationName;
             Version applicationVersion;
         };
     }
@@ -73,7 +73,7 @@ namespace Entix::RHI
         /**
          * @brief Creates RHI factory object
          */
-        static Result<Scope<Factory>> Create(FactoryDesc desc = DefaultOf<FactoryDesc>());
+        static Result<Scope<Factory>> Create(const FactoryDesc& desc = DefaultOf<FactoryDesc>());
 
         virtual ~Factory() = default;
 

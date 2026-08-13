@@ -2,6 +2,7 @@
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Memory.h"
+#include "Entix/Core/Assert.h"
 #include "Entix/Core/Tasks/ThreadPool.h"
 
 #include "Entix/RHI/Device.h"
@@ -15,8 +16,7 @@ namespace Entix
     public:
         WorldContext(
             ThreadPool& threadPool,
-            ResourceManager& resourceManager,
-            const Ref<RHI::Device>& renderingDevice
+            ResourceManager& resourceManager
         );
         ~WorldContext() = default;
 
@@ -35,7 +35,19 @@ namespace Entix
         inline ResourceManager& GetResourceManager() const noexcept { return m_resourceManager; }
 
         EX_FORCE_INLINE
-        inline RHI::Device& GetRenderingDevice() const noexcept { return *m_renderingDevice; }
+        inline RHI::Device& GetRenderingDevice() const noexcept
+        {
+            EX_ASSERT(m_renderingDevice);
+            return *m_renderingDevice;
+        }
+
+    protected:
+        friend class Application;
+
+        void SetRenderingDevice(const Ref<RHI::Device>& renderingDevice) noexcept
+        {
+            m_renderingDevice = renderingDevice;
+        }
 
     private:
         ThreadPool& m_threadPool;

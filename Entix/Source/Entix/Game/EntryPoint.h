@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Entix/Core/PlatformDetection.h"
-
 #include "Entix/Core/Debug/Logger.h"
 
 #include "Entix/Core/Debug/StdoutLogSink.h"
