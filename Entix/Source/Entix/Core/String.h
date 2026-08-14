@@ -4,6 +4,7 @@
 
 #include <concepts>
 #include <string>
+#include <sstream>
 
 namespace Entix
 {
@@ -15,6 +16,20 @@ namespace Entix
 
     template<typename T>
     T FromString(const String& str);
+
+    template<>
+    EX_FORCE_INLINE
+    inline String ToString(const String& obj)
+    {
+        return obj;
+    }
+
+    template<>
+    EX_FORCE_INLINE
+    inline String FromString(const String& obj)
+    {
+        return obj;
+    }
 
     template<typename T>
     T DefaultOf();
@@ -40,6 +55,9 @@ namespace Entix
     concept ToStringImplemented = requires (const T& obj)
     {
         { ToString(obj) } -> std::same_as<String>;
+    } || requires (const T& obj)
+    {
+        { std::to_string(obj) } -> std::same_as<String>;
     };
 
     template<typename T>
@@ -118,5 +136,35 @@ namespace Entix
     T FromString(const String& str)
     {
         return T{str};
+    }
+
+    template<>
+    EX_FORCE_INLINE
+    inline int FromString<int>(const String& str)
+    {
+        return std::stoi(str);
+    }
+
+    template<>
+    EX_FORCE_INLINE
+    inline bool FromString<bool>(const String& str)
+    {
+        // Support both 1/0 and true/false
+        if(str.size() == 1)
+        {
+            return static_cast<bool>(std::stoi(str));
+        }
+
+        bool value;
+        std::stringstream ss(str);
+        ss >> std::boolalpha >> value;
+        return value;
+    }
+
+    template<>
+    EX_FORCE_INLINE
+    inline float FromString<float>(const String& str)
+    {
+        return std::stof(str);
     }
 }

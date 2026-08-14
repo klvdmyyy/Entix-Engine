@@ -3,34 +3,11 @@
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Memory.h"
 #include "Entix/Core/String.h"
-#include "Entix/Core/Types.h"
 
 #include <type_traits>
 
 namespace Entix
 {
-    class CVarStorage
-    {
-    public:
-        CVarStorage();
-        ~CVarStorage();
-
-        template<ConvertibleToString T>
-        void Set(const String& name, const T& value)
-        {
-            return SetInternal(name, ToString<T>(value));
-        }
-
-        template<typename T>
-        T Get(const String& name);
-
-    private:
-        ENTIX_API void SetInternal(const String& name, const String& value);
-        ENTIX_API String GetInternal(const String& name);
-
-        std::unordered_map<String, String> m_cVarMap;
-    };
-
     class Console
     {
     public:
@@ -45,7 +22,7 @@ namespace Entix
         ENTIX_API void ExecuteCommand(const String& cmdLine);
         ENTIX_API void ExecuteCommand(const std::vector<String>& args);
 
-        template<ConvertibleToString T>
+        template<IndirectString T>
         void SetCVar(const String& name, const T& value)
         {
             return SetCVarInternal(name, ToString<T>(value));
@@ -60,8 +37,11 @@ namespace Entix
             m_cVarCallbackMap.insert({name, callback});
         }
 
-        template<typename T>
-        T GetCVar(const String& name);
+        template<IndirectString T>
+        T GetCVar(const String& name)
+        {
+            return FromString<T>(GetCVarInternal(name));
+        }
 
     private:
         Console() = default;
@@ -69,17 +49,13 @@ namespace Entix
         ENTIX_API void SetCVarInternal(const String& name, const String& value);
         ENTIX_API String GetCVarInternal(const String& name);
 
+        static std::vector<String> SplitString(const String& line);
+
         std::unordered_map<String, String> m_cVarMap;
-        std::unordered_map<StringView, CVarCallback> m_cVarCallbackMap;
+        std::unordered_map<String, CVarCallback> m_cVarCallbackMap;
 
         std::mutex m_sync;
     };
-
-    template<> bool Console::GetCVar<bool>(const String& name);
-    template<> Int32 Console::GetCVar<Int32>(const String& name);
-    template<> Uint32 Console::GetCVar<Uint32>(const String& name);
-    template<> float Console::GetCVar<float>(const String& name);
-    template<> String Console::GetCVar<String>(const String& name);
 
     // -----------------------------------------------------------------------------------
     // TODO Пока что `CachedCVar` поддерживает работу только с одним экземпляром
@@ -93,6 +69,7 @@ namespace Entix
     // (This is russian language)
     // -----------------------------------------------------------------------------------
     template<typename T>
+        requires (IndirectString<T>)
     class CachedCVar
     {
     public:
@@ -104,7 +81,7 @@ namespace Entix
         }
 
         CachedCVar(const String& name)
-            requires (DefaultOfImplemented<T>)
+            requires (HasDefaults<T>)
             : k_name(name),
               m_value(DefaultOf<T>())
         {
