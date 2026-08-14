@@ -6,11 +6,15 @@
 
 namespace Entix
 {
-    ApplicationDesc CreateApplication()
+    ApplicationDesc CreateApplication(int argc, char** argv)
     {
-        return {
-            .threads = 2,
-            .enableHotReload = true
-        };
+        return ApplicationDescBuilder()
+            .SetCLIArgs(argc, argv)
+            .SetName("Sandbox")
+            .SetVersion({0, 1, 0})
+            .SetThreadCount(2)
+            .EnableResourceHotReload()
+            .Build()
+            .Unwrap();
     }
 }

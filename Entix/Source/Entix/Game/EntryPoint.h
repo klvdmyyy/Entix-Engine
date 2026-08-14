@@ -17,7 +17,7 @@
 
 namespace Entix
 {
-    extern ApplicationDesc CreateApplication();
+    extern ApplicationDesc CreateApplication(int argc, char** argv);
 
     static int Main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
     {
@@ -46,7 +46,7 @@ namespace Entix
 
         try
         {
-            Application app(CreateApplication());
+            Application app(CreateApplication(argc, argv));
 
             app.Run();
             
