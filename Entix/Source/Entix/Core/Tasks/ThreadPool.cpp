@@ -16,7 +16,7 @@ namespace Entix
         if(m_initialized) return;
         else m_initialized = true;
 
-        EX_LOG(ThreadPool, Info, "Initializing thread pool with {} threads.", workerCount);
+        EX_LOG(ThreadPool, Info, "Initializing thread pool with {}+1(main) threads.", workerCount);
 
         m_stop = false;
         for(Usize i = 0; i < workerCount; i++)
