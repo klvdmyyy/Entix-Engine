@@ -1,9 +1,10 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 cmake_minimum_required(VERSION 3.31.6)
 
-include(third-party)
-
 project(Entix-Engine VERSION 1.0.0)
+
+include(third-party)
+include(vulkan-sdk)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

@@ -1,3 +1,9 @@
+#----------------------------------------+
+# Copyright (C) 2026 Dmitriy Klementiev. |
+#                                        |
+# SPDX-License-Identifier: BSD-3-Clause  |
+#----------------------------------------+
+
 macro(enable_code_analysis_for TARGET_NAME)
     if(MSVC)
         set_target_properties(${TARGET_NAME} PROPERTIES

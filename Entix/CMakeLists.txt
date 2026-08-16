@@ -98,19 +98,20 @@ configure_file(
 
 include(third-party)
 
-target_link_sdl3(Entix)
-target_link_vulkan(Entix)
-
 target_link_libraries(Entix PRIVATE
     Vendor::GLAD
     Vendor::TinyObjLoader
     Vendor::STBImage
     Vendor::ImGui
-    Tracy::TracyClient
-    slang)
+    VulkanSDK::Headers
+    VulkanSDK::Slang
+    VulkanSDK::SlangCompiler
+    ThirdParty::SDL3
+    ThirdParty::TracyClient)
 
 target_link_libraries(Entix PUBLIC
-    nlohmann_json::nlohmann_json)
+    ThirdParty::CLI11
+    ThirdParty::JSON)
 
 # Compiler definitions
 

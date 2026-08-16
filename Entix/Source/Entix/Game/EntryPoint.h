@@ -12,6 +12,8 @@
 
 #include "Entix/Game/Application.h"
 
+#include <CLI/CLI.hpp>
+
 #include <chrono>
 #include <format>
 
@@ -31,6 +33,10 @@ namespace Entix
             LogLevel::Fatal
         });
 
+        // Windows applications are compiled with WinMain which
+        // doesn't use terminal.
+        //
+        // We just don't need to write logs to stdout.
 #ifndef ENTIX_PLATFORM_WINDOWS
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>(), {
             LogLevel::Trace,
@@ -46,7 +52,26 @@ namespace Entix
 
         try
         {
-            Application app(CreateApplication(argc, argv));
+            auto desc = CreateApplication(argc, argv);
+
+            // Parsing command line arguments and ovverride some parameters of ApplicationDesc
+            {
+                CLI::App cliApp{desc.description};
+                argv = cliApp.ensure_utf8(argv);
+
+                cliApp.add_option("--threads", desc.threads, "Thread pool worker count.");
+                cliApp.add_option("--hot-reload", desc.enableHotReload, "Enable ResourceManager hot-reload.");
+
+                String rhiBackendStr = "vulkan";
+                cliApp.add_option("--rhi-backend", rhiBackendStr, "Rendering Hardware Interface backend API.");
+
+                CLI11_PARSE(cliApp, argc, argv);
+
+                // Parse RHI::BackendApi from provided string option
+                desc.rhiFactoryDesc.backendApi = FromString<RHI::BackendApi>(rhiBackendStr);
+            }
+
+            Application app(desc);
 
             app.Run();
             
@@ -63,7 +88,12 @@ namespace Entix
 #if defined(ENTIX_PLATFORM_WINDOWS)
 #include <Windows.h>
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int APIENTRY WinMain(
+    [[maybe_unused]] HINSTANCE hInstance,
+    [[maybe_unused]] HINSTANCE hPrevInstance,
+    [[maybe_unused]] LPSTR lpCmdLine,
+    [[maybe_unused]] int nShowCmd
+)
 {
     return ::Entix::Main(__argc, __argv);
 }

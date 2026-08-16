@@ -3,6 +3,7 @@
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Tasks/ThreadPool.h"
 
+#include "Entix/Game/LayerStack.h"
 #include "Entix/Resources/ResourceManager.h"
 
 #include "Entix/RHI/Factory.h"
@@ -17,6 +18,10 @@ namespace Entix
     {
         int argc = 0;
         char** argv = nullptr;
+
+        String name = "No Name";
+        String description = "No Description";
+        Version version = {0, 1, 0};
 
         Usize threads = 0;
         bool enableHotReload = false;
@@ -48,7 +53,16 @@ namespace Entix
         EX_FORCE_INLINE
         inline ApplicationDescBuilder& SetName(const String& name)
         {
+            m_desc.name = name;
             m_desc.rhiFactoryDesc.applicationName = name;
+
+            return *this;
+        }
+
+        EX_FORCE_INLINE
+        inline ApplicationDescBuilder& SetDescription(const String& desc)
+        {
+            m_desc.description = desc;
 
             return *this;
         }
@@ -56,6 +70,7 @@ namespace Entix
         EX_FORCE_INLINE
         inline ApplicationDescBuilder& SetVersion(const Version& version)
         {
+            m_desc.version = version;
             m_desc.rhiFactoryDesc.applicationVersion = version;
 
             return *this;
@@ -133,5 +148,7 @@ namespace Entix
 
         WorldContext m_worldContext;
         ControlFlow m_controlFlow;
+
+        LayerStack m_layerStack;
     };
 }

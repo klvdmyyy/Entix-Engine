@@ -8,6 +8,22 @@
 
 namespace Entix
 {
+    struct ConsoleCommand
+    {
+        using CmdFn = std::function<void()>;
+
+        String name;
+        CmdFn func;
+
+        struct Hasher
+        {
+            Usize operator()(const ConsoleCommand& cmd)
+            {
+                return std::hash<String>{}(cmd.name);
+            }
+        };
+    };
+
     class Console
     {
     public:
@@ -50,6 +66,8 @@ namespace Entix
         ENTIX_API String GetCVarInternal(const String& name);
 
         static std::vector<String> SplitString(const String& line);
+
+        std::unordered_map<String, ConsoleCommand::Hasher> m_cmdMap;
 
         std::unordered_map<String, String> m_cVarMap;
         std::unordered_map<String, CVarCallback> m_cVarCallbackMap;

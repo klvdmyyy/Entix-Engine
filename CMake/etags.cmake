@@ -1,3 +1,9 @@
+#----------------------------------------+
+# Copyright (C) 2026 Dmitriy Klementiev. |
+#                                        |
+# SPDX-License-Identifier: BSD-3-Clause  |
+#----------------------------------------+
+
 macro(etags_generate)
   find_program(ETAGS_PATH etags)
   if(ETAGS_PATH)

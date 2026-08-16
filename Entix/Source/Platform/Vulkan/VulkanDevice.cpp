@@ -13,7 +13,7 @@
 #include "Platform/Vulkan/VulkanShader.h"
 #include "Platform/Vulkan/VulkanSwapchain.h"
 
-#include <ranges>
+#include <algorithm>
 
 namespace Entix
 {
@@ -74,8 +74,12 @@ namespace Entix
         return vk::False;
     }
 
-    VulkanDevice::VulkanDevice(Window* window)
-        : m_window(window)
+    VulkanDevice::VulkanDevice(
+        ResourceManager& resourceManager,
+        Window* window
+    )
+        : m_resourceManager(resourceManager),
+          m_window(window)
     {
         CreateInstance().Unwrap();
         SetupDebugMessenger().Unwrap();
@@ -88,13 +92,13 @@ namespace Entix
 
     VulkanDevice::~VulkanDevice()
     {
-        ResourceManager::Instance()->UnloadType<VulkanShader>();
+        m_resourceManager.UnloadType<VulkanShader>();
         EX_LOG(LogRHI, Debug, "Destroying VulkanDevice class");
     }
 
     ResourceHandle<RHI::Shader> VulkanDevice::LoadShader(const ResourceId& resourceId)
     {
-        auto shader = (ResourceHandle<RHI::Shader>)ResourceManager::Instance()->Load<VulkanShader>(resourceId, m_device);
+        auto shader = (ResourceHandle<RHI::Shader>)m_resourceManager.Load<VulkanShader>(resourceId, m_device);
         EX_LOG(LogTemp, Info, "Vulkan Shader Id: {}", shader.GetId().GetFilenameString());
         return shader;
     }

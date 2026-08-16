@@ -4,6 +4,7 @@
 
 #include "Entix/Core/Result.h"
 
+#include "Entix/Resources/ResourceManager.h"
 #include "Entix/WSI/Window.h"
 
 #include <array>
@@ -15,7 +16,10 @@ namespace Entix
     class VulkanDevice : public RHI::Device
     {
     public:
-        VulkanDevice(Window* window = nullptr);
+        VulkanDevice(
+            ResourceManager& resourceManager,
+            Window* window = nullptr
+        );
         ~VulkanDevice();
 
         ResourceHandle<RHI::Shader> LoadShader(const ResourceId& resourceId) final;
@@ -45,6 +49,8 @@ namespace Entix
         Result<vk::SurfaceKHR> CreateSurface(Window* window);
         Result<void> PickPhysicalDevice();
         Result<void> CreateLogicalDevice();
+
+        ResourceManager& m_resourceManager;
 
         vk::raii::Context m_context;
         vk::raii::Instance m_instance = nullptr;

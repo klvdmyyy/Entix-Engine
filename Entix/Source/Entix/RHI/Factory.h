@@ -14,6 +14,7 @@
 #include "Entix/Core/Version.h"
 
 #include <vector>
+#include <algorithm>
 
 namespace Entix
 {
@@ -59,6 +60,34 @@ namespace Entix
             .applicationName = "No Name",
             .applicationVersion = {0, 1, 0},
         };
+    }
+
+    template<>
+    EX_FORCE_INLINE
+    inline String ToString<RHI::BackendApi>(const RHI::BackendApi& api)
+    {
+        using RHI::BackendApi;
+        switch(api)
+        {
+            case BackendApi::Vulkan:
+                return "Vulkan";
+
+            default:
+                return ToString<BackendApi>(DefaultOf<BackendApi>());
+        }
+    }
+
+    template<>
+    EX_FORCE_INLINE
+    inline RHI::BackendApi FromString<RHI::BackendApi>(const String& value)
+    {
+        String backendName = value;
+        std::transform(backendName.begin(), backendName.end(), backendName.begin(), [](char c) { return std::tolower(c); });
+
+        using RHI::BackendApi;
+
+        if(backendName == "vulkan") return BackendApi::Vulkan;
+        else return DefaultOf<BackendApi>();
     }
 }
 

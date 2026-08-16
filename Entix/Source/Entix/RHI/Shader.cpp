@@ -8,10 +8,9 @@
 
 #include "Entix/Core/Globals.h"
 
-#include <print>
-#include <shader-slang/slang.h>
-#include <shader-slang/slang-com-ptr.h>
-#include <shader-slang/slang-com-helper.h>
+#include <slang/slang.h>
+#include <slang/slang-com-ptr.h>
+#include <slang/slang-com-helper.h>
 
 #define EX_SLANG_TRY(EXPR) \
     if(!SLANG_SUCCEEDED(EXPR)) \

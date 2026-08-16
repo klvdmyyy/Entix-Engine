@@ -1,100 +1,85 @@
-macro(target_link_sdl3 TARGET)
-    if(MSVC)
-        message(FATAL "SDL3 linking not implemented for windows. See `CMake/third-party.cmake`")
-        # target_include_directories(${TARGET} PRIVATE
-        #     $ENV{VULKAN_SDK}/Include)
-
-        # target_link_directories(${TARGET} PRIVATE
-        #     $ENV{VULKAN_SDK}/Lib)
-        
-        # target_link_libraries(${TARGET} PRIVATE
-        #     vulkan-1.lib
-        #     slang.lib
-        #     slang-compiler.lib)
-    else()
-        find_package(SDL3 REQUIRED)
-
-        target_link_libraries(${TARGET} PRIVATE
-            SDL3::SDL3)
-    endif()
-endmacro()
-
-macro(target_link_vulkan TARGET)
-    if(MSVC)
-        target_include_directories(${TARGET} PRIVATE
-            $ENV{VULKAN_SDK}/Include)
-
-        target_link_directories(${TARGET} PRIVATE
-            $ENV{VULKAN_SDK}/Lib)
-        
-        target_link_libraries(${TARGET} PRIVATE
-            vulkan-1.lib)
-    else()
-        find_package(Vulkan REQUIRED)
-
-        target_link_libraries(${TARGET} PRIVATE
-            Vulkan::Vulkan)
-    endif()
-endmacro()
-
-macro(target_link_slang TARGET)
-    if(MSVC)
-        message(FATAL "Slang linking not implemented for windows. See `CMake/third-party.cmake`")
-    else()
-        find_package(slang REQUIRED)
-
-        target_link_libraries(${TARGET} PRIVATE slang::slang)
-    endif()
-endmacro()
-
-#####################################################
-################# Fetched Libraries #################
+#----------------------------------------+
+# Copyright (C) 2026 Dmitriy Klementiev. |
+#                                        |
+# SPDX-License-Identifier: BSD-3-Clause  |
+#----------------------------------------+
 
 include(FetchContent)
 
-FetchContent_Declare(
-  EnTT
-  GIT_REPOSITORY https://github.com/skypjack/entt
-  GIT_TAG v3.16.0
-  OVERRIDE_FIND_PACKAGE
-)
+if(NOT TARGET SDL3-shared)
+    FetchContent_Declare(SDL3
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL
+        GIT_TAG release-3.4.14
+    )
 
-FetchContent_MakeAvailable(EnTT)
+    FetchContent_MakeAvailable(SDL3)
+    if(NOT TARGET ThirdParty::SDL3)
+        add_library(ThirdParty::SDL3 ALIAS SDL3-shared)
+    endif()
+endif()
 
-FetchContent_Declare(
-  glm
-  GIT_REPOSITORY https://github.com/g-truc/glm
-  GIT_TAG 1.0.3
-  OVERRIDE_FIND_PACKAGE
-)
+if(NOT TARGET EnTT)
+    FetchContent_Declare(EnTT
+        GIT_REPOSITORY https://github.com/skypjack/entt
+        GIT_TAG v3.16.0
+    )
 
-FetchContent_MakeAvailable(glm)
+    FetchContent_MakeAvailable(EnTT)
 
-FetchContent_Declare(
-  Tracy
-  GIT_REPOSITORY https://github.com/wolfpld/tracy
-  GIT_TAG bf21d8ea115318e32ea0d97d2b4fbcb9f5773774
-  OVERRIDE_FIND_PACKAGE
-)
+    if(NOT TARGET ThirdParty::EnTT)
+        add_library(ThirdParty::EnTT ALIAS EnTT)
+    endif()
+endif()
 
-set(TRACY_ON_DEMAND OFF CACHE BOOL "" FORCE)
-set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(Tracy)
+if(NOT TARGET glm)
+    FetchContent_Declare(glm
+        GIT_REPOSITORY https://github.com/g-truc/glm
+        GIT_TAG 1.0.3
+    )
 
-FetchContent_Declare(
-  nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json
-  GIT_TAG v3.12.0
-  OVERRIDE_FIND_PACKAGE
-)
+    FetchContent_MakeAvailable(glm)
 
-FetchContent_MakeAvailable(nlohmann_json)
+    if(NOT TARGET ThirdParty::GLM)
+        add_library(ThirdParty::GLM ALIAS glm)
+    endif()
+endif()
 
-FetchContent_Declare(
-    Slang
-    GIT_REPOSITORY https://github.com/shader-slang/slang
-    GIT_TAG v2026.14.1
-    OVERRIDE_FIND_PACKAGE
-)
+if(NOT TARGET nlohmann_json)
+    FetchContent_Declare(nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json
+        GIT_TAG v3.12.0
+    )
 
-FetchContent_MakeAvailable(Slang)
+    FetchContent_MakeAvailable(nlohmann_json)
+
+    if(NOT TARGET ThirdParty::JSON)
+        add_library(ThirdParty::JSON ALIAS nlohmann_json)
+    endif()
+endif()
+
+if(NOT TARGET CLI11)
+    FetchContent_Declare(CLI11
+        GIT_REPOSITORY https://github.com/klvdmyyy/CLI11
+        GIT_TAG "origin/main"
+    )
+
+    FetchContent_MakeAvailable(CLI11)
+
+    if(NOT TARGET ThirdParty::CLI11)
+        add_library(ThirdParty::CLI11 ALIAS CLI11)
+    endif()
+endif()
+
+if(NOT TARGET TracyClient)
+    FetchContent_Declare(Tracy
+        GIT_REPOSITORY https://github.com/klvdmyyy/tracy
+    )
+
+    set(TRACY_ON_DEMAND OFF CACHE BOOL "" FORCE)
+    set(TRACY_STATIC OFF CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(Tracy)
+
+    if(NOT TARGET ThirdParty::TracyClient)
+        add_library(ThirdParty::TracyClient ALIAS TracyClient)
+    endif()
+endif()

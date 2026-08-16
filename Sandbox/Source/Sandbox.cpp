@@ -11,6 +11,7 @@ namespace Entix
         return ApplicationDescBuilder()
             .SetCLIArgs(argc, argv)
             .SetName("Sandbox")
+            .SetDescription("Example game written on top of Entix Engine")
             .SetVersion({0, 1, 0})
             .SetThreadCount(2)
             .EnableResourceHotReload()

@@ -1,13 +1,15 @@
-#[[
------------------------------------------------------------------------------
-VulkanSDK automatic installation via CMake.
-
-On linux it just installed VulkanSDK archive and unpack it into cmake binary
-dir.
-
-On windows it download installer and install VulkanSDK for your system.
------------------------------------------------------------------------------
-#]]
+#----------------------------------------+
+# Copyright (C) 2026 Dmitriy Klementiev. |
+#                                        |
+# SPDX-License-Identifier: BSD-3-Clause  |
+#----------------------------------------+---------------------------------------
+# VulkanSDK automatic installation via CMake.
+#
+# > On linux it just installed VulkanSDK archive and unpack it into cmake binary
+# dir.
+#
+# > On windows it download installer and install VulkanSDK for your system.
+#--------------------------------------------------------------------------------
 
 # Check current platform
 if(NOT (MSVC OR LINUX))
@@ -37,7 +39,7 @@ if(MSVC)
     if(DEFINED ENV{VULKAN_SDK})
         set(INSTALLED_VULKAN_SDK_PATH $ENV{VULKAN_SDK})
         cmake_path(GET INSTALLED_VULKAN_SDK_PATH FILENAME INSTALLED_VULKAN_SDK_VERSION_DIRECTORY)
-        if(NOT ${VULKAN_SDK_VERSION} STREQUAL ${INSTALLED_VULKAN_SDK_VERSION_DIRECTORY})
+        if(NOT "${VULKAN_SDK_VERSION}" STREQUAL "${INSTALLED_VULKAN_SDK_VERSION_DIRECTORY}")
             message(STATUS "Vulkan SDK version mismatch. Installed version is ${INSTALLED_VULKAN_SDK_VERSION_DIRECTORY}. Required version is ${VULKAN_SDK_VERSION}.")
             message(STATUS "Installing Vulkan SDK ${VULKAN_SDK_VERSION}")
 
@@ -45,5 +47,33 @@ if(MSVC)
         endif()
     endif()
 elseif(LINUX)
-    # TODO VulkanSDK installation on Linux
+    FetchContent_Declare(VulkanSDK
+        URL ${VULKAN_SDK_URL}
+    )
+
+    FetchContent_MakeAvailable(VulkanSDK)
+    FetchContent_GetProperties(VulkanSDK
+        SOURCE_DIR VulkanSDK_SOURCE_DIR
+    )
+
+    set(VULKAN_SDK_ROOT ${VulkanSDK_SOURCE_DIR}/${VULKAN_SDK_ARCH})
+
+    # Vulkan Headers
+    add_library(VulkanSDK::Headers INTERFACE IMPORTED)
+    set_target_properties(VulkanSDK::Headers PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${VULKAN_SDK_ROOT}/include
+    )
+
+    # Slang
+    add_library(VulkanSDK::Slang SHARED IMPORTED)
+    set_target_properties(VulkanSDK::Slang PROPERTIES
+        IMPORTED_IMPLIB ${VULKAN_SDK_ROOT}/lib/libslang.so
+    )
+
+    add_library(VulkanSDK::SlangCompiler SHARED IMPORTED)
+    set_target_properties(VulkanSDK::SlangCompiler PROPERTIES
+        IMPORTED_IMPLIB ${VULKAN_SDK_ROOT}/lib/libslang-compiler.so
+    )
+
+    link_directories(${VULKAN_SDK_ROOT}/lib)
 endif()

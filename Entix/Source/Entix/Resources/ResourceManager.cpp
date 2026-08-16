@@ -11,6 +11,7 @@ namespace Entix
     ResourceManager::ResourceManager(ThreadPool& threadPool, bool enableHotReload)
         : m_threadPool(threadPool), k_enableHotReload(enableHotReload)
     {
+        EX_LOG(Resources, Info, "Initializing ResourceManager. Hot reload are {}", enableHotReload ? "enabled" : "disabled");
         if(k_enableHotReload)
         {
             m_fileWatcher = CreateScope<FileWatcher>(threadPool, [this](const std::filesystem::path& path)

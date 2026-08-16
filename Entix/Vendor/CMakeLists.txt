@@ -19,11 +19,11 @@ target_include_directories(imgui_headers__entix_vendor INTERFACE
   imgui-docking/misc/cpp
   imgui-docking/backends)
 
+add_library(Vendor::ImGui-Headers ALIAS imgui_headers__entix_vendor)
+
 add_library(imgui__entix_vendor)
 
 set_target_properties(imgui__entix_vendor PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-target_link_libraries(imgui__entix_vendor PUBLIC imgui-headers)
 
 file(
   GLOB
@@ -38,14 +38,8 @@ file(
 
 file(
   GLOB
-  IMGUI_SDL_SOURCES
+  IMGUI_SDL3_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui-docking/backends/imgui_impl_sdl3.cpp
-)
-
-file(
-  GLOB
-  IMGUI_OPENGL_SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui-docking/backends/imgui_impl_opengl3.cpp
 )
 
 file(
@@ -54,16 +48,17 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui-docking/backends/imgui_impl_vulkan.cpp
 )
 
-target_link_vulkan(imgui__entix_vendor)
-target_link_sdl3(imgui__entix_vendor)
+target_link_libraries(imgui__entix_vendor
+    PUBLIC
+        Vendor::ImGui-Headers
+        VulkanSDK::Headers
+        ThirdParty::SDL3)
 
 target_sources(imgui__entix_vendor PRIVATE
   ${IMGUI_SOURCES}
-  ${IMGUI_SDL_SOURCES}
-  ${IMGUI_OPENGL_SOURCES}
+  ${IMGUI_SDL3_SOURCES}
   ${IMGUI_VULKAN_SOURCES})
 
-add_library(Vendor::ImGui-Headers ALIAS imgui_headers__entix_vendor)
 add_library(Vendor::ImGui ALIAS imgui__entix_vendor)
 
 # ---------------------------------------------------------------------
