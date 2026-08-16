@@ -166,5 +166,3 @@ namespace Entix
 	}
 }
 ```
-
-### RHI (Rendering Hardware Interface)
