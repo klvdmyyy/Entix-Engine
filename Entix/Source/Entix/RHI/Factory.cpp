@@ -11,7 +11,8 @@ namespace Entix::RHI
             case BackendApi::Vulkan:
                 return Scope<Factory>(new VulkanFactory(
                     desc.applicationName,
-                    desc.applicationVersion
+                    desc.applicationVersion,
+                    {}
                 ));
             default:
                 return Error("Unknown backend api!");
