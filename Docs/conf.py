@@ -18,12 +18,23 @@ release = '0.1.0'
 
 extensions = [
     'breathe', # For Doxygen integration
+    'myst_parser', # For markdown
 ]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
+myst_enable_extensions = [
+    # "attrs_inline",
+    # "attrs_block",
+    # "deflist",
+    # "tasklist",
+    # "linkify",
+    # "substitution",
+    # "html_image",
+    "colon_fence",
+    # "strikethrough",
+]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
