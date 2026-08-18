@@ -1,0 +1,24 @@
+site_name: "Entix Engine Documentation"
+docs_dir: Docs/
+theme:
+    name: material
+
+plugins:
+    - search
+    - mkdoxy:
+        projects:
+            EntixEngine:
+                src-dirs: ./Entix/Source
+                full-doc: True
+                doxy-cfg:
+                    FILE_PATTERNS: "*.cpp *.h *.hpp"
+                    RECURSIVE: True
+                    PROJECT_NAME: "Entix Engine"
+                    PROJECT_BRIEF: "3D Game Engine written in C++"
+
+nav:
+    - Home Page: index.md
+    - First Steps:
+        - Building from source: first_steps/building_from_source.md
+    - Building Your First Application:
+        - Project setup: building_your_first_application/project_setup.md

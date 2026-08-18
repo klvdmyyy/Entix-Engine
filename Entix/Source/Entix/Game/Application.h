@@ -14,7 +14,7 @@
 
 namespace Entix
 {
-    struct [[nodiscard]] ApplicationDesc
+    struct ApplicationDesc
     {
         int argc = 0;
         char** argv = nullptr;
