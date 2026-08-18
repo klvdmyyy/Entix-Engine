@@ -1,0 +1,55 @@
+name: Build and Deploy Sphinx Documentation
+
+on:
+    push:
+        branches: [ "master" ]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: false
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.11'
+
+            - name: Install system dependencies
+              run: sudo apt-get update && sudo apt-get install -y make doxygen graphviz
+
+            - name: Install python dependencies
+              run: pip install sphinx sphinx_clarity_theme breathe
+
+            - name: Build Doxygen XML
+              run: |
+                cd Docs
+                doxygen
+
+            - name: Build Sphinx HTML
+              run: |
+                cd Docs
+                make html
+
+            - name: Setup Pages
+              uses: actions/configure-pages@v4
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                path: './Docs/_build/html'
+
+            - name: Deploy to Github Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
