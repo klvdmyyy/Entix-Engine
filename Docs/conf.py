@@ -19,6 +19,7 @@ release = '0.1.0'
 extensions = [
     'breathe', # For Doxygen integration
     'myst_parser', # For markdown
+    'sphinx_design', # For pretty things
 ]
 
 templates_path = ['_templates']
@@ -26,7 +27,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 myst_enable_extensions = [
     # "attrs_inline",
-    # "attrs_block",
+    "attrs_block",
     # "deflist",
     # "tasklist",
     # "linkify",

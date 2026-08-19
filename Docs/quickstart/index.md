@@ -4,5 +4,6 @@
 :hidden:
 
 building_from_source
+error_handling
 
 :::
