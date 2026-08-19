@@ -10,7 +10,21 @@ and doing same things.
 
 :::
 
+:::{doxygendefine} EX_TRY
+:project: Entix Engine
+
+:::
+
+:::{doxygendefine} EX_LET_TRY
+:project: Entix Engine
+
+:::
+
 ## Unrecovarable errors
+
+:::{note}
+In Debug build {cpp:func}`Entix::Panic` also place debug breakpoint
+:::
 
 :::{doxygenfunction} Entix::Panic(std::source_location)
 :project: Entix Engine

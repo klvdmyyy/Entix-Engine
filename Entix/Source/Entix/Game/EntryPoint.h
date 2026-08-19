@@ -87,7 +87,7 @@ namespace Entix
 
 #if defined(ENTIX_PLATFORM_WINDOWS)
 #include <Windows.h>
-
+//! [entry_windows]
 int APIENTRY WinMain(
     [[maybe_unused]] HINSTANCE hInstance,
     [[maybe_unused]] HINSTANCE hPrevInstance,
@@ -97,10 +97,12 @@ int APIENTRY WinMain(
 {
     return ::Entix::Main(__argc, __argv);
 }
+//! [entry_windows]
 #else
-// NOLINTNEXTLINE
-int main(int argc, char** argv)
+//! [entry_linux]
+int main(int argc, char** argv) // NOLINT
 {
     return ::Entix::Main(argc, argv);
 }
+//! [entry_linux]
 #endif

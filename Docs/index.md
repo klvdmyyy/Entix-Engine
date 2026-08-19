@@ -1,10 +1,10 @@
 # Entix Engine Documentation page
 
-Welcome to Entix Engine documentation page.
-
-:::{note}
-This project is under active development
+:::{attention}
+This project is **under active development** and may be **unstable**!
 :::
+
+Welcome to Entix Engine documentation page.
 
 :::{toctree}
 :hidden:
