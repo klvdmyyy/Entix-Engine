@@ -5,6 +5,8 @@
 
 **Entix Engine is a powerfull 3D game engine written in modern C++ with monolithic architecture.**
 
+> [Documentation of the project are available here](https://klvdmyyy.github.io/Entix-Engine/)
+
 ## License
 
 **Entix Engine** is **source-available software**. All right reserved by the author. See the [LICENSE](LICENSE) file for details.
