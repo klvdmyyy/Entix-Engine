@@ -1,0 +1,1 @@
+# Entix's core types
