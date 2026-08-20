@@ -26,7 +26,7 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -y make doxygen graphviz
 
             - name: Install python dependencies
-              run: pip install sphinx sphinx_clarity_theme breathe myst-parser sphinx-design
+              run: pip install sphinx sphinx-breeze-theme breathe myst-parser sphinx-design ablog
 
             - name: Build Doxygen XML
               run: |

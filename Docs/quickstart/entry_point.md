@@ -29,6 +29,26 @@ namespace Entix
 
 The {cpp:func}`Entix::CreateApplication` are called inside {cpp:func}`Entix::Main` to create new application from your description.
 
+:::{seealso}
+{doc}`/quickstart/application_and_applicationdesc` page for more info about {cpp:class}`Entix::Application`, {cpp:class}`Entix::ApplicationDesc` and {cpp:class}`Entix::ApplicationDescBuilder`.
+:::
+
+* * *
+
+Game entry-point are used for simplicity and "sugar". A lot of work are done for you with {cpp:class}`Entix::Application`. In {cpp:class}`Entix::ApplicationDesc` you can specify a lot of things.
+
+::::{card} `#include <Entix/Game/Application.h>`
+**ApplicationDesc builder class**
+^^^
+:::{doxygenclass} Entix::ApplicationDescBuilder
+:project: Entix Engine
+:members:
+:undoc-members:
+
+:::
+
+::::
+
 ## Raw entry-point
 
 If you don't need built-in {cpp:class}`Entix::Application` class you can write your own things in "raw" entry-point provided by Entix Runtime.
