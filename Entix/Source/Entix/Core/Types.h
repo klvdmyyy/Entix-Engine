@@ -6,6 +6,15 @@
 #include <type_traits>
 #include <any>
 
+/**
+ * @brief Defines Id type from template.
+ *
+ * @details
+ * Creates a empty tag structure and defines Id type with following template parameters:
+ * `Id<Usize, TAG_STRUCTURE>`
+ *
+ * @param[in] NAME You Id type name. Tag structure are named as `NAME##Tag`
+ */
 #define EX_DEFINE_ID_TYPE(NAME) \
     struct NAME##Tag {}; \
     using NAME = ::Entix::Id<::Entix::Usize, NAME##Tag>

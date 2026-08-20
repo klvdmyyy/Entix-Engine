@@ -21,6 +21,10 @@
 :undoc-members:
 :::
 
+:::{doxygendefine} EX_DEFINE_ID_TYPE
+:project: Entix Engine
+:::
+
 ::::
 
 * * *
