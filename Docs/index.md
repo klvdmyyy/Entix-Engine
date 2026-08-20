@@ -18,6 +18,7 @@ quickstart/index
 :hidden:
 :caption: Project
 
+contributing
 changelog
 licenses
 
