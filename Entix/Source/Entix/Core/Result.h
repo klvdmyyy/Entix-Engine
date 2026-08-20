@@ -4,8 +4,6 @@
  * 
  * @details
  * Rust-inspired Result class for error-handling.
- * 
- * @ingroup Core
  */
 
 #pragma once
@@ -22,7 +20,7 @@
  * 
  * @details
  * Usage Example:
- * @code
+ * @code{.cpp}
  * extern Result<void> AnotherResultingFn();
  * 
  * Result<void> SomeFn()
@@ -31,8 +29,6 @@
  *      return {};
  * }
  * @endcode
- * 
- * @ingroup Code
  */
 #define EX_TRY(EXPR) \
     if(auto res = EXPR; res.IsError()) \
@@ -43,7 +39,7 @@
  * 
  * @details
  * Usage Example:
- * @code
+ * @code{.cpp}
  * extern Result<int> AnotherResultingFn();
  * 
  * Result<int> SomeFn()
@@ -52,8 +48,6 @@
  *      return code; // It returns `AnotherResultingFn()` result if it successfuly executed
  * }
  * @endcode
- * 
- * @ingroup Core
  */
 #define EX_LET_TRY(VAR, EXPR) \
     auto VAR##__entix_try_result__ = EXPR; \
@@ -63,6 +57,10 @@
 
 namespace Entix
 {
+    /**
+     * @brief Rust-like Result type
+     *
+     */
     template<typename SuccessType, typename ErrorType = Error>
     class [[nodiscard("Result value must be handled")]] Result
     {

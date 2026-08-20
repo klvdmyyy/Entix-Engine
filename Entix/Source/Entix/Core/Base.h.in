@@ -20,7 +20,7 @@
 #elif defined(ENTIX_COMPILER_MSVC)
 #    define EX_FORCE_INLINE [[msvc::forceinline]]
 #else
-#    error "Compiler doesn't support forceinline yet!"
+#    define EX_FORCE_INLINE
 #endif
 
 #if defined(ENTIX_PLATFORM_WINDOWS)

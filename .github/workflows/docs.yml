@@ -3,6 +3,8 @@ name: Build and Deploy Sphinx Documentation
 on:
     push:
         branches: [ "master" ]
+    pull_request:
+        branches: [ "master" ]
     workflow_dispatch:
 
 permissions:
@@ -26,7 +28,7 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -y make doxygen graphviz
 
             - name: Install python dependencies
-              run: pip install sphinx sphinx_clarity_theme breathe myst-parser
+              run: pip install sphinx sphinx-breeze-theme breathe myst-parser sphinx-design ablog
 
             - name: Build Doxygen XML
               run: |

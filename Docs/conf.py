@@ -19,6 +19,9 @@ release = '0.1.0'
 extensions = [
     'breathe', # For Doxygen integration
     'myst_parser', # For markdown
+    'sphinx_design', # For pretty things
+    'ablog', # For my Devlogs embedded in documentation
+    'sphinx.ext.intersphinx', # I don't know what is it (:
 ]
 
 templates_path = ['_templates']
@@ -26,7 +29,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 myst_enable_extensions = [
     # "attrs_inline",
-    # "attrs_block",
+    "attrs_block",
     # "deflist",
     # "tasklist",
     # "linkify",
@@ -36,10 +39,13 @@ myst_enable_extensions = [
     # "strikethrough",
 ]
 
+# ABlog settings
+blog_post_pattern = [ "devlog/*.md" ]
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_clarity_theme'
+html_theme = 'breeze'
 html_static_path = ['_static']
 
 # -- Breathe configuration ---------------------------------------------------
