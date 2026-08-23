@@ -12,14 +12,14 @@
 #--------------------------------------------------------------------------------
 
 # Check current platform
-if(NOT (MSVC OR LINUX))
+if(NOT (WIN32 OR LINUX))
     message(FATAL_ERROR "Vulkan SDK installation doesn't supported on current platform.")
 endif()
 
 # Setting up Vulkan SDK version
 set(VULKAN_SDK_VERSION "1.4.350.0" CACHE STRING "Vulakn SDK version")
 
-if(MSVC)
+if(WIN32)
     set(VULKAN_SDK_PLATFORM_NAME "windows")
     set(VULKAN_SDK_ARCH "X64")
     set(VULKAN_SDK_EXTENSION "exe")
@@ -32,6 +32,37 @@ endif()
 set(VULKAN_SDK_URL "https://sdk.lunarg.com/sdk/download/${VULKAN_SDK_VERSION}/${VULKAN_SDK_PLATFORM_NAME}/vulkansdk-${VULKAN_SDK_PLATFORM_NAME}-${VULKAN_SDK_ARCH}-${VULKAN_SDK_VERSION}.${VULKAN_SDK_EXTENSION}")
 
 if(MSVC)
+    function(install_vulkan_sdk)
+        set(WIN_DIR_ENV "$ENV{windir}")
+        cmake_path(GET WIN_DIR_ENV PARENT_PATH VULKAN_SDK_PARENT_PATH)
+        set(ENV{VULKAN_SDK} "${VULKAN_SDK_PARENT_PATH}VulkanSDK\\${VULKAN_SDK_VERSION}")
+
+        message(STATUS "VulkanSDK path: $ENV{VULKAN_SDK}")
+
+        if(NOT EXISTS $ENV{VULKAN_SDK})
+            message(STATUS "Vulkan SDK ${VULKAN_SDK_VERSION} not found. Installing it!")
+            set(INSTALLER_PATH "${CMAKE_BINARY_DIR}/VulkanSDK-Installer.exe")
+
+            if(NOT EXISTS ${INSTALLER_PATH})
+                message(STATUS "Download Vulkan SDK ${VULKAN_SDK_VERSION} Windows Installer")
+                file(DOWNLOAD ${VULKAN_SDK_URL} ${INSTALLER_PATH} SHOW_PROGRESS)
+            else()
+                message(STATUS "Vulkan SDK Installer found!")
+            endif()
+
+            message(STATUS "Installing Vulkan SDK. This may take a few minutes...")
+            execute_process(
+                COMMAND ${INSTALLER_PATH} --accept-licenses --default-answer --confirm-command install
+                RESULT_VARIABLE install_result
+                OUTPUT_QUIET
+            )
+
+            if(NOT install_result EQUAL 0)
+                message(FATAL_ERROR "Vulkan SDK installation failed!")
+            endif()
+        endif()
+    endfunction()
+
     # Installation of Vulkan SDK on Windows is a little bit different.
     #
     # We need to run EXE installer. But before we do this, we want to check
@@ -40,12 +71,30 @@ if(MSVC)
         set(INSTALLED_VULKAN_SDK_PATH $ENV{VULKAN_SDK})
         cmake_path(GET INSTALLED_VULKAN_SDK_PATH FILENAME INSTALLED_VULKAN_SDK_VERSION_DIRECTORY)
         if(NOT "${VULKAN_SDK_VERSION}" STREQUAL "${INSTALLED_VULKAN_SDK_VERSION_DIRECTORY}")
-            message(STATUS "Vulkan SDK version mismatch. Installed version is ${INSTALLED_VULKAN_SDK_VERSION_DIRECTORY}. Required version is ${VULKAN_SDK_VERSION}.")
-            message(STATUS "Installing Vulkan SDK ${VULKAN_SDK_VERSION}")
-
-            # TODO VulkanSDK installation on Windows
+            install_vulkan_sdk()
         endif()
+    else()
+        install_vulkan_sdk()
     endif()
+
+    # Vulkan Headers
+    add_library(VulkanSDK::Headers INTERFACE IMPORTED)
+    set_target_properties(VulkanSDK::Headers PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES $ENV{VULKAN_SDK}/Include
+    )
+
+    # Slang
+    add_library(VulkanSDK::Slang SHARED IMPORTED)
+    set_target_properties(VulkanSDK::Slang PROPERTIES
+        IMPORTED_IMPLIB $ENV{VULKAN_SDK}/Lib/slang.lib
+    )
+
+    add_library(VulkanSDK::SlangCompiler SHARED IMPORTED)
+    set_target_properties(VulkanSDK::SlangCompiler PROPERTIES
+        IMPORTED_IMPLIB $ENV{VULKAN_SDK}/Lib/slang-compiler.lib
+    )
+
+    link_directories($ENV{VULKAN_SDK}/Lib)
 elseif(LINUX)
     FetchContent_Declare(VulkanSDK
         URL ${VULKAN_SDK_URL}
