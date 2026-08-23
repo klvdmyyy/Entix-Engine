@@ -68,9 +68,13 @@ if(MSVC)
     # We need to run EXE installer. But before we do this, we want to check
     # if VulkanSDK already installed and it has right version.
     if(DEFINED ENV{VULKAN_SDK})
+        # Get VulkanSDK version
         set(INSTALLED_VULKAN_SDK_PATH $ENV{VULKAN_SDK})
         cmake_path(GET INSTALLED_VULKAN_SDK_PATH FILENAME INSTALLED_VULKAN_SDK_VERSION_DIRECTORY)
+
+        # Check VulkanSDK version
         if(NOT "${VULKAN_SDK_VERSION}" STREQUAL "${INSTALLED_VULKAN_SDK_VERSION_DIRECTORY}")
+            message(WARNING "VulkanSDK version mismatch!")
             install_vulkan_sdk()
         endif()
     else()

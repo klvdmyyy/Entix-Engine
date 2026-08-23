@@ -19,8 +19,6 @@ namespace Entix
     public:
         using LevelBitset = std::bitset<static_cast<Uint8>(LogLevel::Count)>;
 
-        Logger() = default;
-
         // Unable to copy
         Logger(const Logger&) = delete;
         Logger& operator=(const Logger&) = delete;
@@ -40,6 +38,8 @@ namespace Entix
         );
 
     private:
+        Logger() = default;
+        
         std::vector<std::pair<Scope<LogSink>, LevelBitset>> m_sinks;
     };
 }

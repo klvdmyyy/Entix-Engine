@@ -33,11 +33,14 @@ namespace Entix
 
     using Usize = size_t;
 
-    using Any = std::any;
+    using Any = ::std::any;
 
     /**
      * @brief Id template type.
      *
+     * @tparam T Id unsigned integer type (std::is_unsigned_v<T> is required)
+     * @tparam Tag For different Id types. Tag must be empty structure (std::is_empty_v<Tag> is required)
+     * 
      * @details
      * Usage example:
      * @code{.cpp}
