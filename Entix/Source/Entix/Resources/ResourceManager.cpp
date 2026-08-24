@@ -26,15 +26,15 @@ namespace Entix
         ZoneScopedN("Resource reloading");
         ZoneTextF("%s", resourceId.GetFilepathString().c_str());
 
-        if(auto res = FindResourceById(resourceId); res.IsSuccess())
+        if(auto resourceResult = FindResourceById(resourceId); resourceResult.IsSuccess())
         {
             EX_LOG(Resources, Info, "Changes detected. Reloading resource: '{}'", resourceId.GetFilenameString());
 
-            Ref<Resource> resource = res.Unwrap().get();
+            Ref<Resource> resource = resourceResult.Unwrap().get();
 
-            if(auto res = resource->Reload(); res.IsError())
+            if(auto reloadResult = resource->Reload(); reloadResult.IsError())
             {
-                EX_LOG(Resources, Error, "Failed to reload resource '{}':\n{}\nDependencies wouldn't be signaled about resource reloading to keep older version!", resourceId.GetFilenameString(), res.UnwrapErr());
+                EX_LOG(Resources, Error, "Failed to reload resource '{}':\n{}\nDependencies wouldn't be signaled about resource reloading to keep older version!", resourceId.GetFilenameString(), reloadResult.UnwrapErr());
                 return;
             }
 
@@ -42,7 +42,7 @@ namespace Entix
         }
         else
         {
-            EX_LOG(Resources, Error, "Changes detected in resource '{}' but it won't be found. It's must be unreachable error! Error: {}", resourceId.GetFilenameString(), res.UnwrapErr());
+            EX_LOG(Resources, Error, "Changes detected in resource '{}' but it won't be found. It's must be unreachable error! Error: {}", resourceId.GetFilenameString(), resourceResult.UnwrapErr());
         }
     }
 
