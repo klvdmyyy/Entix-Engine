@@ -272,7 +272,7 @@ namespace Entix
 
         m_physicalDevice = *devIter;
 
-        EX_LOG(LogRHI, Info, "Found suitable GPU: {}", String(m_physicalDevice.getProperties().deviceName));
+        EX_LOG(LogRHI, Info, "Found suitable GPU: {}", String(m_physicalDevice.getProperties().deviceName.data()));
 
         return {};
     }

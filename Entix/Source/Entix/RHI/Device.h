@@ -19,7 +19,7 @@ namespace Entix::RHI
 
     class Swapchain;
 
-    class GraphicsPipelineSpecification;
+    struct GraphicsPipelineSpecification;
     class GraphicsPipeline;
 
     enum class GraphicsApi

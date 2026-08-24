@@ -32,7 +32,7 @@ namespace Entix
             m_fileTimestamps[path] = std::filesystem::last_write_time(path);
         } catch(const std::filesystem::filesystem_error& err)
         {
-            return Error("Failed to watch path");
+            return Error("Failed to watch path. Error: " + String(err.what()));
         }
 
         return {};

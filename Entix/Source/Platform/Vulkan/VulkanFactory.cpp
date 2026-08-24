@@ -189,7 +189,7 @@ namespace Entix
     {
         auto properties = physicalDevice.getProperties();
         return RHI::GpuInfo{
-            .name = String(properties.deviceName),
+            .name = String(properties.deviceName.data()),
             .index_ = index,
         };
     }
