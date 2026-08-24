@@ -137,7 +137,7 @@ namespace Entix
         Application(Application&&) = delete;
         Application& operator=(Application&&) = delete;
 
-        void Run();
+        ENTIX_API void Run();
 
     private:
         ThreadPool m_threadPool;
