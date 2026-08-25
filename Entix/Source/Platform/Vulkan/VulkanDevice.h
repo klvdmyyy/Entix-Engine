@@ -44,8 +44,6 @@ namespace Entix
     private:
         bool IsDeviceSuitable(const vk::raii::PhysicalDevice& physicalDevice);
 
-        Result<void> CreateInstance();
-        Result<void> SetupDebugMessenger();
         Result<vk::SurfaceKHR> CreateSurface(Window* window);
         Result<void> PickPhysicalDevice();
         Result<void> CreateLogicalDevice();

@@ -15,7 +15,8 @@ function(add_entix_executable TARGET_NAME)
 
     # Define Win32 executable if it possible
     if(WIN32)
-        add_executable(${TARGET_NAME} WIN32)
+        # add_executable(${TARGET_NAME} WIN32)
+        add_executable(${TARGET_NAME})
     else()
         add_executable(${TARGET_NAME})
     endif()

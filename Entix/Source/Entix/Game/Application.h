@@ -2,6 +2,10 @@
 
 #include "Entix/Core/Base.h"
 #include "Entix/Core/Tasks/ThreadPool.h"
+#include "Entix/Core/Events/Listener.h"
+
+#include "Entix/WSI/Events.h"
+#include "Entix/WSI/Window.h"
 
 #include "Entix/Game/LayerStack.h"
 #include "Entix/Resources/ResourceManager.h"
@@ -14,6 +18,8 @@
 
 namespace Entix
 {
+    class SDLFactory;
+
     struct ApplicationDesc
     {
         int argc = 0;
@@ -123,7 +129,7 @@ namespace Entix
         ApplicationDesc m_desc{};
     };
 
-    class Application
+    class Application : public EventListener
     {
     public:
         ENTIX_API Application(const ApplicationDesc& desc = DefaultOf<ApplicationDesc>());
@@ -137,11 +143,18 @@ namespace Entix
         Application(Application&&) = delete;
         Application& operator=(Application&&) = delete;
 
+        ENTIX_API void OnEvent(const Event& event) final;
+
+        ENTIX_API void OnWindowCloseRequested(WindowId windowId);
+
         ENTIX_API void Run();
 
     private:
         ThreadPool m_threadPool;
         ResourceManager m_resourceManager;
+
+        Scope<SDLFactory> m_sdlFactory;
+        Ref<Window> m_mainWindow;
 
         Scope<RHI::Factory> m_rhiFactory;
         Ref<RHI::Device> m_renderingDevice;

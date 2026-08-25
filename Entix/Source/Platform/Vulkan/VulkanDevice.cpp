@@ -5,8 +5,6 @@
 #include "Entix/Core/Debug/Logger.h"
 #include "Entix/Core/Globals.h"
 
-#include "Entix/WSI/Base.h"
-
 #include "Entix/Resources/ResourceManager.h"
 
 #include "Platform/Vulkan/VulkanPipeline.h"
@@ -17,63 +15,6 @@
 
 namespace Entix
 {
-    static VKAPI_ATTR vk::Bool32 VKAPI_CALL DebugCallback(vk::DebugUtilsMessageSeverityFlagBitsEXT       severity,
-                                                      [[maybe_unused]] vk::DebugUtilsMessageTypeFlagsEXT type,
-                                                      const vk::DebugUtilsMessengerCallbackDataEXT * pCallbackData,
-                                                      [[maybe_unused]] void *                            pUserData)
-    {
-        LogLevel level = LogLevel::Count;
-
-        if(severity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eError)
-        {
-            level = LogLevel::Error;
-        }
-        else if(severity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning)
-        {
-            level = LogLevel::Warning;
-        }
-        else if(severity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo)
-        {
-            level = LogLevel::Info;
-        }
-        else if(severity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose)
-        {
-            level = LogLevel::Debug;
-        }
-        else
-        {
-            level = LogLevel::Trace;
-        }
-
-        if(type & vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral)
-        {
-            Logger::Instance().LogMessage(
-                EX_GLOBAL_LOG_CATEGORY_NAME(VulkanGeneral),
-                level, std::format("{}", pCallbackData->pMessage)
-            );
-        }
-        else if(type & vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance)
-        {
-            Logger::Instance().LogMessage(
-                EX_GLOBAL_LOG_CATEGORY_NAME(VulkanPerformance),
-                level, std::format("{}", pCallbackData->pMessage)
-            );
-        }
-        else if(type & vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation)
-        {
-            Logger::Instance().LogMessage(
-                EX_GLOBAL_LOG_CATEGORY_NAME(VulkanValidation),
-                level, std::format("{}", pCallbackData->pMessage)
-            );
-        }
-        else
-        {
-            return vk::True;
-        }
-
-        return vk::False;
-    }
-
     VulkanDevice::VulkanDevice(
         ResourceManager& resourceManager,
         Window* window
@@ -81,9 +22,6 @@ namespace Entix
         : m_resourceManager(resourceManager),
           m_window(window)
     {
-        CreateInstance().Unwrap();
-        SetupDebugMessenger().Unwrap();
-
         m_surface = vk::raii::SurfaceKHR(m_instance, CreateSurface(window).Unwrap());
 
         PickPhysicalDevice().Unwrap();
@@ -121,84 +59,6 @@ namespace Entix
     Result<RHI::GraphicsPipeline*> VulkanDevice::CreateGraphicsPipeline(const RHI::GraphicsPipelineSpecification& spec, const std::vector<ResourceHandle<RHI::Shader>>& shaders)
     {
         return new VulkanGraphicsPipeline(m_device, spec, shaders);
-    }
-
-    Result<void> VulkanDevice::CreateInstance()
-    {
-        EX_LOG(LogRHI, Info, "Creating vulkan instance.");
-
-        vk::ApplicationInfo appInfo;
-        appInfo.pApplicationName = "Sandbox Game";
-        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "Entix Engine";
-        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.apiVersion = vk::ApiVersion14;
-
-        std::vector<const char*> requiredLayers;
-        std::vector<const char*> requiredExtensions;
-
-        EX_LET_TRY(wsiRequirements, WSI::GetRequiredVulkanInstanceExtensions());
-        requiredExtensions.assign(wsiRequirements.begin(), wsiRequirements.end());
-
-        if constexpr(ENABLE_VALIDATION_LAYERS)
-        {
-            requiredLayers.insert(requiredLayers.end(), VALIDATION_LAYERS.begin(), VALIDATION_LAYERS.end());
-            requiredExtensions.push_back(vk::EXTDebugUtilsExtensionName);
-        }
-
-        EX_LOG(LogRHI, Debug, "Required vulkan instance extensions: {}", requiredExtensions);
-        EX_LOG(LogRHI, Debug, "Vulkan instance extensions required by WSI: {}", wsiRequirements);
-
-        auto layerProperties = m_context.enumerateInstanceLayerProperties();
-        auto unsupportedLayerIt =
-            std::ranges::find_if(requiredLayers, [&layerProperties](const auto& requiredLayer) {
-                return std::ranges::none_of(layerProperties, [requiredLayer](const auto& layerProperty) {
-                    return strcmp(layerProperty.layerName, requiredLayer) == 0;
-                });
-            });
-
-        if(unsupportedLayerIt != requiredLayers.end())
-        {
-            return Error("Required layer not supported: " + String(*unsupportedLayerIt));
-        }
-
-        vk::InstanceCreateInfo createInfo;
-        createInfo.pApplicationInfo = &appInfo;
-        createInfo.enabledLayerCount = static_cast<Uint32>(requiredLayers.size());
-        createInfo.ppEnabledLayerNames = requiredLayers.data();
-        createInfo.enabledExtensionCount = static_cast<Uint32>(requiredExtensions.size());
-        createInfo.ppEnabledExtensionNames = requiredExtensions.data();
-
-        EX_VK_TRY(
-            m_instance = vk::raii::Instance(m_context, createInfo);
-        );
-
-        return {};
-    }
-
-    Result<void> VulkanDevice::SetupDebugMessenger()
-    {
-        if constexpr(!ENABLE_VALIDATION_LAYERS) return {};
-
-        EX_LOG(LogRHI, Debug, "Setting up Vulkan debug messenger.");
-
-        vk::DebugUtilsMessageSeverityFlagsEXT severityFlags(vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-                                                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
-                                                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
-                                                            vk::DebugUtilsMessageSeverityFlagBitsEXT::eError);
-        vk::DebugUtilsMessageTypeFlagsEXT     messageTypeFlags(
-                vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation);
-
-        vk::DebugUtilsMessengerCreateInfoEXT createInfo;
-        createInfo.messageSeverity = severityFlags;
-        createInfo.messageType = messageTypeFlags;
-        createInfo.pfnUserCallback = &DebugCallback;
-
-        EX_VK_TRY(
-            m_debugMessenger = m_instance.createDebugUtilsMessengerEXT(createInfo);
-        );
-
-        return {};
     }
 
     Result<vk::SurfaceKHR> VulkanDevice::CreateSurface(Window* window)

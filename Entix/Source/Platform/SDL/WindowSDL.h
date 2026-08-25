@@ -9,7 +9,7 @@ namespace Entix
     class WindowSDL : public Window
     {
     public:
-        WindowSDL(const WindowConfig& config);
+        WindowSDL(const WindowDesc& desc);
         ~WindowSDL();
 
         Result<void*> GetWindowHandle() const noexcept final;
@@ -27,7 +27,7 @@ namespace Entix
         Result<void> Initialize();
         Result<void> Shutdown();
 
-        const WindowConfig k_config;
+        const WindowDesc k_desc;
 
         SDL_Window* m_window = nullptr;
     };

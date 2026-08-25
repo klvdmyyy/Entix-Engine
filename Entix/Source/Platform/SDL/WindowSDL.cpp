@@ -4,8 +4,8 @@
 
 namespace Entix
 {
-    WindowSDL::WindowSDL(const WindowConfig& config)
-        : k_config(config)
+    WindowSDL::WindowSDL(const WindowDesc& desc)
+        : k_desc(desc)
     {
         Initialize().Unwrap();
     }
@@ -17,7 +17,7 @@ namespace Entix
 
     Result<void> WindowSDL::Initialize()
     {
-        m_window = SDL_CreateWindow(k_config.title.c_str(), k_config.width, k_config.height, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_VULKAN);
+        m_window = SDL_CreateWindow(k_desc.title.c_str(), k_desc.width, k_desc.height, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_VULKAN);
 
         if(m_window == nullptr)
             return Error(SDL_GetError());

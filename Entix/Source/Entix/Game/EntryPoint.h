@@ -1,7 +1,4 @@
-#ifndef ENTIX_BUILD_DLL
 #pragma once
-
-#include "Entix/Core/EntryPoint.h"
 
 #include "Entix/Core/Debug/Logger.h"
 
@@ -24,7 +21,7 @@ namespace Entix
 {
     extern ApplicationDesc CreateApplication(int argc, char** argv);
 
-    static int Main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
+    int Main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
     {
         auto file = CreateScope<IO::FileStream>(std::format("{0:%F}T{0:%H-%M%Z}.log", std::chrono::utc_clock::now()), IO::StreamMode::Write);
         Logger::Instance().AddSink(CreateScope<StreamLogSink>(std::move(file)), {
@@ -40,7 +37,7 @@ namespace Entix
         // doesn't use terminal.
         //
         // We just don't need to write logs to stdout.
-#ifndef ENTIX_PLATFORM_WINDOWS
+#ifndef ENTIX_PLATFORM_WINDOWS_
         Logger::Instance().AddSink(CreateScope<StdoutLogSink>(), {
             LogLevel::Trace,
             LogLevel::Debug,
@@ -87,4 +84,26 @@ namespace Entix
         }
     }
 }
+
+#if defined(ENTIX_PLATFORM_WINDOWS_)
+#include <Windows.h>
+//! [entry_windows]
+int APIENTRY WinMain(
+    [[maybe_unused]] HINSTANCE hInstance,
+    [[maybe_unused]] HINSTANCE hPrevInstance,
+    [[maybe_unused]] LPSTR lpCmdLine,
+    [[maybe_unused]] int nShowCmd
+)
+{
+    __debugbreak();
+    return ::Entix::Main(__argc, __argv);
+}
+//! [entry_windows]
+#else
+//! [entry_linux]
+int main(int argc, char** argv) // NOLINT
+{
+    return ::Entix::Main(argc, argv);
+}
+//! [entry_linux]
 #endif

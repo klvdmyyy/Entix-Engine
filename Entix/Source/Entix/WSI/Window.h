@@ -7,9 +7,9 @@
 
 namespace Entix
 {
-    struct WindowConfig
+    struct WindowDesc
     {
-        WindowConfig() = default;
+        WindowDesc() = default;
 
         Uint32 width = 800;
         Uint32 height = 600;
@@ -22,9 +22,9 @@ namespace Entix
                & AField("title", title);
         }
 
-        static WindowConfig Deserialize(JsonArchive& ar)
+        static WindowDesc Deserialize(JsonArchive& ar)
         {
-            WindowConfig config;
+            WindowDesc config;
 
             ar & AField("width", config.width)
                & AField("height", config.height)

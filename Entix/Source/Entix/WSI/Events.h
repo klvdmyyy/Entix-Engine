@@ -72,16 +72,4 @@ namespace Entix
         float m_xPosition, m_yPosition;
         float m_xRelative, m_yRelative;
     };
-
-    namespace WSI
-    {
-        ENTIX_API Result<void> Initialize();
-        ENTIX_API void Shutdown();
-
-        ENTIX_API void PollEvents();
-
-        /** Vulkan things */
-        
-        ENTIX_API Result<std::vector<const char*>> GetRequiredVulkanInstanceExtensions();
-    }
 }
