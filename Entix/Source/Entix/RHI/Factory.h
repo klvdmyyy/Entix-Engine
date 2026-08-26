@@ -13,6 +13,8 @@
 #include "Entix/Core/Result.h"
 #include "Entix/Core/Version.h"
 
+#include "Entix/WSI/Window.h"
+
 #include <vector>
 #include <algorithm>
 
@@ -25,12 +27,16 @@ namespace Entix
             Vulkan = 0, //< Default value
         };
 
+        /// @brief Information about your GPU.
+        ///
+        /// @attention All fields with underscore at the end are not for use. It should be private
+        /// but I want to keep GpuInfo as plain data structure.
         struct GpuInfo
         {
             String name;
 
-            // It must be a private member but I want to keep GpuInfo
-            // just plain data structure
+            /// @details It must be a private member but I want to keep GpuInfo
+            /// just plain data structure
             Usize index_;
         };
 
@@ -99,15 +105,22 @@ namespace Entix::RHI
     class Factory
     {
     public:
-        /**
-         * @brief Creates RHI factory object
-         */
-        static Result<Scope<Factory>> Create(const FactoryDesc& desc = DefaultOf<FactoryDesc>());
-
         virtual ~Factory() = default;
 
         virtual std::vector<GpuInfo> GetSupportedGpuInfos() = 0;
 
-        virtual Result<Device*> CreateGpuHandle(const GpuInfo& info) = 0;
+        virtual Result<Device*> CreateGpuHandle(
+            const GpuInfo& info,
+
+            // It's used to check Gpu capabilities to render in target window.
+            //
+            // Notice that all other windows created after main must provide surfaces
+            // with same capabilities. You don't need to check Gpu support for all windows you are
+            // create, only for main
+            //
+            //
+            // Maybe this parameter should be placed somewhere else but I don't know where for now (:
+            Ref<Window> mainWindow = nullptr
+        ) = 0;
     };
 }

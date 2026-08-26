@@ -14,7 +14,7 @@ namespace Entix
           m_resourceManager(m_threadPool, desc.enableHotReload),
           m_sdlFactory(CreateScope<SDLFactory>()),
           m_mainWindow(nullptr),
-          m_rhiFactory(RHI::Factory::Create(desc.rhiFactoryDesc).Unwrap()),
+          m_rhiFactory(m_sdlFactory->CreateRHIFactory(desc.rhiFactoryDesc).Unwrap()),
           m_renderingDevice(nullptr),
           m_worldContext(m_threadPool, m_resourceManager),
           m_layerStack(&m_controlFlow, &m_worldContext)
@@ -44,9 +44,9 @@ namespace Entix
         std::ranges::sort(capableGpuInfos.begin(), capableGpuInfos.end(), desc.gpuSortCallback);
         
         EX_LOG(LogTemp, Info, "Found capable GPU for rendering: {}", capableGpuInfos[0].name);
-        // m_renderingDevice.reset(m_rhiFactory->CreateGpuHandle(capableGpuInfos[0]).Unwrap());
+        m_renderingDevice.reset(m_rhiFactory->CreateGpuHandle(capableGpuInfos[0]).Unwrap());
 
-        // m_worldContext.SetRenderingDevice(m_renderingDevice);
+        m_worldContext.SetRenderingDevice(m_renderingDevice);
     }
 
     Application::~Application()

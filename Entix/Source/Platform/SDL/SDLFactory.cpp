@@ -7,6 +7,8 @@
 
 #include "Platform/SDL/WindowSDL.h"
 
+#include "Platform/Vulkan/VulkanFactory.h"
+
 #include <SDL3/SDL_vulkan.h>
 
 namespace Entix
@@ -29,6 +31,12 @@ namespace Entix
     Result<Window*> SDLFactory::CreateWindow(const WindowDesc& desc)
     {
         return new WindowSDL(desc);
+    }
+
+    Result<RHI::Factory*> SDLFactory::CreateRHIFactory(const RHI::FactoryDesc& desc)
+    {
+        EX_LET_TRY(requiredExtensions, GetRequiredVulkanInstanceExtensions());
+        return new VulkanFactory(desc.applicationName, desc.applicationVersion, requiredExtensions);
     }
 
     void SDLFactory::PollEvents()
